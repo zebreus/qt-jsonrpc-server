@@ -9,8 +9,8 @@ int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
 
-    JsonRpcServer<TestService, true>* test = new JsonRpcServer<TestService>(56730);
-    test->startListening();
+    JsonRpcServer<TestService> test(56730);
+    test.startListening();
 
     return a.exec();
 }
