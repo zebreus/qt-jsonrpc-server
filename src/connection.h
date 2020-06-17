@@ -299,6 +299,16 @@ bool Connection<T, true>::processRequest(const QJsonObject &message)
                 return false;
             }
             break;
+        case QMetaType::QJsonValue :
+            //TODO Probably the value should be checked somehow
+            if( true ){
+                value->setValue(providedParameter);
+                argument = Q_ARG(QJsonValue, *((QJsonValue*)value->data()));
+            }else{
+                qDebug() << "Parameter type of parameter " << i << " cannot be converted to QJsonValue";
+                return false;
+            }
+            break;
         default:
             //TODO Add more types
             qDebug()  << "Request has unsupported type "<< "Not all types are implemented yet.";
