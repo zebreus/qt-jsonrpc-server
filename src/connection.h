@@ -373,7 +373,7 @@ bool Connection<T, true>::processRequest(const QJsonObject &message)
     QJsonDocument resultDocument;
     resultDocument.setObject(resultObject);
     //emit sendResult(resultDocument.toJson());
-    webSocket->sendBinaryMessage(resultDocument.toJson());
+    webSocket->sendBinaryMessage(resultDocument.toJson(QJsonDocument::Compact));
 
     qDebug() << "RESULT: " << returnVariant;
 
