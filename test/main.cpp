@@ -9,7 +9,7 @@ int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
 
-    JsonRpcServer<TestService> test(56730);
+    jsonrpc::Server<TestService> test(56730);
     test.startListening();
 
     return a.exec();

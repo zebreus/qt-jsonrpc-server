@@ -13,13 +13,14 @@
 #include <cmath>
 #include <QCoreApplication>
 
+namespace jsonrpc{
 
 //Intermediate class that the JsonRpcServer inherits from, as template classes cannot use the QObject macro
 //All signals and slots have to be defined here
-class IntermediateJsonRpcConnection : public QObject {
+class IntermediateConnection : public QObject {
     Q_OBJECT
 public:
-    explicit IntermediateJsonRpcConnection(QObject *parent = nullptr): QObject(parent){}
+    explicit IntermediateConnection(QObject *parent = nullptr): QObject(parent){}
 private Q_SLOTS:
     virtual void receiveMessage(const QString& message) {}
     virtual void disconnected() {}
@@ -29,14 +30,14 @@ public: signals:
 
 //Only allow templates for classes that are based on QObject
 template<class T, bool = std::is_base_of<QObject, T>::value>
-class JsonRpcConnection : public IntermediateJsonRpcConnection {};
+class Connection : public IntermediateConnection {};
 
 template<class T>
-class JsonRpcConnection<T, true> : public IntermediateJsonRpcConnection
+class Connection<T, true> : public IntermediateConnection
 {
 public:
-    explicit JsonRpcConnection(QWebSocket* socket, QObject *parent = nullptr);
-    ~JsonRpcConnection();
+    explicit Connection(QWebSocket* socket, QObject *parent = nullptr);
+    ~Connection();
     void receiveMessage(const QString& message) override;
     void disconnected() override;
 
@@ -52,22 +53,22 @@ private:
 };
 
 template<typename T>
-JsonRpcConnection<T, true>::JsonRpcConnection(QWebSocket *socket, QObject *parent) : IntermediateJsonRpcConnection(parent), webSocket(socket)
+Connection<T, true>::Connection(QWebSocket *socket, QObject *parent) : IntermediateConnection(parent), webSocket(socket)
 {
     processor = new T(this);
     connect(webSocket, &QWebSocket::textMessageReceived,
-        this, &JsonRpcConnection<T>::receiveMessage);
+        this, &Connection<T>::receiveMessage);
     connect(webSocket, &QWebSocket::disconnected,
-        this, &JsonRpcConnection<T>::disconnected);
+        this, &Connection<T>::disconnected);
 }
 
 template<class T>
-JsonRpcConnection<T,true>::~JsonRpcConnection(){
+Connection<T,true>::~Connection(){
     webSocket->close();
 }
 
 template<typename T>
-void JsonRpcConnection<T, true>::receiveMessage(const QString &message)
+void Connection<T, true>::receiveMessage(const QString &message)
 {
     qDebug() << "processing message " << message;
 
@@ -101,7 +102,7 @@ void JsonRpcConnection<T, true>::receiveMessage(const QString &message)
 }
 
 template<class T>
-bool JsonRpcConnection<T, true>::processJsonRpc(const QJsonObject &message)
+bool Connection<T, true>::processJsonRpc(const QJsonObject &message)
 {
     // Check if it has a valid rpc field
     QJsonValue jsonrpcValue = message.value("jsonrpc");
@@ -155,7 +156,7 @@ inline int deletePointer(void* t){
 }
 
 template<class T>
-bool JsonRpcConnection<T, true>::processRequest(const QJsonObject &message)
+bool Connection<T, true>::processRequest(const QJsonObject &message)
 {
     // Find method
     QString methodName = message.value("method").toString();
@@ -374,23 +375,23 @@ bool JsonRpcConnection<T, true>::processRequest(const QJsonObject &message)
     //emit sendResult(resultDocument.toJson());
     webSocket->sendBinaryMessage(resultDocument.toJson());
 
-
     qDebug() << "RESULT: " << returnVariant;
 
     return true;
 }
 
 template<class T>
-bool JsonRpcConnection<T, true>::processResult(const QJsonObject &message)
+bool Connection<T, true>::processResult(const QJsonObject &message)
 {
     qDebug() << "processResult not implemented yet";
     return true;
 }
 
 template<typename T>
-void JsonRpcConnection<T, true>::disconnected()
+void Connection<T, true>::disconnected()
 {
     qDebug() << "disconnected";
 }
 
+}
 #endif // JSONRPCCONNECTION_H

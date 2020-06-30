@@ -10,13 +10,14 @@
 #include <QtWebSockets/QWebSocket>
 
 using namespace std;
+namespace jsonrpc{
 
 //Intermediate class that the JsonRpcServer inherits from, as template classes cannot use the QObject macro
 //All signals and slots have to be defined here
-class IntermediateJsonRpcServer : public QObject {
+class IntermediateServer : public QObject {
     Q_OBJECT
 public:
-    explicit IntermediateJsonRpcServer(QObject *parent = nullptr): QObject(parent){}
+    explicit IntermediateServer(QObject *parent = nullptr): QObject(parent){}
 public Q_SLOTS:
     virtual void onNewConnection() {}
 public: signals:
@@ -27,19 +28,19 @@ public: signals:
 //Only allow templates for classes that are based on QObject
 //Empty class for everything not based on QObject
 template<class T, bool = std::is_base_of<QObject, T>::value>
-class JsonRpcServer : IntermediateJsonRpcServer {};
+class Server : IntermediateServer {};
 
 
 //Class for everything based on QObject
 template<class T>
-class JsonRpcServer<T, true> : public IntermediateJsonRpcServer
+class Server<T, true> : public IntermediateServer
 {
 private:
     QWebSocketServer* webSocketServer;
-    QList<JsonRpcConnection<T>*> connections;
+    QList<Connection<T>*> connections;
 public:
-    explicit JsonRpcServer(int port, QObject *parent = nullptr);
-    ~JsonRpcServer();
+    explicit Server(int port, QObject *parent = nullptr);
+    ~Server();
     void startListening();
     void onNewConnection() override;
 
@@ -48,34 +49,36 @@ public:
 // Template implementation
 
 template<class T>
-JsonRpcServer<T,true>::JsonRpcServer(int port, QObject *parent) : IntermediateJsonRpcServer(parent){
+Server<T,true>::Server(int port, QObject *parent) : IntermediateServer(parent){
     webSocketServer = new QWebSocketServer(QStringLiteral("SERVERNAME"), QWebSocketServer::NonSecureMode, this);
     if (webSocketServer->listen(QHostAddress::Any, port))
     {
         qDebug() << "Server listening on " << QHostAddress::Any << ":" << port;
         connect(webSocketServer, &QWebSocketServer::newConnection,
-            this, &JsonRpcServer<T>::onNewConnection);
+                this, &Server<T>::onNewConnection);
     }else{
         qDebug() << "Error opening server on " << QHostAddress::Any << ":" << port;
     }
 }
 
 template<class T>
-JsonRpcServer<T,true>::~JsonRpcServer(){
+Server<T,true>::~Server(){
     webSocketServer->close();
 }
 
 template<class T>
-void JsonRpcServer<T,true>::startListening(){
+void Server<T,true>::startListening(){
     emit testSignal();
     //onNewConnection();
 }
 
 template<class T>
-void JsonRpcServer<T,true>::onNewConnection(){
+void Server<T,true>::onNewConnection(){
     QWebSocket *webSocket = webSocketServer->nextPendingConnection();
-    JsonRpcConnection<T>* connection = new JsonRpcConnection<T>(webSocket,this);
+    Connection<T>* connection = new Connection<T>(webSocket,this);
     connections.push_back(connection);
+}
+
 }
 
 #endif // JSONRPCSERVER_H
