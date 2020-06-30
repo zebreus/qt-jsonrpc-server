@@ -16,12 +16,14 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    src/message.cpp \
     test/testservice.cpp \
     test/main.cpp
 
 HEADERS += \
-    src/jsonrpcconnection.h \
-    src/jsonrpcserver.h \
+    src/connection.h \
+    src/message.h \
+    src/server.h \
     test/testservice.h
 
 # Default rules for deployment.
