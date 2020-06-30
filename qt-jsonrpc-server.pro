@@ -18,6 +18,8 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
     src/error.cpp \
     src/message.cpp \
+    src/request.cpp \
+    src/response.cpp \
     test/testservice.cpp \
     test/main.cpp
 
@@ -25,6 +27,8 @@ HEADERS += \
     src/connection.h \
     src/error.h \
     src/message.h \
+    src/request.h \
+    src/response.h \
     src/server.h \
     test/testservice.h
 
