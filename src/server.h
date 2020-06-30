@@ -3,7 +3,7 @@
 
 #include <QObject>
 #include <QList>
-#include "jsonrpcconnection.h"
+#include "connection.h"
 #include <iostream>
 #include <QString>
 #include <QtWebSockets/QWebSocketServer>
