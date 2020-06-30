@@ -6,6 +6,7 @@
 #include <QJsonValue>
 #include <QString>
 
+namespace jsonrpc{
 
 class Error : public Message {
 
@@ -26,5 +27,7 @@ class Error : public Message {
     QString message;
     QJsonValue data;
 };
+
+}
 
 #endif // ERROR_H

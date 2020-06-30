@@ -1,5 +1,7 @@
 #include "message.h"
 
+namespace jsonrpc{
+
 Message::Message(const QJsonObject& message)
 {
     if(message.value("jsonrpc") != "2.0"){
@@ -20,4 +22,6 @@ QJsonValue Message::getId() const
 bool Message::hasId() const
 {
     return !(id.isUndefined() || id.isNull());
+}
+
 }

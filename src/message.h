@@ -4,6 +4,8 @@
 #include <QVariant>
 #include <QJsonObject>
 
+namespace jsonrpc{
+
 class Message {
 
  public:
@@ -17,5 +19,7 @@ class Message {
  private:
     QJsonValue id;
 };
+
+}
 
 #endif // MESSAGE_H

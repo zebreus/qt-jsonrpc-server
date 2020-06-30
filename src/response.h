@@ -5,6 +5,8 @@
 #include <QJsonObject>
 #include <QJsonValue>
 
+namespace jsonrpc{
+
 class Response : public Message {
 
  public:
@@ -13,8 +15,10 @@ class Response : public Message {
 
     QJsonValue getResult() const;
 
- public:
+ private:
     QJsonValue result;
 };
+
+}
 
 #endif // RESPONSE_H

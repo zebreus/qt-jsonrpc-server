@@ -1,5 +1,7 @@
 #include "response.h"
 
+namespace jsonrpc{
+
 Response::Response(const QJsonObject& message): Message(message)
 {
     result = message.value("result");
@@ -11,4 +13,6 @@ Response::Response(const QJsonObject& message): Message(message)
 QJsonValue Response::getResult() const
 {
     return result;
+}
+
 }

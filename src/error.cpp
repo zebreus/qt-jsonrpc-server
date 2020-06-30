@@ -1,5 +1,7 @@
 #include "error.h"
 
+namespace jsonrpc{
+
 Error::Error(const QJsonObject& message): Message(message)
 {
     QJsonValue jsonError = message.value("error");
@@ -43,4 +45,6 @@ QJsonValue Error::getData() const
 bool Error::hasData() const
 {
     return !(data.isUndefined() || data.isNull());
+}
+
 }
