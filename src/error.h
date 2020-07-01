@@ -22,6 +22,16 @@ class Error : public Message {
 
     bool hasData() const;
 
+    QJsonObject toJson() const override;
+
+    Error(int code, const QString& errorMessage, const QJsonValue& data);
+
+    Error(int code, const QString& errorMessage);
+
+    Error(const QJsonValue& id, int code, const QString& errorMessage, const QJsonValue& data);
+
+    Error(const QJsonValue& id, int code, const QString& errorMessage);
+
  private:
     int code;
     QString message;

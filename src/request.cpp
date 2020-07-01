@@ -25,6 +25,21 @@ QList<QJsonValue> Request::getArguments() const
     return arguments;
 }
 
+QJsonObject Request::toJson() const
+{
+
+}
+
+Request::Request(const QString &methodName, const QList<QJsonValue> &arguments)
+{
+
+}
+
+Request::Request(const QJsonValue &id, const QString &methodName, const QList<QJsonValue> &arguments)
+{
+
+}
+
 bool Request::buildArguments(const QJsonValue& passedArguments)
 {
     switch (passedArguments.type()){

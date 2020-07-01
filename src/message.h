@@ -16,6 +16,14 @@ class Message {
 
     virtual bool hasId() const;
 
+    virtual QJsonObject toJson() const;
+
+protected:
+
+    Message();
+
+    Message(const QJsonValue& id);
+
  private:
     QJsonValue id;
 };

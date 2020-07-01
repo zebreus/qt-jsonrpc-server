@@ -15,6 +15,12 @@ class Response : public Message {
 
     QJsonValue getResult() const;
 
+    QJsonObject toJson() const override;
+
+    Response(const QJsonValue& result);
+
+    Response(const QJsonValue& id, const QJsonValue& result);
+
  private:
     QJsonValue result;
 };

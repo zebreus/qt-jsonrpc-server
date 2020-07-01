@@ -20,6 +20,12 @@ public:
 
     QList<QJsonValue> getArguments() const;
 
+    QJsonObject toJson() const override;
+
+    Request(const QString& methodName, const QList<QJsonValue>& arguments);
+
+    Request(const QJsonValue& id, const QString& methodName, const QList<QJsonValue>& arguments);
+
 private:
     QString methodName;
     QList<QJsonValue> arguments;

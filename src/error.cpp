@@ -47,4 +47,29 @@ bool Error::hasData() const
     return !(data.isUndefined() || data.isNull());
 }
 
+QJsonObject Error::toJson() const
+{
+
+}
+
+Error::Error(int code, const QString &errorMessage, const QJsonValue &data)
+{
+
+}
+
+Error::Error(int code, const QString &errorMessage)
+{
+
+}
+
+Error::Error(const QJsonValue &id, int code, const QString &errorMessage, const QJsonValue &data)
+{
+
+}
+
+Error::Error(const QJsonValue &id, int code, const QString &errorMessage)
+{
+
+}
+
 }

@@ -24,4 +24,19 @@ bool Message::hasId() const
     return !(id.isUndefined() || id.isNull());
 }
 
+QJsonObject Message::toJson() const
+{
+
+}
+
+Message::Message()
+{
+
+}
+
+Message::Message(const QJsonValue& id)
+{
+
+}
+
 }

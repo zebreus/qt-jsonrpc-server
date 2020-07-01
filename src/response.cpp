@@ -15,4 +15,19 @@ QJsonValue Response::getResult() const
     return result;
 }
 
+QJsonObject Response::toJson() const
+{
+
+}
+
+Response::Response(const QJsonValue &result)
+{
+
+}
+
+Response::Response(const QJsonValue &id, const QJsonValue &result)
+{
+
+}
+
 }
