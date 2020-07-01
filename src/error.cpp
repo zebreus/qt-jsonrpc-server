@@ -49,25 +49,39 @@ bool Error::hasData() const
 
 QJsonObject Error::toJson() const
 {
+    QJsonObject errorObject;
+    errorObject.insert("code", code);
+    errorObject.insert("message", message);
+    //TODO check if just adding QJsonValue::Undefined has the same effect
+    if(!data.isUndefined()){
+        errorObject.insert("data",data);
+    }
 
+    QJsonObject errorMessageJson = Message::toJson();
+    errorMessageJson.insert("error",errorObject);
+    return errorMessageJson;
 }
 
-Error::Error(int code, const QString &errorMessage, const QJsonValue &data)
+Error::Error(int code, const QString &errorMessage, const QJsonValue &data):
+    Message(), code(code), message(errorMessage), data(data)
 {
 
 }
 
-Error::Error(int code, const QString &errorMessage)
+Error::Error(int code, const QString &errorMessage):
+    Message(), code(code), message(errorMessage), data(QJsonValue::Undefined)
 {
 
 }
 
-Error::Error(const QJsonValue &id, int code, const QString &errorMessage, const QJsonValue &data)
+Error::Error(const QJsonValue &id, int code, const QString &errorMessage, const QJsonValue &data):
+    Message(id), code(code), message(errorMessage), data(data)
 {
 
 }
 
-Error::Error(const QJsonValue &id, int code, const QString &errorMessage)
+Error::Error(const QJsonValue &id, int code, const QString &errorMessage):
+    Message(id), code(code), message(errorMessage), data(QJsonValue::Undefined)
 {
 
 }
