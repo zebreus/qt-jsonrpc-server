@@ -27,15 +27,29 @@ QList<QJsonValue> Request::getArguments() const
 
 QJsonObject Request::toJson() const
 {
+    QJsonObject requestMessageJson = Message::toJson();
 
+    requestMessageJson.insert("method", methodName);
+
+    if(arguments.size() != 0){
+        QJsonArray requestArguments;
+        for(QJsonValue argument : arguments){
+            requestArguments.append(argument);
+        }
+        requestMessageJson.insert("params",requestArguments);
+    }
+
+    return requestMessageJson;
 }
 
-Request::Request(const QString &methodName, const QList<QJsonValue> &arguments)
+Request::Request(const QString &methodName, const QList<QJsonValue> &arguments):
+    Message(), methodName(methodName), arguments(arguments)
 {
 
 }
 
-Request::Request(const QJsonValue &id, const QString &methodName, const QList<QJsonValue> &arguments)
+Request::Request(const QJsonValue &id, const QString &methodName, const QList<QJsonValue> &arguments):
+    Message(id), methodName(methodName), arguments(arguments)
 {
 
 }
