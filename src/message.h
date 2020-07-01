@@ -3,6 +3,7 @@
 
 #include <QVariant>
 #include <QJsonObject>
+#include <QUuid>
 
 namespace jsonrpc{
 
