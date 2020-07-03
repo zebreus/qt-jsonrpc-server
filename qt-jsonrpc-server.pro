@@ -18,6 +18,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
     src/argument.cpp \
     src/boolargument.cpp \
+    src/call.cpp \
     src/error.cpp \
     src/intargument.cpp \
     src/message.cpp \
@@ -29,6 +30,7 @@ SOURCES += \
 HEADERS += \
     src/argument.h \
     src/boolargument.h \
+    src/call.h \
     src/connection.h \
     src/error.h \
     src/intargument.h \
