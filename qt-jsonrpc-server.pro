@@ -16,7 +16,10 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    src/argument.cpp \
+    src/boolargument.cpp \
     src/error.cpp \
+    src/intargument.cpp \
     src/message.cpp \
     src/request.cpp \
     src/response.cpp \
@@ -24,8 +27,11 @@ SOURCES += \
     test/main.cpp
 
 HEADERS += \
+    src/argument.h \
+    src/boolargument.h \
     src/connection.h \
     src/error.h \
+    src/intargument.h \
     src/message.h \
     src/request.h \
     src/response.h \
