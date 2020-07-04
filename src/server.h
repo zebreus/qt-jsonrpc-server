@@ -37,7 +37,7 @@ class Server<T, true> : public IntermediateServer
 {
 private:
     QWebSocketServer* webSocketServer;
-    QList<Connection<T>*> connections;
+    QList<Connection*> connections;
 public:
     explicit Server(int port, QObject *parent = nullptr);
     ~Server();
@@ -75,7 +75,9 @@ void Server<T,true>::startListening(){
 template<class T>
 void Server<T,true>::onNewConnection(){
     QWebSocket *webSocket = webSocketServer->nextPendingConnection();
-    Connection<T>* connection = new Connection<T>(webSocket,this);
+    T* qObject = new T();
+    Connection* connection = new Connection(webSocket,this);
+    ((QObject*)qObject)->setParent(connection);
     connections.push_back(connection);
 }
 
