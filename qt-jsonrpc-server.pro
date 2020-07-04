@@ -19,6 +19,7 @@ SOURCES += \
     src/argument.cpp \
     src/boolargument.cpp \
     src/call.cpp \
+    src/callmanager.cpp \
     src/error.cpp \
     src/intargument.cpp \
     src/message.cpp \
@@ -31,6 +32,7 @@ HEADERS += \
     src/argument.h \
     src/boolargument.h \
     src/call.h \
+    src/callmanager.h \
     src/connection.h \
     src/error.h \
     src/intargument.h \
