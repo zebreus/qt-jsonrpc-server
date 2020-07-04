@@ -24,6 +24,7 @@ SOURCES += \
     src/intargument.cpp \
     src/message.cpp \
     src/request.cpp \
+    src/requestmanager.cpp \
     src/response.cpp \
     test/testservice.cpp \
     test/main.cpp
@@ -38,6 +39,7 @@ HEADERS += \
     src/intargument.h \
     src/message.h \
     src/request.h \
+    src/requestmanager.h \
     src/response.h \
     src/server.h \
     test/testservice.h

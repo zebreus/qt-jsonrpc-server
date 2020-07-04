@@ -2,15 +2,30 @@
 #define REQUESTMANAGER_H
 
 #include <QObject>
+#include <QSharedPointer>
+#include "request.h"
+#include "message.h"
+#include "error.h"
+#include "response.h"
 
-class RequestManager : public QObject
-{
+namespace jsonrpc{
+
+class RequestManager : public QObject{
     Q_OBJECT
 public:
-    explicit RequestManager(QObject *parent = nullptr);
+    RequestManager(QObject* target, QObject* parent);
+    void processError(const QSharedPointer<Error>& error);
+    void processResponse(const QSharedPointer<Response>& response);
 
 signals:
+    void sendingRequest(const QSharedPointer<Request>& request);
+
+private:
+    QList<Request*> activeRequests;
+    QObject* processor;
 
 };
+
+}
 
 #endif // REQUESTMANAGER_H
