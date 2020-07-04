@@ -21,8 +21,8 @@ Q_OBJECT
     explicit MessageProcessor(QObject* processor, QObject* parent);
 
   private:
-    void processIncomingMessage(const QJsonDocument& message);
-    void processIncomingMessage(const QJsonObject& message);
+    void processIncomingDocument(const QJsonDocument& message);
+    void processIncomingObject(const QJsonObject& message);
     void processIncomingRequest(const QSharedPointer<Request>& request);
     void processIncomingResponse(const QSharedPointer<Response>& response);
     void processIncomingError(const QSharedPointer<Error>& error);
@@ -32,7 +32,7 @@ public slots:
     void processOutgoingMessage(const QSharedPointer<Message>& message);
 
  signals:
-    void sendingMessage(const QSharedPointer<Message> message);
+    void outgoingMessage(const QString& message);
     void receivedResponse(const QSharedPointer<Response>& response);
     void receivedError(const QSharedPointer<Error>& error);
     void receivedRequest(const QSharedPointer<Request>& request);
