@@ -1,12 +1,13 @@
 #include "call.h"
 
-jsonrpc::Call::Call(const jsonrpc::Request &request, QObject *target, QObject *parent):
+jsonrpc::Call::Call(const QSharedPointer<Request> &request, QObject *target, QObject *parent):
     QObject(parent), processor(target)
 {
-    //TODO Communicate if construction was successful; maybe throw an exception
-    callId = request.getId();
-    setMethod(request.getMethodName());
-    setArguments(request.getArguments());
+    //Throwing an Error object if an error is encountered during construction
+    //TODO improve error handling
+    callId = request->getId();
+    setMethod(request->getMethodName());
+    setArguments(request->getArguments());
 }
 
 void jsonrpc::Call::invoke()
@@ -56,10 +57,10 @@ void jsonrpc::Call::invoke()
     //TODO detect errors
     //TODO async
     QJsonValue resultValue = QJsonValue::fromVariant(returnVariant);
-    emit onSuccess(Response(callId, resultValue));
+    emit onSuccess(QSharedPointer<Response>(new Response(callId, resultValue)));
 }
 
-bool jsonrpc::Call::setMethod(const QString &methodName)
+void jsonrpc::Call::setMethod(const QString &methodName)
 {
     int methodOffset = processor->metaObject()->methodOffset();
     //From the position after all methods of superclasses(methodOffset) to end of all methods(methodCount).
@@ -67,46 +68,32 @@ bool jsonrpc::Call::setMethod(const QString &methodName)
         QMetaMethod testMethod = processor->metaObject()->method(methodIndex);
         if(testMethod.name() == methodName){
             method = testMethod;
-            return true;
+            return;
         }
     }
 
-    //TODO Error handling?
     QString errorMessage = QString("Method not found: %1");
     errorMessage = errorMessage.arg(methodName);
-    emit onError(Error(callId, Error::Code::MethodNotFound, errorMessage));
-    return false;
+    throw Error(callId, Error::Code::MethodNotFound, errorMessage);
 }
 
-bool jsonrpc::Call::setArguments(const QList<QJsonValue> &providedArguments)
+void jsonrpc::Call::setArguments(const QList<QJsonValue> &providedArguments)
 {
     if(providedArguments.size() > 10){
-        //TODO Error handling? Maybe throw error messages instead of emiting onError
         QString errorMessage = QString("Maximum number of parameters exceeded (%1/10).");
         errorMessage = errorMessage.arg(QString(providedArguments.size()));
-        emit onError(Error(callId, Error::Code::InvalidParams, errorMessage));
-        return false;
+        throw Error(callId, Error::Code::InvalidParams, errorMessage);
     }
     QList<QMetaType::Type> requiredParameterTypes = getRequiredParameterTypes();
     if(providedArguments.size() != requiredParameterTypes.size()){
         QString errorMessage = "Parameter amount mismatch (%1:%2)";
         errorMessage = errorMessage.arg(QString(providedArguments.size()), QString(requiredParameterTypes.size()));
-        emit onError(Error(callId, Error::Code::InvalidParams, errorMessage));
-        return false;
+        throw Error(callId, Error::Code::InvalidParams, errorMessage);
     }
 
     for(int i = 0;i<requiredParameterTypes.size();i++){
-        bool success = addArgument(requiredParameterTypes[i], providedArguments[i]);
-        if(!success){
-            //TODO if throwing errors instead of emitting them, this should be moved  to add Argument
-            QString errorMessage = "Invalid type of parameter %1, %2 required.";
-            errorMessage = errorMessage.arg(QString(i), QString(QMetaType::typeName(requiredParameterTypes[i])));
-            emit onError(Error(callId, Error::Code::InvalidParams, errorMessage));
-            return false;
-        }
+        addArgument(requiredParameterTypes[i], providedArguments[i]);
     }
-
-    return true;
 }
 
 QList<QMetaType::Type> jsonrpc::Call::getRequiredParameterTypes() const
@@ -119,7 +106,7 @@ QList<QMetaType::Type> jsonrpc::Call::getRequiredParameterTypes() const
     return requiredParameterTypes;
 }
 
-bool jsonrpc::Call::addArgument(const QMetaType::Type &requiredType, const QJsonValue &providedParameter)
+void jsonrpc::Call::addArgument(const QMetaType::Type &requiredType, const QJsonValue &providedParameter)
 {
     Argument* argument;
 
@@ -133,8 +120,9 @@ bool jsonrpc::Call::addArgument(const QMetaType::Type &requiredType, const QJson
         break;
     default:
         qDebug()  << "Request has unsupported type "<< "Not all types are implemented yet.";
-        return false;
+        QString errorMessage = "Invalid type of parameter %1, %2 required.";
+        errorMessage = errorMessage.arg(QString(arguments.size()+1), QString(QMetaType::typeName(requiredType)));
+        throw Error(callId, Error::Code::InvalidParams, errorMessage);
     }
     arguments.push_back(QSharedPointer<Argument>(argument));
-    return true;
 }
