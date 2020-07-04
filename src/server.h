@@ -20,8 +20,6 @@ public:
     explicit IntermediateServer(QObject *parent = nullptr): QObject(parent){}
 public Q_SLOTS:
     virtual void onNewConnection() {}
-public: signals:
-    void testSignal();
 };
 
 
@@ -68,16 +66,14 @@ Server<T,true>::~Server(){
 
 template<class T>
 void Server<T,true>::startListening(){
-    emit testSignal();
-    //onNewConnection();
 }
 
 template<class T>
 void Server<T,true>::onNewConnection(){
     QWebSocket *webSocket = webSocketServer->nextPendingConnection();
-    T* qObject = new T();
-    Connection* connection = new Connection(webSocket,this);
-    ((QObject*)qObject)->setParent(connection);
+    T* target = new T();
+    Connection* connection = new Connection(webSocket,target,this);
+    ((QObject*)target)->setParent(connection);
     connections.push_back(connection);
 }
 
