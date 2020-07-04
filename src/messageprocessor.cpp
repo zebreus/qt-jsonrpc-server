@@ -5,6 +5,10 @@ jsonrpc::MessageProcessor::MessageProcessor(QObject *processor, QObject *parent)
 {
     requestManager = new RequestManager(processor, this);
     callManager = new CallManager(processor, this);
+    connect(callManager, &CallManager::respond,
+        this, &MessageProcessor::processOutgoingMessage);
+    connect(requestManager, &RequestManager::sendingRequest,
+        this, &MessageProcessor::processOutgoingMessage);
 }
 
 void jsonrpc::MessageProcessor::processIncomingDocument(const QJsonDocument &jsonDocument)

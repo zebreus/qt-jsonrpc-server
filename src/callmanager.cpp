@@ -13,7 +13,7 @@ void jsonrpc::CallManager::processRequest(const QSharedPointer<jsonrpc::Request>
         //TODO Highly unsafe
         Call* call = new Call(request,processor,this);
         connect(call, &Call::onError, this, &CallManager::receiveError);
-        connect(call, &Call::onError, this, &CallManager::receiveError);
+        connect(call, &Call::onSuccess, this, &CallManager::receiveSuccess);
         call->invoke();
         delete call;
     }catch(const Error& error){

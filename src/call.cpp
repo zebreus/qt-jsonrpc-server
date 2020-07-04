@@ -3,6 +3,7 @@
 jsonrpc::Call::Call(const QSharedPointer<Request> &request, QObject *target, QObject *parent):
     QObject(parent), processor(target)
 {
+
     //Throwing an Error object if an error is encountered during construction
     //TODO improve error handling
     callId = request->getId();
