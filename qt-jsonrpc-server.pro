@@ -20,6 +20,7 @@ SOURCES += \
     src/boolargument.cpp \
     src/call.cpp \
     src/callmanager.cpp \
+    src/connection.cpp \
     src/error.cpp \
     src/intargument.cpp \
     src/message.cpp \
