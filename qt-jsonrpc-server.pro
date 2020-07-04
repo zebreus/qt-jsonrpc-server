@@ -23,6 +23,7 @@ SOURCES += \
     src/error.cpp \
     src/intargument.cpp \
     src/message.cpp \
+    src/messageprocessor.cpp \
     src/request.cpp \
     src/requestmanager.cpp \
     src/response.cpp \
@@ -38,6 +39,7 @@ HEADERS += \
     src/error.h \
     src/intargument.h \
     src/message.h \
+    src/messageprocessor.h \
     src/request.h \
     src/requestmanager.h \
     src/response.h \
