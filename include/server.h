@@ -9,6 +9,8 @@
 #include <QtWebSockets/QWebSocketServer>
 #include <QtWebSockets/QWebSocket>
 #include <functional>
+#include <type_traits>
+#include <cassert>
 
 using namespace std;
 namespace jsonrpc{
@@ -64,7 +66,13 @@ Server<T,true>::~Server(){
 
 template<class T>
 void Server<T,true>::startListening(){
-    setConstructorArguments();
+    if(!constructorFunction){
+        if constexpr(is_constructible<T>::value){
+            constructorFunction = [](){return new T(); };
+        }else{
+            assert(is_constructible<T>::value);
+        }
+    }
     if (webSocketServer->listen(QHostAddress::Any, port))
     {
         qDebug() << "Server listening on " << QHostAddress::Any << ":" << port;
