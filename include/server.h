@@ -38,6 +38,7 @@ private:
     QWebSocketServer* webSocketServer;
     QList<Connection*> connections;
     std::function<T*()> constructorFunction;
+    int port;
 public:
     explicit Server(int port, QObject *parent = nullptr);
     ~Server();
@@ -52,17 +53,8 @@ public:
 // Template implementation
 
 template<class T>
-Server<T,true>::Server(int port, QObject *parent) : IntermediateServer(parent){
+Server<T,true>::Server(int port, QObject *parent) : IntermediateServer(parent), port(port){
     webSocketServer = new QWebSocketServer(QStringLiteral("SERVERNAME"), QWebSocketServer::NonSecureMode, this);
-    setConstructorArguments();
-    if (webSocketServer->listen(QHostAddress::Any, port))
-    {
-        qDebug() << "Server listening on " << QHostAddress::Any << ":" << port;
-        connect(webSocketServer, &QWebSocketServer::newConnection,
-                this, &Server<T>::onNewConnection);
-    }else{
-        qDebug() << "Error opening server on " << QHostAddress::Any << ":" << port;
-    }
 }
 
 template<class T>
@@ -72,6 +64,15 @@ Server<T,true>::~Server(){
 
 template<class T>
 void Server<T,true>::startListening(){
+    setConstructorArguments();
+    if (webSocketServer->listen(QHostAddress::Any, port))
+    {
+        qDebug() << "Server listening on " << QHostAddress::Any << ":" << port;
+        connect(webSocketServer, &QWebSocketServer::newConnection,
+                this, &Server<T>::onNewConnection);
+    }else{
+        qDebug() << "Error opening server on " << QHostAddress::Any << ":" << port;
+    }
 }
 
 template<class T>
