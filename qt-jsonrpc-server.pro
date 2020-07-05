@@ -18,6 +18,11 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    src/doubleargument.cpp \
+    src/qcharargument.cpp \
+    src/qjsonvalueargument.cpp \
+    src/qstringargument.cpp \
+    src/uintargument.cpp \
     src/argument.cpp \
     src/boolargument.cpp \
     src/call.cpp \
@@ -39,14 +44,19 @@ HEADERS += \
     include/call.h \
     include/callmanager.h \
     include/connection.h \
+    include/doubleargument.h \
     include/error.h \
     include/intargument.h \
     include/message.h \
     include/messageprocessor.h \
+    include/qcharargument.h \
+    include/qjsonvalueargument.h \
+    include/qstringargument.h \
     include/request.h \
     include/requestmanager.h \
     include/response.h \
     include/server.h \
+    include/uintargument.h \
     test/testservice.h
 
 # Default rules for deployment.

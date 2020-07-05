@@ -4,6 +4,11 @@ DEPENDPATH += $$PWD
 QT += websockets
 
 SOURCES += \
+    $$PWD/src/doubleargument.cpp \
+    $$PWD/src/qcharargument.cpp \
+    $$PWD/src/qjsonvalueargument.cpp \
+    $$PWD/src/qstringargument.cpp \
+    $$PWD/src/uintargument.cpp \
     $$PWD/src/argument.cpp \
     $$PWD/src/boolargument.cpp \
     $$PWD/src/call.cpp \
@@ -18,6 +23,11 @@ SOURCES += \
     $$PWD/src/response.cpp
 
 HEADERS += \
+    $$PWD/include/doubleargument.h \
+    $$PWD/include/qcharargument.h \
+    $$PWD/include/qjsonvalueargument.h \
+    $$PWD/include/qstringargument.h \
+    $$PWD/include/uintargument.h \
     $$PWD/include/argument.h \
     $$PWD/include/boolargument.h \
     $$PWD/include/call.h \

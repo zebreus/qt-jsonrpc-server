@@ -19,7 +19,7 @@ IntArgument::IntArgument(const QJsonValue& providedArgument)
         value.reset(valuePointer);
         argument = Q_ARG(int, *valuePointer);
     }else{
-        qDebug() << "Parameter type of parameter " << providedArgument.type() << " cannot be converted to bool";
+        qDebug() << "Parameter type of parameter " << providedArgument.type() << " cannot be converted to int";
         throw "Error";
     }
 }

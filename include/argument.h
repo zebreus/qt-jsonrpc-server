@@ -4,6 +4,8 @@
 #include <QMetaType>
 #include <QJsonValue>
 
+
+//TODO Make argument templated instead of having many subclasses
 class Argument {
 
  public:

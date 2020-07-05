@@ -9,6 +9,11 @@
 #include "argument.h"
 #include "boolargument.h"
 #include "intargument.h"
+#include "uintargument.h"
+#include "doubleargument.h"
+#include "qcharargument.h"
+#include "qstringargument.h"
+#include "qjsonvalueargument.h"
 
 namespace jsonrpc{
 
