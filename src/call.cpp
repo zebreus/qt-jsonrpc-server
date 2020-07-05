@@ -114,25 +114,25 @@ void jsonrpc::Call::addArgument(const QMetaType::Type &requiredType, const QJson
     //TODO move this to a factory method in argument
     switch(requiredType){
     case QMetaType::Bool :
-        argument = new BoolArgument(providedParameter);
+        argument = new ArgumentImplementation<bool>(providedParameter);
         break;
     case QMetaType::Int :
-        argument = new IntArgument(providedParameter);
+        argument = new ArgumentImplementation<int>(providedParameter);
         break;
     case QMetaType::UInt :
-        argument = new UIntArgument(providedParameter);
+        argument = new ArgumentImplementation<unsigned int>(providedParameter);
         break;
     case QMetaType::QChar :
-        argument = new QCharArgument(providedParameter);
+        argument = new ArgumentImplementation<QChar>(providedParameter);
         break;
     case QMetaType::QString :
-        argument = new QStringArgument(providedParameter);
+        argument = new ArgumentImplementation<QString>(providedParameter);
         break;
     case QMetaType::QJsonValue :
-        argument = new QJsonValueArgument(providedParameter);
+        argument = new ArgumentImplementation<QJsonValue>(providedParameter);
         break;
     case QMetaType::Double :
-        argument = new DoubleArgument(providedParameter);
+        argument = new ArgumentImplementation<double>(providedParameter);
         break;
     default:
         qDebug()  << "Request has unsupported type "<< "Not all types are implemented yet.";

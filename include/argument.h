@@ -3,25 +3,40 @@
 
 #include <QMetaType>
 #include <QJsonValue>
+#include <QJsonArray>
+#include <QJsonObject>
+#include <QJsonDocument>
+#include <QDate>
+#include <cmath>
 
 
 //TODO Make argument templated instead of having many subclasses
 class Argument {
 
- public:
-
-    virtual QGenericArgument getArgument();
-
+public:
+    QGenericArgument getArgument();
     virtual ~Argument();
 
- protected:
-
+protected:
     Argument();
 
-  private:
+private:
     Argument(Argument const&) = delete;
     Argument& operator=(Argument const&) = delete;
- protected:
+protected:
     QGenericArgument argument;
 };
+
+template<typename T>
+class ArgumentImplementation : public Argument{
+public:
+    ArgumentImplementation(const QJsonValue& argument);
+private:
+    void setValue(const T& t);
+    QSharedPointer<T> value;
+};
+
+
+
+
 #endif // ARGUMENT_H
