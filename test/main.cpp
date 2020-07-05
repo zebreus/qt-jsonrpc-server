@@ -3,7 +3,7 @@
 #include <QList>
 #include <QString>
 #include "test/testservice.h"
-#include "src/server.h"
+#include <server.h>
 
 int main(int argc, char *argv[])
 {
