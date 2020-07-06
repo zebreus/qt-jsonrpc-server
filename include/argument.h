@@ -9,14 +9,13 @@
 #include <QDate>
 #include <cmath>
 
-
-//TODO Make argument templated instead of having many subclasses
 class Argument {
 
 public:
     QGenericArgument getArgument();
     virtual ~Argument();
 
+    static Argument* create(const QMetaType::Type& type, const QJsonValue& value);
 protected:
     Argument();
 

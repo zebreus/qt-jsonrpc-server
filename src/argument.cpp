@@ -22,12 +22,6 @@ void ArgumentImplementation<T>::setValue(const T& value){
     argument = Q_ARG(T, *valuePointer);
 }
 
-template<typename T>
-ArgumentImplementation<T>::ArgumentImplementation(const QJsonValue& argument){
-    //Unknown type
-    throw QString("Unknown type").arg(QString(argument.type()));
-}
-
 template<>
 ArgumentImplementation<bool>::ArgumentImplementation(const QJsonValue& argument){
     if( argument.isBool() ){
@@ -741,3 +735,258 @@ ArgumentImplementation<QByteArrayList>::ArgumentImplementation(const QJsonValue&
     //TODO implement QByteArrayList type
     throw QString("QByteArrayList type not implemented");
 }
+
+Argument *Argument::create(const QMetaType::Type &type, const QJsonValue &value)
+{
+    switch(type){
+    case QMetaType::Void :
+        //TODO decide how to handle void
+        throw QString("void not implemented");
+        break;
+    case QMetaType::UnknownType :
+        //Target type unregistered
+        throw QString("Unknown/Unregistered target type");
+        break;
+    case QMetaType::Bool :
+        return new ArgumentImplementation<bool>(value);
+        break;
+    case QMetaType::Int :
+        return new ArgumentImplementation<int>(value);
+        break;
+    case QMetaType::UInt :
+        return new ArgumentImplementation<unsigned int>(value);
+        break;
+    case QMetaType::Double :
+        return new ArgumentImplementation<double>(value);
+        break;
+    case QMetaType::QChar :
+        return new ArgumentImplementation<QChar>(value);
+        break;
+    case QMetaType::QString :
+        return new ArgumentImplementation<QString>(value);
+        break;
+    case QMetaType::QByteArray :
+        return new ArgumentImplementation<QByteArray>(value);
+        break;
+    case QMetaType::Nullptr :
+        return new ArgumentImplementation<std::nullptr_t>(value);
+        break;
+    case QMetaType::VoidStar :
+        return new ArgumentImplementation<void*>(value);
+        break;
+    case QMetaType::Long :
+        return new ArgumentImplementation<long>(value);
+        break;
+    case QMetaType::LongLong :
+        return new ArgumentImplementation<long long>(value);
+        break;
+    case QMetaType::Short :
+        return new ArgumentImplementation<short>(value);
+        break;
+    case QMetaType::Char :
+        return new ArgumentImplementation<char>(value);
+        break;
+    case QMetaType::ULong :
+        return new ArgumentImplementation<unsigned long>(value);
+        break;
+    case QMetaType::ULongLong :
+        return new ArgumentImplementation<unsigned long long>(value);
+        break;
+    case QMetaType::UShort :
+        return new ArgumentImplementation<unsigned short>(value);
+        break;
+    case QMetaType::SChar :
+        return new ArgumentImplementation<signed char>(value);
+        break;
+    case QMetaType::UChar :
+        return new ArgumentImplementation<unsigned char>(value);
+        break;
+    case QMetaType::Float :
+        return new ArgumentImplementation<float>(value);
+        break;
+    case QMetaType::QObjectStar :
+        return new ArgumentImplementation<QObject*>(value);
+        break;
+    case QMetaType::QVariant :
+        return new ArgumentImplementation<QVariant>(value);
+        break;
+    case QMetaType::QCursor :
+        return new ArgumentImplementation<QCursor>(value);
+        break;
+    case QMetaType::QDate :
+        return new ArgumentImplementation<QDate>(value);
+        break;
+    case QMetaType::QSize :
+        return new ArgumentImplementation<QSize>(value);
+        break;
+    case QMetaType::QTime :
+        return new ArgumentImplementation<QTime>(value);
+        break;
+    case QMetaType::QVariantList :
+        return new ArgumentImplementation<QVariantList>(value);
+        break;
+    case QMetaType::QPolygon :
+        return new ArgumentImplementation<QPolygon>(value);
+        break;
+    case QMetaType::QPolygonF :
+        return new ArgumentImplementation<QPolygonF>(value);
+        break;
+    case QMetaType::QColor :
+        return new ArgumentImplementation<QColor>(value);
+        break;
+    case QMetaType::QColorSpace :
+        return new ArgumentImplementation<QColorSpace>(value);
+        break;
+    case QMetaType::QSizeF :
+        return new ArgumentImplementation<QSizeF>(value);
+        break;
+    case QMetaType::QRectF :
+        return new ArgumentImplementation<QRectF>(value);
+        break;
+    case QMetaType::QLine :
+        return new ArgumentImplementation<QLine>(value);
+        break;
+    case QMetaType::QTextLength :
+        return new ArgumentImplementation<QTextLength>(value);
+        break;
+    case QMetaType::QStringList :
+        return new ArgumentImplementation<QStringList>(value);
+        break;
+    case QMetaType::QVariantMap :
+        return new ArgumentImplementation<QVariantMap>(value);
+        break;
+    case QMetaType::QVariantHash :
+        return new ArgumentImplementation<QVariantHash>(value);
+        break;
+    case QMetaType::QIcon :
+        return new ArgumentImplementation<QIcon>(value);
+        break;
+    case QMetaType::QPen :
+        return new ArgumentImplementation<QPen>(value);
+        break;
+    case QMetaType::QLineF :
+        return new ArgumentImplementation<QLineF>(value);
+        break;
+    case QMetaType::QTextFormat :
+        return new ArgumentImplementation<QTextFormat>(value);
+        break;
+    case QMetaType::QRect :
+        return new ArgumentImplementation<QRect>(value);
+        break;
+    case QMetaType::QPoint :
+        return new ArgumentImplementation<QPoint>(value);
+        break;
+    case QMetaType::QUrl :
+        return new ArgumentImplementation<QUrl>(value);
+        break;
+    case QMetaType::QRegExp :
+        return new ArgumentImplementation<QRegExp>(value);
+        break;
+    case QMetaType::QRegularExpression :
+        return new ArgumentImplementation<QRegularExpression>(value);
+        break;
+    case QMetaType::QDateTime :
+        return new ArgumentImplementation<QDateTime>(value);
+        break;
+    case QMetaType::QPointF :
+        return new ArgumentImplementation<QPointF>(value);
+        break;
+    case QMetaType::QPalette :
+        return new ArgumentImplementation<QPalette>(value);
+        break;
+    case QMetaType::QFont :
+        return new ArgumentImplementation<QFont>(value);
+        break;
+    case QMetaType::QBrush :
+        return new ArgumentImplementation<QBrush>(value);
+        break;
+    case QMetaType::QRegion :
+        return new ArgumentImplementation<QRegion>(value);
+        break;
+    case QMetaType::QBitArray :
+        return new ArgumentImplementation<QBitArray>(value);
+        break;
+    case QMetaType::QImage :
+        return new ArgumentImplementation<QImage>(value);
+        break;
+    case QMetaType::QKeySequence :
+        return new ArgumentImplementation<QKeySequence>(value);
+        break;
+    case QMetaType::QSizePolicy :
+        return new ArgumentImplementation<QSizePolicy>(value);
+        break;
+    case QMetaType::QPixmap :
+        return new ArgumentImplementation<QPixmap>(value);
+        break;
+    case QMetaType::QLocale :
+        return new ArgumentImplementation<QLocale>(value);
+        break;
+    case QMetaType::QBitmap :
+        return new ArgumentImplementation<QBitmap>(value);
+        break;
+    case QMetaType::QMatrix :
+        return new ArgumentImplementation<QMatrix>(value);
+        break;
+    case QMetaType::QTransform :
+        return new ArgumentImplementation<QTransform>(value);
+        break;
+    case QMetaType::QMatrix4x4 :
+        return new ArgumentImplementation<QMatrix4x4>(value);
+        break;
+    case QMetaType::QVector2D :
+        return new ArgumentImplementation<QVector2D>(value);
+        break;
+    case QMetaType::QVector3D :
+        return new ArgumentImplementation<QVector3D>(value);
+        break;
+    case QMetaType::QVector4D :
+        return new ArgumentImplementation<QVector4D>(value);
+        break;
+    case QMetaType::QQuaternion :
+        return new ArgumentImplementation<QQuaternion>(value);
+        break;
+    case QMetaType::QEasingCurve :
+        return new ArgumentImplementation<QEasingCurve>(value);
+        break;
+    case QMetaType::QJsonValue :
+        return new ArgumentImplementation<QJsonValue>(value);
+        break;
+    case QMetaType::QJsonObject :
+        return new ArgumentImplementation<QJsonObject>(value);
+        break;
+    case QMetaType::QJsonArray :
+        return new ArgumentImplementation<QJsonArray>(value);
+        break;
+    case QMetaType::QJsonDocument :
+        return new ArgumentImplementation<QJsonDocument>(value);
+        break;
+    case QMetaType::QCborValue :
+        return new ArgumentImplementation<QCborValue>(value);
+        break;
+    case QMetaType::QCborArray :
+        return new ArgumentImplementation<QCborArray>(value);
+        break;
+    case QMetaType::QCborMap :
+        return new ArgumentImplementation<QCborMap>(value);
+        break;
+    case QMetaType::QCborSimpleType :
+        return new ArgumentImplementation<QCborSimpleType>(value);
+        break;
+    case QMetaType::QModelIndex :
+        return new ArgumentImplementation<QModelIndex>(value);
+        break;
+    case QMetaType::QPersistentModelIndex :
+        return new ArgumentImplementation<QPersistentModelIndex>(value);
+        break;
+    case QMetaType::QUuid :
+        return new ArgumentImplementation<QUuid>(value);
+        break;
+    case QMetaType::QByteArrayList :
+        return new ArgumentImplementation<QByteArrayList>(value);
+        break;
+    default:
+        //Usertype
+        throw "Support for usertypes not implemented";
+    }
+}
+
