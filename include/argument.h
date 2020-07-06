@@ -15,7 +15,7 @@ public:
     QGenericArgument getArgument();
     virtual ~Argument();
 
-    static Argument* create(const QMetaType::Type& type, const QJsonValue& value);
+    static Argument* create(const int requiredTypeId, const QJsonValue& value);
 protected:
     Argument();
 

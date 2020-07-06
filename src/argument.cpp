@@ -786,9 +786,9 @@ ArgumentImplementation<QByteArrayList>::ArgumentImplementation(const QJsonValue&
     throw QString("QByteArrayList type not implemented");
 }
 
-Argument *Argument::create(const QMetaType::Type &type, const QJsonValue &value)
+Argument *Argument::create(const int requiredTypeId, const QJsonValue &value)
 {
-    switch(type){
+    switch((QMetaType::Type)requiredTypeId){
     case QMetaType::Void :
         //TODO decide how to handle void
         throw QString("void not implemented");

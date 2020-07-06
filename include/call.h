@@ -28,12 +28,12 @@ signals:
     void onSuccess(QSharedPointer<Response> result);
 
 private:
-    QList<QMetaType::Type> getRequiredParameterTypes() const;
+    QList<int> getRequiredParameterTypes() const;
 
     //These methods will throw an Error object containing a error message if there is an error
     void setMethod(const QString& methodName);
     void setArguments(const QList<QJsonValue>& providedArguments);
-    void addArgument(const QMetaType::Type& requiredType, const QJsonValue& providedParameter);
+    void addArgument(const int requiredTypeId, const QJsonValue& providedParameter);
 
 private:
     QList<QSharedPointer<Argument>> arguments;

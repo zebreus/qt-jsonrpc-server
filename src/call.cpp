@@ -85,33 +85,34 @@ void jsonrpc::Call::setArguments(const QList<QJsonValue> &providedArguments)
         errorMessage = errorMessage.arg(QString(providedArguments.size()));
         throw Error(callId, Error::Code::InvalidParams, errorMessage);
     }
-    QList<QMetaType::Type> requiredParameterTypes = getRequiredParameterTypes();
-    if(providedArguments.size() != requiredParameterTypes.size()){
+    QList<int> requiredParameterTypeIds = getRequiredParameterTypes();
+    //TODO default/void parameters
+    if(providedArguments.size() != requiredParameterTypeIds.size()){
         QString errorMessage = "Parameter amount mismatch (%1:%2)";
-        errorMessage = errorMessage.arg(QString(providedArguments.size()), QString(requiredParameterTypes.size()));
+        errorMessage = errorMessage.arg(QString(providedArguments.size()), QString(requiredParameterTypeIds.size()));
         throw Error(callId, Error::Code::InvalidParams, errorMessage);
     }
 
-    for(int i = 0;i<requiredParameterTypes.size();i++){
-        addArgument(requiredParameterTypes[i], providedArguments[i]);
+    for(int i = 0;i<requiredParameterTypeIds.size();i++){
+        addArgument(requiredParameterTypeIds[i], providedArguments[i]);
     }
 }
 
-QList<QMetaType::Type> jsonrpc::Call::getRequiredParameterTypes() const
+QList<int> jsonrpc::Call::getRequiredParameterTypes() const
 {
     // Get parameter types
-    QList<QMetaType::Type> requiredParameterTypes;
+    QList<int> requiredParameterTypes;
     for(int i = 0;i<method.parameterCount();i++){
-        requiredParameterTypes.push_back((QMetaType::Type)method.parameterType(i));
+        requiredParameterTypes.push_back(method.parameterType(i));
     }
     return requiredParameterTypes;
 }
 
-void jsonrpc::Call::addArgument(const QMetaType::Type &requiredType, const QJsonValue &providedParameter)
+void jsonrpc::Call::addArgument(const int requiredTypeId, const QJsonValue &providedParameter)
 {
     Argument* argument;
 
-    argument = Argument::create(requiredType, providedParameter);
+    argument = Argument::create(requiredTypeId, providedParameter);
 
     arguments.push_back(QSharedPointer<Argument>(argument));
 }
