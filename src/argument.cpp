@@ -319,6 +319,7 @@ ArgumentImplementation<QVariant>::ArgumentImplementation(const QJsonValue& argum
 
 template<>
 ArgumentImplementation<QCursor>::ArgumentImplementation(const QJsonValue& argument){
+    Q_UNUSED(argument);
     //TODO implement QCursor type
     throw QString("QCursor type not implemented");
 }
@@ -364,120 +365,140 @@ ArgumentImplementation<QDate>::ArgumentImplementation(const QJsonValue& argument
 
 template<>
 ArgumentImplementation<QSize>::ArgumentImplementation(const QJsonValue& argument){
+    Q_UNUSED(argument);
     //TODO implement QSize type
     throw QString("QSize type not implemented");
 }
 
 template<>
 ArgumentImplementation<QTime>::ArgumentImplementation(const QJsonValue& argument){
+    Q_UNUSED(argument);
     //TODO implement QTime type
     throw QString("QTime type not implemented");
 }
 
 template<>
 ArgumentImplementation<QVariantList>::ArgumentImplementation(const QJsonValue& argument){
+    Q_UNUSED(argument);
     //TODO implement QVariantList type
     throw QString("QVariantList type not implemented");
 }
 
 template<>
 ArgumentImplementation<QPolygon>::ArgumentImplementation(const QJsonValue& argument){
+    Q_UNUSED(argument);
     //TODO implement QPolygon type
     throw QString("QPolygon type not implemented");
 }
 
 template<>
 ArgumentImplementation<QPolygonF>::ArgumentImplementation(const QJsonValue& argument){
+    Q_UNUSED(argument);
     //TODO implement QPolygonF type
     throw QString("QPolygonF type not implemented");
 }
 
 template<>
 ArgumentImplementation<QColor>::ArgumentImplementation(const QJsonValue& argument){
+    Q_UNUSED(argument);
     //TODO implement QColor type
     throw QString("QColor type not implemented");
 }
 
 template<>
 ArgumentImplementation<QColorSpace>::ArgumentImplementation(const QJsonValue& argument){
+    Q_UNUSED(argument);
     //TODO implement QColorSpace type
     throw QString("QColorSpace type not implemented");
 }
 
 template<>
 ArgumentImplementation<QSizeF>::ArgumentImplementation(const QJsonValue& argument){
+    Q_UNUSED(argument);
     //TODO implement QSizeF type
     throw QString("QSizeF type not implemented");
 }
 
 template<>
 ArgumentImplementation<QRectF>::ArgumentImplementation(const QJsonValue& argument){
+    Q_UNUSED(argument);
     //TODO implement QRectF type
     throw QString("QRectF type not implemented");
 }
 
 template<>
 ArgumentImplementation<QLine>::ArgumentImplementation(const QJsonValue& argument){
+    Q_UNUSED(argument);
     //TODO implement QLine type
     throw QString("QLine type not implemented");
 }
 
 template<>
 ArgumentImplementation<QTextLength>::ArgumentImplementation(const QJsonValue& argument){
+    Q_UNUSED(argument);
     //TODO implement QTextLength type
     throw QString("QTextLength type not implemented");
 }
 
 template<>
 ArgumentImplementation<QStringList>::ArgumentImplementation(const QJsonValue& argument){
+    Q_UNUSED(argument);
     //TODO implement QStringList type
     throw QString("QStringList type not implemented");
 }
 
 template<>
 ArgumentImplementation<QVariantMap>::ArgumentImplementation(const QJsonValue& argument){
+    Q_UNUSED(argument);
     //TODO implement QVariantMap type
     throw QString("QVariantMap type not implemented");
 }
 
 template<>
 ArgumentImplementation<QVariantHash>::ArgumentImplementation(const QJsonValue& argument){
+    Q_UNUSED(argument);
     //TODO implement QVariantHash type
     throw QString("QVariantHash type not implemented");
 }
 
 template<>
 ArgumentImplementation<QIcon>::ArgumentImplementation(const QJsonValue& argument){
+    Q_UNUSED(argument);
     //TODO implement QIcon type
     throw QString("QIcon type not implemented");
 }
 
 template<>
 ArgumentImplementation<QPen>::ArgumentImplementation(const QJsonValue& argument){
+    Q_UNUSED(argument);
     //TODO implement QPen type
     throw QString("QPen type not implemented");
 }
 
 template<>
 ArgumentImplementation<QLineF>::ArgumentImplementation(const QJsonValue& argument){
+    Q_UNUSED(argument);
     //TODO implement QLineF type
     throw QString("QLineF type not implemented");
 }
 
 template<>
 ArgumentImplementation<QTextFormat>::ArgumentImplementation(const QJsonValue& argument){
+    Q_UNUSED(argument);
     //TODO implement QTextFormat type
     throw QString("QTextFormat type not implemented");
 }
 
 template<>
 ArgumentImplementation<QRect>::ArgumentImplementation(const QJsonValue& argument){
+    Q_UNUSED(argument);
     //TODO implement QRect type
     throw QString("QRect type not implemented");
 }
 
 template<>
 ArgumentImplementation<QPoint>::ArgumentImplementation(const QJsonValue& argument){
+    Q_UNUSED(argument);
     //TODO implement QPoint type
     throw QString("QPoint type not implemented");
 }
@@ -499,138 +520,161 @@ ArgumentImplementation<QUrl>::ArgumentImplementation(const QJsonValue& argument)
 
 template<>
 ArgumentImplementation<QRegExp>::ArgumentImplementation(const QJsonValue& argument){
+    Q_UNUSED(argument);
     //TODO implement QRegExp type
     throw QString("QRegExp type not implemented");
 }
 
 template<>
 ArgumentImplementation<QRegularExpression>::ArgumentImplementation(const QJsonValue& argument){
+    Q_UNUSED(argument);
     //TODO implement QRegularExpression type
     throw QString("QRegularExpression type not implemented");
 }
 
 template<>
 ArgumentImplementation<QDateTime>::ArgumentImplementation(const QJsonValue& argument){
+    Q_UNUSED(argument);
     //TODO implement QDateTime type
     throw QString("QDateTime type not implemented");
 }
 
 template<>
 ArgumentImplementation<QPointF>::ArgumentImplementation(const QJsonValue& argument){
+    Q_UNUSED(argument);
     //TODO implement QPointF type
     throw QString("QPointF type not implemented");
 }
 
 template<>
 ArgumentImplementation<QPalette>::ArgumentImplementation(const QJsonValue& argument){
+    Q_UNUSED(argument);
     //TODO implement QPalette type
     throw QString("QPalette type not implemented");
 }
 
 template<>
 ArgumentImplementation<QFont>::ArgumentImplementation(const QJsonValue& argument){
+    Q_UNUSED(argument);
     //TODO implement QFont type
     throw QString("QFont type not implemented");
 }
 
 template<>
 ArgumentImplementation<QBrush>::ArgumentImplementation(const QJsonValue& argument){
+    Q_UNUSED(argument);
     //TODO implement QBrush type
     throw QString("QBrush type not implemented");
 }
 
 template<>
 ArgumentImplementation<QRegion>::ArgumentImplementation(const QJsonValue& argument){
+    Q_UNUSED(argument);
     //TODO implement QRegion type
     throw QString("QRegion type not implemented");
 }
 
 template<>
 ArgumentImplementation<QBitArray>::ArgumentImplementation(const QJsonValue& argument){
+    Q_UNUSED(argument);
     //TODO implement QBitArray type
     throw QString("QBitArray type not implemented");
 }
 
 template<>
 ArgumentImplementation<QImage>::ArgumentImplementation(const QJsonValue& argument){
+    Q_UNUSED(argument);
     //TODO implement QImage type
     throw QString("QImage type not implemented");
 }
 
 template<>
 ArgumentImplementation<QKeySequence>::ArgumentImplementation(const QJsonValue& argument){
+    Q_UNUSED(argument);
     //TODO implement QKeySequence type
     throw QString("QKeySequence type not implemented");
 }
 
 template<>
 ArgumentImplementation<QSizePolicy>::ArgumentImplementation(const QJsonValue& argument){
+    Q_UNUSED(argument);
     //TODO implement QSizePolicy type
     throw QString("QSizePolicy type not implemented");
 }
 
 template<>
 ArgumentImplementation<QPixmap>::ArgumentImplementation(const QJsonValue& argument){
+    Q_UNUSED(argument);
     //TODO implement QPixmap type
     throw QString("QPixmap type not implemented");
 }
 
 template<>
 ArgumentImplementation<QLocale>::ArgumentImplementation(const QJsonValue& argument){
+    Q_UNUSED(argument);
     //TODO implement QLocale type
     throw QString("QLocale type not implemented");
 }
 
 template<>
 ArgumentImplementation<QBitmap>::ArgumentImplementation(const QJsonValue& argument){
+    Q_UNUSED(argument);
     //TODO implement QBitmap type
     throw QString("QBitmap type not implemented");
 }
 
 template<>
 ArgumentImplementation<QMatrix>::ArgumentImplementation(const QJsonValue& argument){
+    Q_UNUSED(argument);
     //TODO implement QMatrix type
     throw QString("QMatrix type not implemented");
 }
 
 template<>
 ArgumentImplementation<QTransform>::ArgumentImplementation(const QJsonValue& argument){
+    Q_UNUSED(argument);
     //TODO implement QTransform type
     throw QString("QTransform type not implemented");
 }
 
 template<>
 ArgumentImplementation<QMatrix4x4>::ArgumentImplementation(const QJsonValue& argument){
+    Q_UNUSED(argument);
     //TODO implement QMatrix4x4 type
     throw QString("QMatrix4x4 type not implemented");
 }
 
 template<>
 ArgumentImplementation<QVector2D>::ArgumentImplementation(const QJsonValue& argument){
+    Q_UNUSED(argument);
     //TODO implement QVector2D type
     throw QString("QVector2D type not implemented");
 }
 
 template<>
 ArgumentImplementation<QVector3D>::ArgumentImplementation(const QJsonValue& argument){
+    Q_UNUSED(argument);
     //TODO implement QVector3D type
     throw QString("QVector3D type not implemented");
 }
 
 template<>
 ArgumentImplementation<QVector4D>::ArgumentImplementation(const QJsonValue& argument){
+    Q_UNUSED(argument);
     //TODO implement QVector4D type
     throw QString("QVector4D type not implemented");
 }
 
 template<>
 ArgumentImplementation<QQuaternion>::ArgumentImplementation(const QJsonValue& argument){
+    Q_UNUSED(argument);
     //TODO implement QQuaternion type
     throw QString("QQuaternion type not implemented");
 }
 
 template<>
 ArgumentImplementation<QEasingCurve>::ArgumentImplementation(const QJsonValue& argument){
+    Q_UNUSED(argument);
     //TODO implement QEasingCurve type
     throw QString("QEasingCurve type not implemented");
 }
@@ -681,36 +725,42 @@ ArgumentImplementation<QJsonDocument>::ArgumentImplementation(const QJsonValue& 
 
 template<>
 ArgumentImplementation<QCborValue>::ArgumentImplementation(const QJsonValue& argument){
+    Q_UNUSED(argument);
     //TODO implement QCborValue type
     throw QString("QCborValue type not implemented");
 }
 
 template<>
 ArgumentImplementation<QCborArray>::ArgumentImplementation(const QJsonValue& argument){
+    Q_UNUSED(argument);
     //TODO implement QCborArray type
     throw QString("QCborArray type not implemented");
 }
 
 template<>
 ArgumentImplementation<QCborMap>::ArgumentImplementation(const QJsonValue& argument){
+    Q_UNUSED(argument);
     //TODO implement QCborMap type
     throw QString("QCborMap type not implemented");
 }
 
 template<>
 ArgumentImplementation<QCborSimpleType>::ArgumentImplementation(const QJsonValue& argument){
+    Q_UNUSED(argument);
     //TODO implement QCborSimpleType type
     throw QString("QCborSimpleType type not implemented");
 }
 
 template<>
 ArgumentImplementation<QModelIndex>::ArgumentImplementation(const QJsonValue& argument){
+    Q_UNUSED(argument);
     //TODO implement QModelIndex type
     throw QString("QModelIndex type not implemented");
 }
 
 template<>
 ArgumentImplementation<QPersistentModelIndex>::ArgumentImplementation(const QJsonValue& argument){
+    Q_UNUSED(argument);
     //TODO implement QPersistentModelIndex type
     throw QString("QPersistentModelIndex type not implemented");
 }
@@ -724,7 +774,6 @@ ArgumentImplementation<QUuid>::ArgumentImplementation(const QJsonValue& argument
         }else{
             throw "Cannot convert string to QUuid, because it is formatted incorrectly";
         }
-
     }else{
         throw QString("Parameter of type %1 cannot be converted to text").arg(QString(argument.type()));
     }
@@ -732,6 +781,7 @@ ArgumentImplementation<QUuid>::ArgumentImplementation(const QJsonValue& argument
 
 template<>
 ArgumentImplementation<QByteArrayList>::ArgumentImplementation(const QJsonValue& argument){
+    Q_UNUSED(argument);
     //TODO implement QByteArrayList type
     throw QString("QByteArrayList type not implemented");
 }
