@@ -148,7 +148,7 @@ ArgumentImplementation<long long>::ArgumentImplementation(const QJsonValue& argu
         if(std::modf(doubleValue, &integerPart) != 0.0){
             throw "Cannot convert number to long long, because it is not integer";
         }
-        if (integerPart > (double)LONG_LONG_MAX || integerPart < (double)LONG_LONG_MIN){
+        if (integerPart > (double)LLONG_MAX || integerPart < (double)LLONG_MIN){
             throw "Cannot convert number to long long, because it is out of range";
         }
         setValue((long long)integerPart);
@@ -222,7 +222,7 @@ ArgumentImplementation<unsigned long long>::ArgumentImplementation(const QJsonVa
         if(std::modf(doubleValue, &integerPart) != 0.0){
             throw "Cannot convert number to unsigned long long, because it is not integer";
         }
-        if (integerPart > (double)ULONG_LONG_MAX || integerPart < (double)0){
+        if (integerPart > (double)ULLONG_MAX || integerPart < (double)0){
             throw "Cannot convert number to unsigned long long, because it is out of range";
         }
         setValue(integerPart);
