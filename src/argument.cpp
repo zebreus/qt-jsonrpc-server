@@ -182,10 +182,10 @@ ArgumentImplementation<char>::ArgumentImplementation(const QJsonValue& argument)
         if(std::modf(doubleValue, &integerPart) != 0.0){
             throw QString("Cannot convert number to char, because it is not integer");
         }
-        if (integerPart > (double)CHAR_MAX || integerPart < (double)CHAR_MIN){
+        if (integerPart > (double)UCHAR_MAX || integerPart < (double)SCHAR_MIN){
             throw QString("Cannot convert number to char, because it is out of range");
         }
-        setValue(integerPart);
+        setValue((char)integerPart);
     }else if( argument.isString() ){
         QByteArray charArray = argument.toString().toUtf8();
         if(charArray.length() != 1){
