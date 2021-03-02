@@ -83,6 +83,16 @@ ArgumentImplementation<QChar>::ArgumentImplementation(const QJsonValue& argument
             throw QString("Cannot convert string to char, because it is not one char long");
         }
         setValue(stringValue.front());
+    }else if( argument.isDouble() ){
+        double doubleValue = argument.toDouble();
+        double integerPart;
+        if(std::modf(doubleValue, &integerPart) != 0.0){
+            throw QString("Cannot convert number to QChar, because it is not integer");
+        }
+        if (integerPart > (double)USHRT_MAX || integerPart < (double)0){
+            throw QString("Cannot convert number to QChar, because it is out of range");
+        }
+        setValue((unsigned short)integerPart);
     }else{
         throw QString("Parameter of type %1 cannot be converted to text").arg(QString(argument.type()));
     }

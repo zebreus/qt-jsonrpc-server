@@ -370,4 +370,42 @@ TEST(argumentTests, doubleArgumentTest) {
   }, exceptionType);
 }
 
+//Qt core types
+
+TEST(argumentTests, QCharArgumentTest) {
+  ASSERT_NO_THROW({
+    ASSERT_EQ(getArgumentValue<QChar>(createArgument<QChar>(QJsonValue('a'))), QChar('a'));
+    ASSERT_EQ(getArgumentValue<QChar>(createArgument<QChar>(QJsonValue(97))), QChar('a'));
+    ASSERT_EQ(getArgumentValue<QChar>(createArgument<QChar>(QJsonValue(L'ꨑ'))), L'ꨑ');
+    ASSERT_EQ(getArgumentValue<QChar>(createArgument<QChar>(QJsonValue(0xAA11))), L'ꨑ');
+    ASSERT_EQ(getArgumentValue<QChar>(createArgument<QChar>(QJsonValue("Δ"))), L'Δ');
+    ASSERT_NE(getArgumentValue<QChar>(createArgument<QChar>(QJsonValue("Δ"))), "Δa");
+    ASSERT_NE(getArgumentValue<QChar>(createArgument<QChar>(QJsonValue("Δ"))), "");
+  });
+  ASSERT_THROW({
+    createArgument<QChar>(QJsonValue(pow(2,16)));
+  }, exceptionType);
+  ASSERT_THROW({
+    createArgument<QChar>(QJsonValue(-1));
+  }, exceptionType);
+  ASSERT_THROW({
+    createArgument<QChar>(QJsonValue(""));
+  }, exceptionType);
+  ASSERT_THROW({
+    createArgument<QChar>(QJsonValue("aa"));
+  }, exceptionType);
+  ASSERT_THROW({
+    createArgument<QChar>(QJsonValue("𐄂"));
+  }, exceptionType);
+  ASSERT_THROW({
+    createArgument<QChar>(QJsonValue(false));
+  }, exceptionType);
+  ASSERT_THROW({
+    createArgument<QChar>(QJsonValue::Undefined);
+  }, exceptionType);
+}
+
+
+
+
 #endif
