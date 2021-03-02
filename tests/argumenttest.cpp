@@ -15,18 +15,36 @@
 
 using namespace testing;
 
+//Proxy function, as Argument might get changed
+template<typename T>
+QSharedPointer<Argument> createArgument(const QJsonValue& value){
+    return QSharedPointer<Argument>(new ArgumentImplementation<T>(value));
+}
+
+//Proxy function, as Argument might get changed
+template<typename T>
+T& getArgumentValue(const QSharedPointer<Argument>& argument){
+    return *((T*)argument->getArgument().data());
+}
+
 TEST(argumentTests, boolArgumentTest) {
   ASSERT_NO_THROW({
-    ArgumentImplementation<bool> trueArgument(QJsonValue(true));
-    ArgumentImplementation<bool> falseArgument(QJsonValue(false));
-    ASSERT_EQ((*((bool*)trueArgument.getArgument().data())), true);
-    ASSERT_EQ((*((bool*)falseArgument.getArgument().data())), false);
+    auto trueArgument = createArgument<bool>(QJsonValue(true));
+    auto falseArgument = createArgument<bool>(QJsonValue(false));
+    ASSERT_EQ(getArgumentValue<bool>(trueArgument), true);
+    ASSERT_EQ(getArgumentValue<bool>(falseArgument), false);
   });
   ASSERT_THROW({
-    ArgumentImplementation<bool> trueArgument(QJsonValue("true"));
+    createArgument<bool>(QJsonValue("true"));
   }, QString);
   ASSERT_THROW({
-      ArgumentImplementation<bool> falseArgument(QJsonValue("false"));
+    createArgument<bool>(QJsonValue("false"));
+  }, QString);
+  ASSERT_THROW({
+    createArgument<bool>(QJsonValue(0));
+  }, QString);
+  ASSERT_THROW({
+    createArgument<bool>(QJsonValue::Undefined);
   }, QString);
 }
 #endif
