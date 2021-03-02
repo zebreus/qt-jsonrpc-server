@@ -321,29 +321,7 @@ TEST(argumentTests, signedCharArgumentTest) {
   }, exceptionType);
 }
 
-
-TEST(argumentTests, doubleArgumentTest) {
-  ASSERT_NO_THROW({
-    ASSERT_EQ(getArgumentValue<double>(createArgument<double>(QJsonValue(0))), 0);
-    ASSERT_EQ(getArgumentValue<double>(createArgument<double>(QJsonValue(5))), 5);
-    ASSERT_EQ(getArgumentValue<double>(createArgument<double>(QJsonValue(DBL_MIN))), DBL_MIN);
-    ASSERT_EQ(getArgumentValue<double>(createArgument<double>(QJsonValue(DBL_MIN*2))), DBL_MIN*2);
-    ASSERT_EQ(getArgumentValue<double>(createArgument<double>(QJsonValue(DBL_MAX))), DBL_MAX);
-    ASSERT_EQ(getArgumentValue<double>(createArgument<double>(QJsonValue(-DBL_MAX))), -DBL_MAX);
-    ASSERT_TRUE(std::isnan(getArgumentValue<double>(createArgument<double>(QJsonValue(std::numeric_limits<double>::quiet_NaN())))));
-    ASSERT_TRUE(std::isnan(getArgumentValue<double>(createArgument<double>(QJsonValue(std::numeric_limits<double>::signaling_NaN())))));
-    ASSERT_EQ(getArgumentValue<double>(createArgument<double>(QJsonValue(std::numeric_limits<double>::infinity()))), std::numeric_limits<double>::infinity());
-  });
-  ASSERT_THROW({
-    createArgument<double>(QJsonValue("15"));
-  }, exceptionType);
-  ASSERT_THROW({
-    createArgument<double>(QJsonValue(false));
-  }, exceptionType);
-  ASSERT_THROW({
-    createArgument<double>(QJsonValue::Undefined);
-  }, exceptionType);
-}
+//Floating point types
 
 TEST(argumentTests, floatArgumentTest) {
   ASSERT_NO_THROW({
@@ -366,6 +344,29 @@ TEST(argumentTests, floatArgumentTest) {
   }, exceptionType);
   ASSERT_THROW({
     createArgument<float>(QJsonValue::Undefined);
+  }, exceptionType);
+}
+
+TEST(argumentTests, doubleArgumentTest) {
+  ASSERT_NO_THROW({
+    ASSERT_EQ(getArgumentValue<double>(createArgument<double>(QJsonValue(0))), 0);
+    ASSERT_EQ(getArgumentValue<double>(createArgument<double>(QJsonValue(5))), 5);
+    ASSERT_EQ(getArgumentValue<double>(createArgument<double>(QJsonValue(DBL_MIN))), DBL_MIN);
+    ASSERT_EQ(getArgumentValue<double>(createArgument<double>(QJsonValue(DBL_MIN*2))), DBL_MIN*2);
+    ASSERT_EQ(getArgumentValue<double>(createArgument<double>(QJsonValue(DBL_MAX))), DBL_MAX);
+    ASSERT_EQ(getArgumentValue<double>(createArgument<double>(QJsonValue(-DBL_MAX))), -DBL_MAX);
+    ASSERT_TRUE(std::isnan(getArgumentValue<double>(createArgument<double>(QJsonValue(std::numeric_limits<double>::quiet_NaN())))));
+    ASSERT_TRUE(std::isnan(getArgumentValue<double>(createArgument<double>(QJsonValue(std::numeric_limits<double>::signaling_NaN())))));
+    ASSERT_EQ(getArgumentValue<double>(createArgument<double>(QJsonValue(std::numeric_limits<double>::infinity()))), std::numeric_limits<double>::infinity());
+  });
+  ASSERT_THROW({
+    createArgument<double>(QJsonValue("15"));
+  }, exceptionType);
+  ASSERT_THROW({
+    createArgument<double>(QJsonValue(false));
+  }, exceptionType);
+  ASSERT_THROW({
+    createArgument<double>(QJsonValue::Undefined);
   }, exceptionType);
 }
 
