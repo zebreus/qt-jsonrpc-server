@@ -27,6 +27,8 @@ T& getArgumentValue(const QSharedPointer<Argument>& argument){
     return *((T*)argument->getArgument().data());
 }
 
+using exceptionType = QString;
+
 TEST(argumentTests, boolArgumentTest) {
   ASSERT_NO_THROW({
     auto trueArgument = createArgument<bool>(QJsonValue(true));
@@ -36,15 +38,34 @@ TEST(argumentTests, boolArgumentTest) {
   });
   ASSERT_THROW({
     createArgument<bool>(QJsonValue("true"));
-  }, QString);
+  }, exceptionType);
   ASSERT_THROW({
     createArgument<bool>(QJsonValue("false"));
-  }, QString);
+  }, exceptionType);
   ASSERT_THROW({
     createArgument<bool>(QJsonValue(0));
-  }, QString);
+  }, exceptionType);
   ASSERT_THROW({
     createArgument<bool>(QJsonValue::Undefined);
-  }, QString);
+  }, exceptionType);
+}
+
+TEST(argumentTests, intArgumentTest) {
+  ASSERT_NO_THROW({
+    ASSERT_EQ(getArgumentValue<int>(createArgument<int>(QJsonValue(0))), 0);
+    ASSERT_EQ(getArgumentValue<int>(createArgument<int>(QJsonValue(5))), 5);
+    ASSERT_EQ(getArgumentValue<int>(createArgument<int>(QJsonValue(INT_MAX))), INT_MAX);
+                          ASSERT_EQ(getArgumentValue<int>(createArgument<int>(QJsonValue(INT_MIN))), INT_MIN);
+
+  });
+  ASSERT_THROW({
+    createArgument<int>(QJsonValue("15"));
+  }, exceptionType);
+  ASSERT_THROW({
+    createArgument<int>(QJsonValue(false));
+  }, exceptionType);
+  ASSERT_THROW({
+    createArgument<int>(QJsonValue(20ll + INT_MAX));
+  }, exceptionType);
 }
 #endif
