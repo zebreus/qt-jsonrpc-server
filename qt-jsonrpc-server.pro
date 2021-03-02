@@ -58,7 +58,8 @@ test{
 
     SOURCES -= test/testservice.cpp
     SOURCES -= test/main.cpp
-#    SOURCES += tests/argumenttest.cpp
+    HEADERS -= test/testservice.h
+    SOURCES += tests/argumenttest.cpp
 }
 else{
     message(Building app)
