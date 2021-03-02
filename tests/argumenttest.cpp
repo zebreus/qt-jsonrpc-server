@@ -55,8 +55,7 @@ TEST(argumentTests, intArgumentTest) {
     ASSERT_EQ(getArgumentValue<int>(createArgument<int>(QJsonValue(0))), 0);
     ASSERT_EQ(getArgumentValue<int>(createArgument<int>(QJsonValue(5))), 5);
     ASSERT_EQ(getArgumentValue<int>(createArgument<int>(QJsonValue(INT_MAX))), INT_MAX);
-                          ASSERT_EQ(getArgumentValue<int>(createArgument<int>(QJsonValue(INT_MIN))), INT_MIN);
-
+    ASSERT_EQ(getArgumentValue<int>(createArgument<int>(QJsonValue(INT_MIN))), INT_MIN);
   });
   ASSERT_THROW({
     createArgument<int>(QJsonValue("15"));
@@ -66,6 +65,32 @@ TEST(argumentTests, intArgumentTest) {
   }, exceptionType);
   ASSERT_THROW({
     createArgument<int>(QJsonValue(20ll + INT_MAX));
+  }, exceptionType);
+  ASSERT_THROW({
+    createArgument<bool>(QJsonValue::Undefined);
+  }, exceptionType);
+}
+
+TEST(argumentTests, unsignedIntArgumentTest) {
+  ASSERT_NO_THROW({
+    ASSERT_EQ(getArgumentValue<unsigned int>(createArgument<unsigned int>(QJsonValue(0))), 0);
+    ASSERT_EQ(getArgumentValue<unsigned int>(createArgument<unsigned int>(QJsonValue(5))), 5);
+    ASSERT_EQ(getArgumentValue<unsigned int>(createArgument<unsigned int>(QJsonValue(UINT_MAX +0ll))), UINT_MAX);
+  });
+  ASSERT_THROW({
+    createArgument<unsigned int>(QJsonValue(-1));
+  }, exceptionType);
+  ASSERT_THROW({
+    createArgument<unsigned int>(QJsonValue(UINT_MAX+1ll));
+  }, exceptionType);
+  ASSERT_THROW({
+    createArgument<unsigned int>(QJsonValue("15"));
+  }, exceptionType);
+  ASSERT_THROW({
+    createArgument<unsigned int>(QJsonValue(false));
+  }, exceptionType);
+  ASSERT_THROW({
+    createArgument<bool>(QJsonValue::Undefined);
   }, exceptionType);
 }
 #endif
