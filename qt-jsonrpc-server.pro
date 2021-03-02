@@ -45,6 +45,27 @@ HEADERS += \
     include/server.h \
     test/testservice.h
 
+test{
+    include($$PWD/libs/gtest/gtest_dependency.pri)
+
+    QT += testlib
+    TEMPLATE = app
+    TARGET = qt-jsonrpc-tests
+    INCLUDEPATH += src
+
+    CONFIG += thread
+    LIBS += -lgtest -lgtest_main
+
+    SOURCES -= test/testservice.cpp
+    SOURCES -= test/main.cpp
+#    SOURCES += tests/argumenttest.cpp
+}
+else{
+    message(Building app)
+    TEMPLATE = app
+    TARGET = qt-jsonrpc
+}
+
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
