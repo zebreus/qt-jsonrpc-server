@@ -37,10 +37,10 @@ ArgumentImplementation<int>::ArgumentImplementation(const QJsonValue& argument){
         double doubleValue = argument.toDouble();
         double integerPart;
         if(std::modf(doubleValue, &integerPart) != 0.0){
-            throw "Cannot convert number to int, because it is not integer";
+            throw QString("Cannot convert number to int, because it is not integer");
         }
         if (integerPart > (double)INT_MAX || integerPart < (double)INT_MIN){
-            throw "Cannot convert number to int, because it is out of range";
+            throw QString("Cannot convert number to int, because it is out of range");
         }
         setValue((int)integerPart);
     }else{
@@ -54,10 +54,10 @@ ArgumentImplementation<unsigned int>::ArgumentImplementation(const QJsonValue& a
         double doubleValue = argument.toDouble();
         double integerPart;
         if(std::modf(doubleValue, &integerPart) != 0.0){
-            throw "Cannot convert number to unsigned int, because it is not integer";
+            throw QString("Cannot convert number to unsigned int, because it is not integer");
         }
         if (integerPart > (double)UINT_MAX || integerPart < (double)0){
-            throw "Cannot convert number to unsigned int, because it is out of range";
+            throw QString("Cannot convert number to unsigned int, because it is out of range");
         }
         setValue((unsigned int)integerPart);
     }else{
@@ -80,7 +80,7 @@ ArgumentImplementation<QChar>::ArgumentImplementation(const QJsonValue& argument
     if( argument.isString() ){
         QString stringValue = argument.toString();
         if(stringValue.length() != 1){
-            throw "Cannot convert string to char, because it is not one char long";
+            throw QString("Cannot convert string to char, because it is not one char long");
         }
         setValue(stringValue.front());
     }else{
@@ -129,10 +129,10 @@ ArgumentImplementation<long>::ArgumentImplementation(const QJsonValue& argument)
         double doubleValue = argument.toDouble();
         double integerPart;
         if(std::modf(doubleValue, &integerPart) != 0.0){
-            throw "Cannot convert number to long, because it is not integer";
+            throw QString("Cannot convert number to long, because it is not integer");
         }
         if (integerPart > (double)LONG_MAX || integerPart < (double)LONG_MIN){
-            throw "Cannot convert number to long, because it is out of range";
+            throw QString("Cannot convert number to long, because it is out of range");
         }
         setValue((long)integerPart);
     }else{
@@ -146,10 +146,10 @@ ArgumentImplementation<long long>::ArgumentImplementation(const QJsonValue& argu
         double doubleValue = argument.toDouble();
         double integerPart;
         if(std::modf(doubleValue, &integerPart) != 0.0){
-            throw "Cannot convert number to long long, because it is not integer";
+            throw QString("Cannot convert number to long long, because it is not integer");
         }
         if (integerPart > (double)LLONG_MAX || integerPart < (double)LLONG_MIN){
-            throw "Cannot convert number to long long, because it is out of range";
+            throw QString("Cannot convert number to long long, because it is out of range");
         }
         setValue((long long)integerPart);
     }else{
@@ -163,10 +163,10 @@ ArgumentImplementation<short>::ArgumentImplementation(const QJsonValue& argument
         double doubleValue = argument.toDouble();
         double integerPart;
         if(std::modf(doubleValue, &integerPart) != 0.0){
-            throw "Cannot convert number to short, because it is not integer";
+            throw QString("Cannot convert number to short, because it is not integer");
         }
         if (integerPart > (double)SHRT_MAX || integerPart < (double)SHRT_MIN){
-            throw "Cannot convert number to short, because it is out of range";
+            throw QString("Cannot convert number to short, because it is out of range");
         }
         setValue(integerPart);
     }else{
@@ -180,16 +180,16 @@ ArgumentImplementation<char>::ArgumentImplementation(const QJsonValue& argument)
         double doubleValue = argument.toDouble();
         double integerPart;
         if(std::modf(doubleValue, &integerPart) != 0.0){
-            throw "Cannot convert number to char, because it is not integer";
+            throw QString("Cannot convert number to char, because it is not integer");
         }
         if (integerPart > (double)CHAR_MAX || integerPart < (double)CHAR_MIN){
-            throw "Cannot convert number to char, because it is out of range";
+            throw QString("Cannot convert number to char, because it is out of range");
         }
         setValue(integerPart);
     }else if( argument.isString() ){
         QByteArray charArray = argument.toString().toUtf8();
         if(charArray.length() != 1){
-            throw "Cannot convert string to char, because it is not one char long";
+            throw QString("Cannot convert string to char, because it is not one char long");
         }
         setValue(charArray.at(0));
     }else{
@@ -203,10 +203,10 @@ ArgumentImplementation<unsigned long>::ArgumentImplementation(const QJsonValue& 
         double doubleValue = argument.toDouble();
         double integerPart;
         if(std::modf(doubleValue, &integerPart) != 0.0){
-            throw "Cannot convert number to unsigned long, because it is not integer";
+            throw QString("Cannot convert number to unsigned long, because it is not integer");
         }
         if (integerPart > (double)ULONG_MAX || integerPart < (double)0){
-            throw "Cannot convert number to unsigned long, because it is out of range";
+            throw QString("Cannot convert number to unsigned long, because it is out of range");
         }
         setValue(integerPart);
     }else{
@@ -220,10 +220,10 @@ ArgumentImplementation<unsigned long long>::ArgumentImplementation(const QJsonVa
         double doubleValue = argument.toDouble();
         double integerPart;
         if(std::modf(doubleValue, &integerPart) != 0.0){
-            throw "Cannot convert number to unsigned long long, because it is not integer";
+            throw QString("Cannot convert number to unsigned long long, because it is not integer");
         }
         if (integerPart > (double)ULLONG_MAX || integerPart < (double)0){
-            throw "Cannot convert number to unsigned long long, because it is out of range";
+            throw QString("Cannot convert number to unsigned long long, because it is out of range");
         }
         setValue(integerPart);
     }else{
@@ -237,10 +237,10 @@ ArgumentImplementation<unsigned short>::ArgumentImplementation(const QJsonValue&
         double doubleValue = argument.toDouble();
         double integerPart;
         if(std::modf(doubleValue, &integerPart) != 0.0){
-            throw "Cannot convert number to unsigned short, because it is not integer";
+            throw QString("Cannot convert number to unsigned short, because it is not integer");
         }
         if (integerPart > (double)USHRT_MAX || integerPart < (double)0){
-            throw "Cannot convert number to unsigned short, because it is out of range";
+            throw QString("Cannot convert number to unsigned short, because it is out of range");
         }
         setValue(integerPart);
     }else{
@@ -254,16 +254,16 @@ ArgumentImplementation<signed char>::ArgumentImplementation(const QJsonValue& ar
         double doubleValue = argument.toDouble();
         double integerPart;
         if(std::modf(doubleValue, &integerPart) != 0.0){
-            throw "Cannot convert number to unsigned char, because it is not integer";
+            throw QString("Cannot convert number to unsigned char, because it is not integer");
         }
         if (integerPart > (double)SCHAR_MAX || integerPart < (double)SCHAR_MIN){
-            throw "Cannot convert number to unsigned char, because it is out of range";
+            throw QString("Cannot convert number to unsigned char, because it is out of range");
         }
         setValue(integerPart);
     }else if( argument.isString() ){
         QByteArray charArray = argument.toString().toUtf8();
         if(charArray.length() != 1){
-            throw "Cannot convert string to char, because it is not one char long";
+            throw QString("Cannot convert string to char, because it is not one char long");
         }
         setValue(charArray.at(0));
     }else{
@@ -277,16 +277,16 @@ ArgumentImplementation<unsigned char>::ArgumentImplementation(const QJsonValue& 
         double doubleValue = argument.toDouble();
         double integerPart;
         if(std::modf(doubleValue, &integerPart) != 0.0){
-            throw "Cannot convert number to unsigned char, because it is not integer";
+            throw QString("Cannot convert number to unsigned char, because it is not integer");
         }
         if (integerPart > (double)UCHAR_MAX || integerPart < (double)0){
-            throw "Cannot convert number to unsigned char, because it is out of range";
+            throw QString("Cannot convert number to unsigned char, because it is out of range");
         }
         setValue(integerPart);
     }else if( argument.isString() ){
         QByteArray charArray = argument.toString().toUtf8();
         if(charArray.length() != 1){
-            throw "Cannot convert string to char, because it is not one char long";
+            throw QString("Cannot convert string to char, because it is not one char long");
         }
         setValue(charArray.at(0));
     }else{
@@ -339,7 +339,7 @@ ArgumentImplementation<QDate>::ArgumentImplementation(const QJsonValue& argument
             if(date.isValid()){
                 setValue(date);
             }else{
-                throw "Cannot convert string to QDate, because it is formatted incorrectly. Use TextDate or ISODate.";
+                throw QString("Cannot convert string to QDate, because it is formatted incorrectly. Use TextDate or ISODate.");
             }
         }
     }if( argument.isArray() ){
@@ -350,13 +350,13 @@ ArgumentImplementation<QDate>::ArgumentImplementation(const QJsonValue& argument
                 if(date.isValid()){
                     setValue(date);
                 }else{
-                    throw "Cannot convert array to QDate, because it's values are out of range.";
+                    throw QString("Cannot convert array to QDate, because it's values are out of range.");
                 }
             }else{
-                throw "Cannot convert array to QDate, because it's values are not integers.";
+                throw QString("Cannot convert array to QDate, because it's values are not integers.");
             }
         }else{
-            throw "Cannot convert array to QDate, because it has the wrong length.";
+            throw QString("Cannot convert array to QDate, because it has the wrong length.");
         }
     }else{
         throw QString("Parameter of type %1 cannot be converted to date. Required format \"ddd MMM d yyyy\"").arg(QString(argument.type()));
@@ -510,7 +510,7 @@ ArgumentImplementation<QUrl>::ArgumentImplementation(const QJsonValue& argument)
         if(url.isValid()){
             setValue(url);
         }else{
-            throw "Cannot convert string to QUrl, because it is formatted incorrectly";
+            throw QString("Cannot convert string to QUrl, because it is formatted incorrectly");
         }
 
     }else{
@@ -715,7 +715,7 @@ ArgumentImplementation<QJsonDocument>::ArgumentImplementation(const QJsonValue& 
         if(!document.isNull()){
             setValue(document);
         }else{
-            throw "Cannot convert string to QJsonDocument, because it is formatted incorrectly";
+            throw QString("Cannot convert string to QJsonDocument, because it is formatted incorrectly");
         }
 
     }else{
@@ -772,7 +772,7 @@ ArgumentImplementation<QUuid>::ArgumentImplementation(const QJsonValue& argument
         if(!uuid.isNull()){
             setValue(uuid);
         }else{
-            throw "Cannot convert string to QUuid, because it is formatted incorrectly";
+            throw QString("Cannot convert string to QUuid, because it is formatted incorrectly");
         }
     }else{
         throw QString("Parameter of type %1 cannot be converted to text").arg(QString(argument.type()));
@@ -1036,7 +1036,7 @@ Argument *Argument::create(const int requiredTypeId, const QJsonValue &value)
         break;
     default:
         //Usertype
-        throw "Support for usertypes not implemented";
+        throw QString("Support for usertypes not implemented");
     }
 }
 
