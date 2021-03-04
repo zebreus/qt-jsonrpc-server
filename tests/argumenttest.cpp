@@ -425,6 +425,27 @@ TEST(argumentTests, QStringArgumentTest) {
   }, exceptionType);
 }
 
+TEST(argumentTests, QByteArrayArgumentTest) {
+  ASSERT_NO_THROW({
+    ASSERT_EQ(getArgumentValue<QByteArray>(createArgument<QByteArray>(QJsonValue(""))), "");
+    ASSERT_EQ(getArgumentValue<QByteArray>(createArgument<QByteArray>(QJsonValue("hallo"))), "hallo");
+    ASSERT_EQ(getArgumentValue<QByteArray>(createArgument<QByteArray>(QJsonValue("test ꨑ"))), "test ꨑ");
+    ASSERT_EQ(getArgumentValue<QByteArray>(createArgument<QByteArray>(QJsonValue("tes\0t ꨑ"))), QByteArray("tes\0t ꨑ"));
+  });
+  ASSERT_THROW({
+    createArgument<QByteArray>(18);
+  }, exceptionType);
+  ASSERT_THROW({
+    createArgument<QByteArray>('t');
+  }, exceptionType);
+  ASSERT_THROW({
+    createArgument<QByteArray>(QJsonValue(false));
+  }, exceptionType);
+  ASSERT_THROW({
+    createArgument<QByteArray>(QJsonValue::Undefined);
+  }, exceptionType);
+}
+
 
 
 
