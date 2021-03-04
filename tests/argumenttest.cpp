@@ -379,8 +379,7 @@ TEST(argumentTests, QCharArgumentTest) {
     ASSERT_EQ(getArgumentValue<QChar>(createArgument<QChar>(QJsonValue(L'ꨑ'))), L'ꨑ');
     ASSERT_EQ(getArgumentValue<QChar>(createArgument<QChar>(QJsonValue(0xAA11))), L'ꨑ');
     ASSERT_EQ(getArgumentValue<QChar>(createArgument<QChar>(QJsonValue("Δ"))), L'Δ');
-    ASSERT_NE(getArgumentValue<QChar>(createArgument<QChar>(QJsonValue("Δ"))), "Δa");
-    ASSERT_NE(getArgumentValue<QChar>(createArgument<QChar>(QJsonValue("Δ"))), "");
+    ASSERT_EQ(getArgumentValue<QChar>(createArgument<QChar>(QJsonValue('\0'))), L'\0');
   });
   ASSERT_THROW({
     createArgument<QChar>(QJsonValue(pow(2,16)));

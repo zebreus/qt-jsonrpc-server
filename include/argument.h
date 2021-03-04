@@ -8,6 +8,23 @@
 #include <QJsonDocument>
 #include <QDate>
 #include <cmath>
+#include <QSize>
+
+#if defined(QT_GUI_LIB) or defined(QT_MODULE_GUI)
+#include <QCursor>
+#include <QPolygon>
+#include <QColor>
+#include <QColorSpace>
+#include <QLine>
+#include <QTextLength>
+#include <QIcon>
+#include <QPalette>
+#include <QBitArray>
+#include <QtGui>
+#endif
+#if defined(QT_WIDGETS_LIB) or defined(QT_MODULE_WIDGETS)
+#include <QSizePolicy>
+#endif
 
 class Argument {
 
@@ -29,10 +46,11 @@ protected:
 template<typename T>
 class ArgumentImplementation : public Argument{
 public:
+    ~ArgumentImplementation() override;
     ArgumentImplementation(const QJsonValue& argument);
 private:
     void setValue(const T& t);
-    QSharedPointer<T> value;
+    T* value;
 };
 
 

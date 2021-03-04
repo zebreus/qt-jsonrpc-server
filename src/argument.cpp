@@ -17,9 +17,8 @@ Argument::Argument()
 
 template<typename T>
 void ArgumentImplementation<T>::setValue(const T& value){
-    T* valuePointer = new T(value);
-    this->value.reset(valuePointer);
-    argument = Q_ARG(T, *valuePointer);
+    this->value = new T(value);
+    argument = Q_ARG(T, *this->value);
 }
 
 template<>
@@ -787,6 +786,12 @@ ArgumentImplementation<QUuid>::ArgumentImplementation(const QJsonValue& argument
     }else{
         throw QString("Parameter of type %1 cannot be converted to text").arg(QString(argument.type()));
     }
+}
+
+template<typename T>
+ArgumentImplementation<T>::~ArgumentImplementation()
+{
+    delete value;
 }
 
 template<>
