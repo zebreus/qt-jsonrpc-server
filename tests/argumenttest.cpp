@@ -446,6 +446,24 @@ TEST(argumentTests, QByteArrayArgumentTest) {
   }, exceptionType);
 }
 
+TEST(argumentTests, NullPtrTArgumentTest) {
+  ASSERT_NO_THROW({
+    ASSERT_EQ(getArgumentValue<std::nullptr_t>(createArgument<std::nullptr_t>(QJsonValue::Null)), nullptr);
+  });
+  ASSERT_THROW({
+    createArgument<std::nullptr_t>(0);
+  }, exceptionType);
+  ASSERT_THROW({
+    createArgument<std::nullptr_t>('t');
+  }, exceptionType);
+  ASSERT_THROW({
+    createArgument<std::nullptr_t>(QJsonValue(false));
+  }, exceptionType);
+  ASSERT_THROW({
+    createArgument<std::nullptr_t>(QJsonValue::Undefined);
+  }, exceptionType);
+}
+
 
 
 
