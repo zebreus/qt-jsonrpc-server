@@ -30,6 +30,7 @@ class Argument {
 
 public:
     QGenericArgument getArgument();
+    virtual QJsonValue getJson() = 0;
     virtual ~Argument();
 
     static Argument* create(const int requiredTypeId, const QJsonValue& value = QJsonValue::Undefined);
@@ -51,6 +52,8 @@ public:
     ~ArgumentImplementation() override;
     ArgumentImplementation(const QJsonValue& argument);
     ArgumentImplementation();
+
+    QJsonValue getJson() override;
 private:
     void setValue(const T& t);
     T* value;

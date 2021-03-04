@@ -5,6 +5,11 @@ QGenericArgument Argument::getArgument()
     return argument;
 }
 
+QJsonValue Argument::getJson()
+{
+    return "t";
+}
+
 Argument::~Argument()
 {
 
@@ -21,6 +26,11 @@ void ArgumentImplementation<T>::setValue(const T& value){
     argument = Q_ARG(T, *this->value);
 }
 
+template<typename T>
+ArgumentImplementation<T>::ArgumentImplementation(const QJsonValue&){
+    static_assert(!std::is_same<T,T>::value,"Argument is not implemented for the type");
+}
+
 template<>
 ArgumentImplementation<bool>::ArgumentImplementation(const QJsonValue& argument){
     if( argument.isBool() ){
@@ -28,6 +38,11 @@ ArgumentImplementation<bool>::ArgumentImplementation(const QJsonValue& argument)
     }else{
         throw QString("Parameter of type %1 cannot be converted to boolean").arg(QString(argument.type()));
     }
+}
+
+template<>
+QJsonValue ArgumentImplementation<bool>::getJson(){
+    return QJsonValue(*value);
 }
 
 template<>
@@ -48,6 +63,11 @@ ArgumentImplementation<int>::ArgumentImplementation(const QJsonValue& argument){
 }
 
 template<>
+QJsonValue ArgumentImplementation<int>::getJson(){
+    return QJsonValue(*value);
+}
+
+template<>
 ArgumentImplementation<unsigned int>::ArgumentImplementation(const QJsonValue& argument){
     if( argument.isDouble() ){
         double doubleValue = argument.toDouble();
@@ -65,12 +85,22 @@ ArgumentImplementation<unsigned int>::ArgumentImplementation(const QJsonValue& a
 }
 
 template<>
+QJsonValue ArgumentImplementation<unsigned int>::getJson(){
+    return QJsonValue((long long)*value);
+}
+
+template<>
 ArgumentImplementation<double>::ArgumentImplementation(const QJsonValue& argument){
     if( argument.isDouble() ){
         setValue(argument.toDouble());
     }else{
         throw QString("Parameter of type %1 cannot be converted to number").arg(QString(argument.type()));
     }
+}
+
+template<>
+QJsonValue ArgumentImplementation<double>::getJson(){
+    return QJsonValue(*value);
 }
 
 //TODO char from int
@@ -98,6 +128,12 @@ ArgumentImplementation<QChar>::ArgumentImplementation(const QJsonValue& argument
 }
 
 template<>
+QJsonValue ArgumentImplementation<QChar>::getJson(){
+    //TODO maybe represent as short string
+    return QJsonValue(value->digitValue());
+}
+
+template<>
 ArgumentImplementation<QString>::ArgumentImplementation(const QJsonValue& argument){
     if( argument.isString() ){
         setValue(argument.toString());
@@ -107,13 +143,53 @@ ArgumentImplementation<QString>::ArgumentImplementation(const QJsonValue& argume
 }
 
 template<>
+QJsonValue ArgumentImplementation<QString>::getJson(){
+    return QJsonValue(*value);
+}
+
+template<>
 ArgumentImplementation<QByteArray>::ArgumentImplementation(const QJsonValue& argument){
     if( argument.isString() ){
         //TODO Check if toUtf8 is appropriate
         setValue(argument.toString().toUtf8());
+    }else if(argument.isArray()){
+        const QJsonArray& array = argument.toArray();
+        QScopedArrayPointer<char> charPointer(new char[array.size()]);
+        int position = 0;
+        for(const QJsonValue& val: array){
+            if( val.isDouble() ){
+                double doubleValue = val.toDouble();
+                double integerPart;
+                if(std::modf(doubleValue, &integerPart) != 0.0){
+                    throw QString("Cannot convert number to byte for QByteArray, because it is not integer");
+                }
+                if (integerPart > (double)UCHAR_MAX || integerPart < (double)SCHAR_MIN){
+                    throw QString("Cannot convert number to byte for QByteArray, because it is out of range");
+                }
+                charPointer[position] = (char)(int)integerPart;
+            }else if( val.isString() ){
+                QByteArray charArray = val.toString().toUtf8();
+                if(charArray.length() != 1){
+                    throw QString("Cannot convert string to byte for QByteArray, because it is longer than one byte");
+                }
+                charPointer[position] = charArray.at(0);
+            }else{
+                throw QString("Parameter of type %1 cannot be converted to byte for QByteArray").arg(QString(val.type()));
+            }
+        }
+        setValue(QByteArray(charPointer.get(), array.size()));
     }else{
         throw QString("Parameter of type %1 cannot be converted to text").arg(QString(argument.type()));
     }
+}
+
+template<>
+QJsonValue ArgumentImplementation<QByteArray>::getJson(){
+    QJsonArray array;
+    for(char c: *value){
+        array.append(QJsonValue(c));
+    }
+    return array;
 }
 
 template<>
@@ -121,15 +197,31 @@ ArgumentImplementation<std::nullptr_t>::ArgumentImplementation(const QJsonValue&
     //TODO nullptr_t is probably best represented by null in json, maybe also undefined idk
     if( argument.isNull() ){
         setValue(nullptr);
+    }else if(argument.isDouble()){
+        if(argument.toDouble() == 0){
+            setValue(nullptr);
+        }else{
+            throw QString("Parameter of type %1 cannot be converted to nullptr").arg(QString(argument.type()));
+        }
     }else{
-        throw QString("Parameter of type %1 cannot be converted to text").arg(QString(argument.type()));
+        throw QString("Parameter of type %1 cannot be converted to nullptr").arg(QString(argument.type()));
     }
+}
+
+template<>
+QJsonValue ArgumentImplementation<std::nullptr_t>::getJson(){
+    return QJsonValue::Null;
 }
 
 template<>
 ArgumentImplementation<void*>::ArgumentImplementation(const QJsonValue& argument){
     //voidpointer will always fails
     throw QString("Parameter of type %1 cannot be converted to void pointer").arg(QString(argument.type()));
+}
+
+template<>
+QJsonValue ArgumentImplementation<void*>::getJson(){
+    throw QJsonValue::Undefined;
 }
 
 template<>
@@ -150,6 +242,12 @@ ArgumentImplementation<long>::ArgumentImplementation(const QJsonValue& argument)
 }
 
 template<>
+QJsonValue ArgumentImplementation<long>::getJson(){
+    //TODO A long can be unrepresentable as a double, if it is too big. It should be put into a string in that case.
+    return QJsonValue((double)*value);
+}
+
+template<>
 ArgumentImplementation<long long>::ArgumentImplementation(const QJsonValue& argument){
     if( argument.isDouble() ){
         double doubleValue = argument.toDouble();
@@ -164,6 +262,12 @@ ArgumentImplementation<long long>::ArgumentImplementation(const QJsonValue& argu
     }else{
         throw QString("Parameter of type %1 cannot be converted to number").arg(QString(argument.type()));
     }
+}
+
+template<>
+QJsonValue ArgumentImplementation<long long>::getJson(){
+    //TODO A long long can be unrepresentable as a double, if it is too big. It should be put into a string in that case.
+    return QJsonValue((double)*value);
 }
 
 template<>
@@ -184,6 +288,11 @@ ArgumentImplementation<short>::ArgumentImplementation(const QJsonValue& argument
 }
 
 template<>
+QJsonValue ArgumentImplementation<short>::getJson(){
+    return QJsonValue(*value);
+}
+
+template<>
 ArgumentImplementation<char>::ArgumentImplementation(const QJsonValue& argument){
     if( argument.isDouble() ){
         double doubleValue = argument.toDouble();
@@ -194,7 +303,7 @@ ArgumentImplementation<char>::ArgumentImplementation(const QJsonValue& argument)
         if (integerPart > (double)UCHAR_MAX || integerPart < (double)SCHAR_MIN){
             throw QString("Cannot convert number to char, because it is out of range");
         }
-        setValue((char)integerPart);
+        setValue((char)(int)integerPart);
     }else if( argument.isString() ){
         QByteArray charArray = argument.toString().toUtf8();
         if(charArray.length() != 1){
@@ -204,6 +313,11 @@ ArgumentImplementation<char>::ArgumentImplementation(const QJsonValue& argument)
     }else{
         throw QString("Parameter of type %1 cannot be converted to number").arg(QString(argument.type()));
     }
+}
+
+template<>
+QJsonValue ArgumentImplementation<char>::getJson(){
+    return QJsonValue(*value);
 }
 
 template<>
@@ -224,6 +338,12 @@ ArgumentImplementation<unsigned long>::ArgumentImplementation(const QJsonValue& 
 }
 
 template<>
+QJsonValue ArgumentImplementation<unsigned long>::getJson(){
+    //TODO An unsigned long can be unrepresentable as a double, if it is too big. It should be put into a string in that case.
+    return QJsonValue((double)*value);
+}
+
+template<>
 ArgumentImplementation<unsigned long long>::ArgumentImplementation(const QJsonValue& argument){
     if( argument.isDouble() ){
         double doubleValue = argument.toDouble();
@@ -241,6 +361,12 @@ ArgumentImplementation<unsigned long long>::ArgumentImplementation(const QJsonVa
 }
 
 template<>
+QJsonValue ArgumentImplementation<unsigned long long>::getJson(){
+    //TODO An unsigned long can be unrepresentable as a double, if it is too big. It should be put into a string in that case.
+    return QJsonValue((double)*value);
+}
+
+template<>
 ArgumentImplementation<unsigned short>::ArgumentImplementation(const QJsonValue& argument){
     if( argument.isDouble() ){
         double doubleValue = argument.toDouble();
@@ -255,6 +381,11 @@ ArgumentImplementation<unsigned short>::ArgumentImplementation(const QJsonValue&
     }else{
         throw QString("Parameter of type %1 cannot be converted to number").arg(QString(argument.type()));
     }
+}
+
+template<>
+QJsonValue ArgumentImplementation<unsigned short>::getJson(){
+    return QJsonValue(*value);
 }
 
 template<>
@@ -281,6 +412,11 @@ ArgumentImplementation<signed char>::ArgumentImplementation(const QJsonValue& ar
 }
 
 template<>
+QJsonValue ArgumentImplementation<signed char>::getJson(){
+    return QJsonValue(*value);
+}
+
+template<>
 ArgumentImplementation<unsigned char>::ArgumentImplementation(const QJsonValue& argument){
     if( argument.isDouble() ){
         double doubleValue = argument.toDouble();
@@ -304,6 +440,11 @@ ArgumentImplementation<unsigned char>::ArgumentImplementation(const QJsonValue& 
 }
 
 template<>
+QJsonValue ArgumentImplementation<unsigned char>::getJson(){
+    return QJsonValue(*value);
+}
+
+template<>
 ArgumentImplementation<float>::ArgumentImplementation(const QJsonValue& argument){
     if( argument.isDouble() ){
         //TODO double(32bit) -> float(64bit) -> loss of precision, maybe throw
@@ -315,9 +456,19 @@ ArgumentImplementation<float>::ArgumentImplementation(const QJsonValue& argument
 }
 
 template<>
+QJsonValue ArgumentImplementation<float>::getJson(){
+    return QJsonValue(*value);
+}
+
+template<>
 ArgumentImplementation<QObject*>::ArgumentImplementation(const QJsonValue& argument){
     //pointers will always fails
     throw QString("Parameter of type %1 cannot be converted to QObject pointer").arg(QString(argument.type()));
+}
+
+template<>
+QJsonValue ArgumentImplementation<QObject*>::getJson(){
+    return QJsonValue::Undefined;
 }
 
 template<>
@@ -327,10 +478,22 @@ ArgumentImplementation<QVariant>::ArgumentImplementation(const QJsonValue& argum
 }
 
 template<>
+QJsonValue ArgumentImplementation<QVariant>::getJson(){
+    //TODO should be ok, as long as the variant only gets constructed from json value
+    return QJsonValue::fromVariant(*value);
+}
+
+template<>
 ArgumentImplementation<QCursor>::ArgumentImplementation(const QJsonValue& argument){
     Q_UNUSED(argument);
     //TODO implement QCursor type
     throw QString("QCursor type not implemented");
+}
+
+template<>
+QJsonValue ArgumentImplementation<QCursor>::getJson(){
+    //TODO implement QCursor type
+    return QJsonValue::Undefined;
 }
 
 template<>
@@ -373,10 +536,21 @@ ArgumentImplementation<QDate>::ArgumentImplementation(const QJsonValue& argument
 }
 
 template<>
+QJsonValue ArgumentImplementation<QDate>::getJson(){
+    return value->toString("yyyy-MM-dd");
+}
+
+template<>
 ArgumentImplementation<QSize>::ArgumentImplementation(const QJsonValue& argument){
     Q_UNUSED(argument);
     //TODO implement QSize type
     throw QString("QSize type not implemented");
+}
+
+template<>
+QJsonValue ArgumentImplementation<QSize>::getJson(){
+    //TODO implement QSize type
+    return QJsonValue::Undefined;
 }
 
 template<>
@@ -387,10 +561,21 @@ ArgumentImplementation<QTime>::ArgumentImplementation(const QJsonValue& argument
 }
 
 template<>
+QJsonValue ArgumentImplementation<QTime>::getJson(){
+    return value->toString("HH:mm:ss");
+}
+
+template<>
 ArgumentImplementation<QVariantList>::ArgumentImplementation(const QJsonValue& argument){
     Q_UNUSED(argument);
     //TODO implement QVariantList type
     throw QString("QVariantList type not implemented");
+}
+
+template<>
+QJsonValue ArgumentImplementation<QVariantList>::getJson(){
+    //TODO implement QVariantList type
+    return QJsonValue::Undefined;
 }
 
 template<>
@@ -401,10 +586,22 @@ ArgumentImplementation<QPolygon>::ArgumentImplementation(const QJsonValue& argum
 }
 
 template<>
+QJsonValue ArgumentImplementation<QPolygon>::getJson(){
+    //TODO implement QPolygon type
+    return QJsonValue::Undefined;
+}
+
+template<>
 ArgumentImplementation<QPolygonF>::ArgumentImplementation(const QJsonValue& argument){
     Q_UNUSED(argument);
     //TODO implement QPolygonF type
     throw QString("QPolygonF type not implemented");
+}
+
+template<>
+QJsonValue ArgumentImplementation<QPolygonF>::getJson(){
+    //TODO implement QPolygonF type
+    return QJsonValue::Undefined;
 }
 
 template<>
@@ -415,10 +612,22 @@ ArgumentImplementation<QColor>::ArgumentImplementation(const QJsonValue& argumen
 }
 
 template<>
+QJsonValue ArgumentImplementation<QColor>::getJson(){
+    //TODO implement QColor type
+    return QJsonValue::Undefined;
+}
+
+template<>
 ArgumentImplementation<QColorSpace>::ArgumentImplementation(const QJsonValue& argument){
     Q_UNUSED(argument);
     //TODO implement QColorSpace type
     throw QString("QColorSpace type not implemented");
+}
+
+template<>
+QJsonValue ArgumentImplementation<QColorSpace>::getJson(){
+    //TODO implement QColorSpace type
+    return QJsonValue::Undefined;
 }
 
 template<>
@@ -429,10 +638,22 @@ ArgumentImplementation<QSizeF>::ArgumentImplementation(const QJsonValue& argumen
 }
 
 template<>
+QJsonValue ArgumentImplementation<QSizeF>::getJson(){
+    //TODO implement QSizeF type
+    return QJsonValue::Undefined;
+}
+
+template<>
 ArgumentImplementation<QRectF>::ArgumentImplementation(const QJsonValue& argument){
     Q_UNUSED(argument);
     //TODO implement QRectF type
     throw QString("QRectF type not implemented");
+}
+
+template<>
+QJsonValue ArgumentImplementation<QRectF>::getJson(){
+    //TODO implement QRectF type
+    return QJsonValue::Undefined;
 }
 
 template<>
@@ -443,10 +664,22 @@ ArgumentImplementation<QLine>::ArgumentImplementation(const QJsonValue& argument
 }
 
 template<>
+QJsonValue ArgumentImplementation<QLine>::getJson(){
+    //TODO implement QLine type
+    return QJsonValue::Undefined;
+}
+
+template<>
 ArgumentImplementation<QTextLength>::ArgumentImplementation(const QJsonValue& argument){
     Q_UNUSED(argument);
     //TODO implement QTextLength type
     throw QString("QTextLength type not implemented");
+}
+
+template<>
+QJsonValue ArgumentImplementation<QTextLength>::getJson(){
+    //TODO implement QTextLength type
+    return QJsonValue::Undefined;
 }
 
 template<>
@@ -457,10 +690,25 @@ ArgumentImplementation<QStringList>::ArgumentImplementation(const QJsonValue& ar
 }
 
 template<>
+QJsonValue ArgumentImplementation<QStringList>::getJson(){
+    QJsonArray array;
+    for(const QString& string: *value){
+        array.append(string);
+    }
+    return array;
+}
+
+template<>
 ArgumentImplementation<QVariantMap>::ArgumentImplementation(const QJsonValue& argument){
     Q_UNUSED(argument);
     //TODO implement QVariantMap type
     throw QString("QVariantMap type not implemented");
+}
+
+template<>
+QJsonValue ArgumentImplementation<QVariantMap>::getJson(){
+    //TODO implement QVariantMap type
+    return QJsonValue::Undefined;
 }
 
 template<>
@@ -471,10 +719,22 @@ ArgumentImplementation<QVariantHash>::ArgumentImplementation(const QJsonValue& a
 }
 
 template<>
+QJsonValue ArgumentImplementation<QVariantHash>::getJson(){
+    //TODO implement QVariantHash type
+    return QJsonValue::Undefined;
+}
+
+template<>
 ArgumentImplementation<QIcon>::ArgumentImplementation(const QJsonValue& argument){
     Q_UNUSED(argument);
     //TODO implement QIcon type
     throw QString("QIcon type not implemented");
+}
+
+template<>
+QJsonValue ArgumentImplementation<QIcon>::getJson(){
+    //TODO implement QIcon type
+    return QJsonValue::Undefined;
 }
 
 template<>
@@ -485,10 +745,22 @@ ArgumentImplementation<QPen>::ArgumentImplementation(const QJsonValue& argument)
 }
 
 template<>
+QJsonValue ArgumentImplementation<QPen>::getJson(){
+    //TODO implement QPen type
+    return QJsonValue::Undefined;
+}
+
+template<>
 ArgumentImplementation<QLineF>::ArgumentImplementation(const QJsonValue& argument){
     Q_UNUSED(argument);
     //TODO implement QLineF type
     throw QString("QLineF type not implemented");
+}
+
+template<>
+QJsonValue ArgumentImplementation<QLineF>::getJson(){
+    //TODO implement QLineF type
+    return QJsonValue::Undefined;
 }
 
 template<>
@@ -499,6 +771,12 @@ ArgumentImplementation<QTextFormat>::ArgumentImplementation(const QJsonValue& ar
 }
 
 template<>
+QJsonValue ArgumentImplementation<QTextFormat>::getJson(){
+    //TODO implement QTextFormat type
+    return QJsonValue::Undefined;
+}
+
+template<>
 ArgumentImplementation<QRect>::ArgumentImplementation(const QJsonValue& argument){
     Q_UNUSED(argument);
     //TODO implement QRect type
@@ -506,10 +784,22 @@ ArgumentImplementation<QRect>::ArgumentImplementation(const QJsonValue& argument
 }
 
 template<>
+QJsonValue ArgumentImplementation<QRect>::getJson(){
+    //TODO implement QRect type
+    return QJsonValue::Undefined;
+}
+
+template<>
 ArgumentImplementation<QPoint>::ArgumentImplementation(const QJsonValue& argument){
     Q_UNUSED(argument);
     //TODO implement QPoint type
     throw QString("QPoint type not implemented");
+}
+
+template<>
+QJsonValue ArgumentImplementation<QPoint>::getJson(){
+    //TODO implement QPoint type
+    return QJsonValue::Undefined;
 }
 
 template<>
@@ -528,10 +818,22 @@ ArgumentImplementation<QUrl>::ArgumentImplementation(const QJsonValue& argument)
 }
 
 template<>
+QJsonValue ArgumentImplementation<QUrl>::getJson(){
+    //TODO implement QUrl type
+    return value->toString();
+}
+
+template<>
 ArgumentImplementation<QRegExp>::ArgumentImplementation(const QJsonValue& argument){
     Q_UNUSED(argument);
     //TODO implement QRegExp type
     throw QString("QRegExp type not implemented");
+}
+
+template<>
+QJsonValue ArgumentImplementation<QRegExp>::getJson(){
+    //TODO implement QRegExp type
+    return QJsonValue::Undefined;
 }
 
 template<>
@@ -542,10 +844,21 @@ ArgumentImplementation<QRegularExpression>::ArgumentImplementation(const QJsonVa
 }
 
 template<>
+QJsonValue ArgumentImplementation<QRegularExpression>::getJson(){
+    //TODO implement QRegularExpression type
+    return QJsonValue::Undefined;
+}
+
+template<>
 ArgumentImplementation<QDateTime>::ArgumentImplementation(const QJsonValue& argument){
     Q_UNUSED(argument);
     //TODO implement QDateTime type
     throw QString("QDateTime type not implemented");
+}
+
+template<>
+QJsonValue ArgumentImplementation<QDateTime>::getJson(){
+    return value->toString(Qt::ISODate);
 }
 
 template<>
@@ -556,10 +869,22 @@ ArgumentImplementation<QPointF>::ArgumentImplementation(const QJsonValue& argume
 }
 
 template<>
+QJsonValue ArgumentImplementation<QPointF>::getJson(){
+    //TODO implement QPointF type
+    return QJsonValue::Undefined;
+}
+
+template<>
 ArgumentImplementation<QPalette>::ArgumentImplementation(const QJsonValue& argument){
     Q_UNUSED(argument);
     //TODO implement QPalette type
     throw QString("QPalette type not implemented");
+}
+
+template<>
+QJsonValue ArgumentImplementation<QPalette>::getJson(){
+    //TODO implement QPalette type
+    return QJsonValue::Undefined;
 }
 
 template<>
@@ -570,10 +895,22 @@ ArgumentImplementation<QFont>::ArgumentImplementation(const QJsonValue& argument
 }
 
 template<>
+QJsonValue ArgumentImplementation<QFont>::getJson(){
+    //TODO implement QFont type
+    return QJsonValue::Undefined;
+}
+
+template<>
 ArgumentImplementation<QBrush>::ArgumentImplementation(const QJsonValue& argument){
     Q_UNUSED(argument);
     //TODO implement QBrush type
     throw QString("QBrush type not implemented");
+}
+
+template<>
+QJsonValue ArgumentImplementation<QBrush>::getJson(){
+    //TODO implement QBrush type
+    return QJsonValue::Undefined;
 }
 
 template<>
@@ -584,10 +921,22 @@ ArgumentImplementation<QRegion>::ArgumentImplementation(const QJsonValue& argume
 }
 
 template<>
+QJsonValue ArgumentImplementation<QRegion>::getJson(){
+    //TODO implement QRegion type
+    return QJsonValue::Undefined;
+}
+
+template<>
 ArgumentImplementation<QBitArray>::ArgumentImplementation(const QJsonValue& argument){
     Q_UNUSED(argument);
     //TODO implement QBitArray type
     throw QString("QBitArray type not implemented");
+}
+
+template<>
+QJsonValue ArgumentImplementation<QBitArray>::getJson(){
+    //TODO implement QBitArray type
+    return QJsonValue::Undefined;
 }
 
 template<>
@@ -598,10 +947,22 @@ ArgumentImplementation<QImage>::ArgumentImplementation(const QJsonValue& argumen
 }
 
 template<>
+QJsonValue ArgumentImplementation<QImage>::getJson(){
+    //TODO implement QImage type
+    return QJsonValue::Undefined;
+}
+
+template<>
 ArgumentImplementation<QKeySequence>::ArgumentImplementation(const QJsonValue& argument){
     Q_UNUSED(argument);
     //TODO implement QKeySequence type
     throw QString("QKeySequence type not implemented");
+}
+
+template<>
+QJsonValue ArgumentImplementation<QKeySequence>::getJson(){
+    //TODO implement QKeySequence type
+    return QJsonValue::Undefined;
 }
 
 template<>
@@ -612,10 +973,22 @@ ArgumentImplementation<QSizePolicy>::ArgumentImplementation(const QJsonValue& ar
 }
 
 template<>
+QJsonValue ArgumentImplementation<QSizePolicy>::getJson(){
+    //TODO implement QSizePolicy type
+    return QJsonValue::Undefined;
+}
+
+template<>
 ArgumentImplementation<QPixmap>::ArgumentImplementation(const QJsonValue& argument){
     Q_UNUSED(argument);
     //TODO implement QPixmap type
     throw QString("QPixmap type not implemented");
+}
+
+template<>
+QJsonValue ArgumentImplementation<QPixmap>::getJson(){
+    //TODO implement QPixmap type
+    return QJsonValue::Undefined;
 }
 
 template<>
@@ -626,10 +999,22 @@ ArgumentImplementation<QLocale>::ArgumentImplementation(const QJsonValue& argume
 }
 
 template<>
+QJsonValue ArgumentImplementation<QLocale>::getJson(){
+    //TODO implement QLocale type
+    return QJsonValue::Undefined;
+}
+
+template<>
 ArgumentImplementation<QBitmap>::ArgumentImplementation(const QJsonValue& argument){
     Q_UNUSED(argument);
     //TODO implement QBitmap type
     throw QString("QBitmap type not implemented");
+}
+
+template<>
+QJsonValue ArgumentImplementation<QBitmap>::getJson(){
+    //TODO implement QBitmap type
+    return QJsonValue::Undefined;
 }
 
 template<>
@@ -640,10 +1025,22 @@ ArgumentImplementation<QMatrix>::ArgumentImplementation(const QJsonValue& argume
 }
 
 template<>
+QJsonValue ArgumentImplementation<QMatrix>::getJson(){
+    //TODO implement QMatrix type
+    return QJsonValue::Undefined;
+}
+
+template<>
 ArgumentImplementation<QTransform>::ArgumentImplementation(const QJsonValue& argument){
     Q_UNUSED(argument);
     //TODO implement QTransform type
     throw QString("QTransform type not implemented");
+}
+
+template<>
+QJsonValue ArgumentImplementation<QTransform>::getJson(){
+    //TODO implement QTransform type
+    return QJsonValue::Undefined;
 }
 
 template<>
@@ -654,10 +1051,22 @@ ArgumentImplementation<QMatrix4x4>::ArgumentImplementation(const QJsonValue& arg
 }
 
 template<>
+QJsonValue ArgumentImplementation<QMatrix4x4>::getJson(){
+    //TODO implement QMatrix4x4 type
+    return QJsonValue::Undefined;
+}
+
+template<>
 ArgumentImplementation<QVector2D>::ArgumentImplementation(const QJsonValue& argument){
     Q_UNUSED(argument);
     //TODO implement QVector2D type
     throw QString("QVector2D type not implemented");
+}
+
+template<>
+QJsonValue ArgumentImplementation<QVector2D>::getJson(){
+    //TODO implement QVector2D type
+    return QJsonValue::Undefined;
 }
 
 template<>
@@ -668,10 +1077,22 @@ ArgumentImplementation<QVector3D>::ArgumentImplementation(const QJsonValue& argu
 }
 
 template<>
+QJsonValue ArgumentImplementation<QVector3D>::getJson(){
+    //TODO implement QVector3D type
+    return QJsonValue::Undefined;
+}
+
+template<>
 ArgumentImplementation<QVector4D>::ArgumentImplementation(const QJsonValue& argument){
     Q_UNUSED(argument);
     //TODO implement QVector4D type
     throw QString("QVector4D type not implemented");
+}
+
+template<>
+QJsonValue ArgumentImplementation<QVector4D>::getJson(){
+    //TODO implement QVector4D type
+    return QJsonValue::Undefined;
 }
 
 template<>
@@ -682,6 +1103,12 @@ ArgumentImplementation<QQuaternion>::ArgumentImplementation(const QJsonValue& ar
 }
 
 template<>
+QJsonValue ArgumentImplementation<QQuaternion>::getJson(){
+    //TODO implement QQuaternion type
+    return QJsonValue::Undefined;
+}
+
+template<>
 ArgumentImplementation<QEasingCurve>::ArgumentImplementation(const QJsonValue& argument){
     Q_UNUSED(argument);
     //TODO implement QEasingCurve type
@@ -689,8 +1116,20 @@ ArgumentImplementation<QEasingCurve>::ArgumentImplementation(const QJsonValue& a
 }
 
 template<>
+QJsonValue ArgumentImplementation<QEasingCurve>::getJson(){
+    //TODO implement QEasingCurve type
+    return QJsonValue::Undefined;
+}
+
+template<>
 ArgumentImplementation<QJsonValue>::ArgumentImplementation(const QJsonValue& argument){
+    //TODO What if QJsonValue::Undefined gets passed
     setValue(argument);
+}
+
+template<>
+QJsonValue ArgumentImplementation<QJsonValue>::getJson(){
+    return *value;
 }
 
 template<>
@@ -703,12 +1142,22 @@ ArgumentImplementation<QJsonObject>::ArgumentImplementation(const QJsonValue& ar
 }
 
 template<>
+QJsonValue ArgumentImplementation<QJsonObject>::getJson(){
+    return *value;
+}
+
+template<>
 ArgumentImplementation<QJsonArray>::ArgumentImplementation(const QJsonValue& argument){
     if( argument.isArray() ){
         setValue(argument.toArray());
     }else{
         throw QString("Parameter of type %1 cannot be converted to array").arg(QString(argument.type()));
     }
+}
+
+template<>
+QJsonValue ArgumentImplementation<QJsonArray>::getJson(){
+    return *value;
 }
 
 template<>
@@ -733,10 +1182,27 @@ ArgumentImplementation<QJsonDocument>::ArgumentImplementation(const QJsonValue& 
 }
 
 template<>
+QJsonValue ArgumentImplementation<QJsonDocument>::getJson(){
+    if(value->isArray()){
+        return value->array();
+    }else if(value->isObject()){
+        return value->object();
+    }else if(value->isNull()){
+        return QJsonValue::Null;
+    }else {
+        return "";
+    }
+}
+
+template<>
 ArgumentImplementation<QCborValue>::ArgumentImplementation(const QJsonValue& argument){
-    Q_UNUSED(argument);
-    //TODO implement QCborValue type
-    throw QString("QCborValue type not implemented");
+    //TODO test for all types
+    setValue(QCborValue::fromJsonValue(argument));
+}
+
+template<>
+QJsonValue ArgumentImplementation<QCborValue>::getJson(){
+    return value->toJsonValue();
 }
 
 template<>
@@ -747,10 +1213,22 @@ ArgumentImplementation<QCborArray>::ArgumentImplementation(const QJsonValue& arg
 }
 
 template<>
+QJsonValue ArgumentImplementation<QCborArray>::getJson(){
+    //TODO implement QCborArray type
+    return QJsonValue::Undefined;
+}
+
+template<>
 ArgumentImplementation<QCborMap>::ArgumentImplementation(const QJsonValue& argument){
     Q_UNUSED(argument);
     //TODO implement QCborMap type
     throw QString("QCborMap type not implemented");
+}
+
+template<>
+QJsonValue ArgumentImplementation<QCborMap>::getJson(){
+    //TODO implement QCborMap type
+    return QJsonValue::Undefined;
 }
 
 template<>
@@ -761,6 +1239,12 @@ ArgumentImplementation<QCborSimpleType>::ArgumentImplementation(const QJsonValue
 }
 
 template<>
+QJsonValue ArgumentImplementation<QCborSimpleType>::getJson(){
+    //TODO implement QCborSimpleType type
+    return QJsonValue::Undefined;
+}
+
+template<>
 ArgumentImplementation<QModelIndex>::ArgumentImplementation(const QJsonValue& argument){
     Q_UNUSED(argument);
     //TODO implement QModelIndex type
@@ -768,10 +1252,22 @@ ArgumentImplementation<QModelIndex>::ArgumentImplementation(const QJsonValue& ar
 }
 
 template<>
+QJsonValue ArgumentImplementation<QModelIndex>::getJson(){
+    //TODO implement QModelIndex type
+    return QJsonValue::Undefined;
+}
+
+template<>
 ArgumentImplementation<QPersistentModelIndex>::ArgumentImplementation(const QJsonValue& argument){
     Q_UNUSED(argument);
     //TODO implement QPersistentModelIndex type
     throw QString("QPersistentModelIndex type not implemented");
+}
+
+template<>
+QJsonValue ArgumentImplementation<QPersistentModelIndex>::getJson(){
+    //TODO implement QPersistentModelIndex type
+    return QJsonValue::Undefined;
 }
 
 template<>
@@ -788,10 +1284,10 @@ ArgumentImplementation<QUuid>::ArgumentImplementation(const QJsonValue& argument
     }
 }
 
-template<typename T>
-ArgumentImplementation<T>::~ArgumentImplementation()
-{
-    delete value;
+
+template<>
+QJsonValue ArgumentImplementation<QUuid>::getJson(){
+    return value->toString();
 }
 
 template<>
@@ -799,6 +1295,18 @@ ArgumentImplementation<QByteArrayList>::ArgumentImplementation(const QJsonValue&
     Q_UNUSED(argument);
     //TODO implement QByteArrayList type
     throw QString("QByteArrayList type not implemented");
+}
+
+template<>
+QJsonValue ArgumentImplementation<QByteArrayList>::getJson(){
+    //TODO implement QByteArrayList type
+    return QJsonValue::Undefined;
+}
+
+template<typename T>
+ArgumentImplementation<T>::~ArgumentImplementation()
+{
+    delete value;
 }
 
 template<typename T>
