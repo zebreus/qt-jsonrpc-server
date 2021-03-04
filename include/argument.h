@@ -32,8 +32,10 @@ public:
     QGenericArgument getArgument();
     virtual ~Argument();
 
-    static Argument* create(const int requiredTypeId, const QJsonValue& value);
+    static Argument* create(const int requiredTypeId, const QJsonValue& value = QJsonValue::Undefined);
 protected:
+    template<typename T>
+    static Argument* createArgument(const QJsonValue& jsonValue);
     Argument();
 
 private:
@@ -48,6 +50,7 @@ class ArgumentImplementation : public Argument{
 public:
     ~ArgumentImplementation() override;
     ArgumentImplementation(const QJsonValue& argument);
+    ArgumentImplementation();
 private:
     void setValue(const T& t);
     T* value;

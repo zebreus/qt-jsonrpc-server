@@ -801,6 +801,12 @@ ArgumentImplementation<QByteArrayList>::ArgumentImplementation(const QJsonValue&
     throw QString("QByteArrayList type not implemented");
 }
 
+template<typename T>
+ArgumentImplementation<T>::ArgumentImplementation()
+{
+    value = new T();
+}
+
 Argument *Argument::create(const int requiredTypeId, const QJsonValue &value)
 {
     switch((QMetaType::Type)requiredTypeId){
@@ -813,241 +819,241 @@ Argument *Argument::create(const int requiredTypeId, const QJsonValue &value)
         throw QString("Unknown/Unregistered target type");
         break;
     case QMetaType::Bool :
-        return new ArgumentImplementation<bool>(value);
+        return createArgument<bool>(value);
         break;
     case QMetaType::Int :
-        return new ArgumentImplementation<int>(value);
+        return createArgument<int>(value);
         break;
     case QMetaType::UInt :
-        return new ArgumentImplementation<unsigned int>(value);
+        return createArgument<unsigned int>(value);
         break;
     case QMetaType::Double :
-        return new ArgumentImplementation<double>(value);
+        return createArgument<double>(value);
         break;
     case QMetaType::QChar :
-        return new ArgumentImplementation<QChar>(value);
+        return createArgument<QChar>(value);
         break;
     case QMetaType::QString :
-        return new ArgumentImplementation<QString>(value);
+        return createArgument<QString>(value);
         break;
     case QMetaType::QByteArray :
-        return new ArgumentImplementation<QByteArray>(value);
+        return createArgument<QByteArray>(value);
         break;
     case QMetaType::Nullptr :
-        return new ArgumentImplementation<std::nullptr_t>(value);
+        return createArgument<std::nullptr_t>(value);
         break;
     case QMetaType::VoidStar :
-        return new ArgumentImplementation<void*>(value);
+        return createArgument<void*>(value);
         break;
     case QMetaType::Long :
-        return new ArgumentImplementation<long>(value);
+        return createArgument<long>(value);
         break;
     case QMetaType::LongLong :
-        return new ArgumentImplementation<long long>(value);
+        return createArgument<long long>(value);
         break;
     case QMetaType::Short :
-        return new ArgumentImplementation<short>(value);
+        return createArgument<short>(value);
         break;
     case QMetaType::Char :
-        return new ArgumentImplementation<char>(value);
+        return createArgument<char>(value);
         break;
     case QMetaType::ULong :
-        return new ArgumentImplementation<unsigned long>(value);
+        return createArgument<unsigned long>(value);
         break;
     case QMetaType::ULongLong :
-        return new ArgumentImplementation<unsigned long long>(value);
+        return createArgument<unsigned long long>(value);
         break;
     case QMetaType::UShort :
-        return new ArgumentImplementation<unsigned short>(value);
+        return createArgument<unsigned short>(value);
         break;
     case QMetaType::SChar :
-        return new ArgumentImplementation<signed char>(value);
+        return createArgument<signed char>(value);
         break;
     case QMetaType::UChar :
-        return new ArgumentImplementation<unsigned char>(value);
+        return createArgument<unsigned char>(value);
         break;
     case QMetaType::Float :
-        return new ArgumentImplementation<float>(value);
+        return createArgument<float>(value);
         break;
     case QMetaType::QObjectStar :
-        return new ArgumentImplementation<QObject*>(value);
+        return createArgument<QObject*>(value);
         break;
     case QMetaType::QVariant :
-        return new ArgumentImplementation<QVariant>(value);
+        return createArgument<QVariant>(value);
         break;
     case QMetaType::QCursor :
-        return new ArgumentImplementation<QCursor>(value);
+        return createArgument<QCursor>(value);
         break;
     case QMetaType::QDate :
-        return new ArgumentImplementation<QDate>(value);
+        return createArgument<QDate>(value);
         break;
     case QMetaType::QSize :
-        return new ArgumentImplementation<QSize>(value);
+        return createArgument<QSize>(value);
         break;
     case QMetaType::QTime :
-        return new ArgumentImplementation<QTime>(value);
+        return createArgument<QTime>(value);
         break;
     case QMetaType::QVariantList :
-        return new ArgumentImplementation<QVariantList>(value);
+        return createArgument<QVariantList>(value);
         break;
     case QMetaType::QPolygon :
-        return new ArgumentImplementation<QPolygon>(value);
+        return createArgument<QPolygon>(value);
         break;
     case QMetaType::QPolygonF :
-        return new ArgumentImplementation<QPolygonF>(value);
+        return createArgument<QPolygonF>(value);
         break;
     case QMetaType::QColor :
-        return new ArgumentImplementation<QColor>(value);
+        return createArgument<QColor>(value);
         break;
     case QMetaType::QColorSpace :
-        return new ArgumentImplementation<QColorSpace>(value);
+        return createArgument<QColorSpace>(value);
         break;
     case QMetaType::QSizeF :
-        return new ArgumentImplementation<QSizeF>(value);
+        return createArgument<QSizeF>(value);
         break;
     case QMetaType::QRectF :
-        return new ArgumentImplementation<QRectF>(value);
+        return createArgument<QRectF>(value);
         break;
     case QMetaType::QLine :
-        return new ArgumentImplementation<QLine>(value);
+        return createArgument<QLine>(value);
         break;
     case QMetaType::QTextLength :
-        return new ArgumentImplementation<QTextLength>(value);
+        return createArgument<QTextLength>(value);
         break;
     case QMetaType::QStringList :
-        return new ArgumentImplementation<QStringList>(value);
+        return createArgument<QStringList>(value);
         break;
     case QMetaType::QVariantMap :
-        return new ArgumentImplementation<QVariantMap>(value);
+        return createArgument<QVariantMap>(value);
         break;
     case QMetaType::QVariantHash :
-        return new ArgumentImplementation<QVariantHash>(value);
+        return createArgument<QVariantHash>(value);
         break;
     case QMetaType::QIcon :
-        return new ArgumentImplementation<QIcon>(value);
+        return createArgument<QIcon>(value);
         break;
     case QMetaType::QPen :
-        return new ArgumentImplementation<QPen>(value);
+        return createArgument<QPen>(value);
         break;
     case QMetaType::QLineF :
-        return new ArgumentImplementation<QLineF>(value);
+        return createArgument<QLineF>(value);
         break;
     case QMetaType::QTextFormat :
-        return new ArgumentImplementation<QTextFormat>(value);
+        return createArgument<QTextFormat>(value);
         break;
     case QMetaType::QRect :
-        return new ArgumentImplementation<QRect>(value);
+        return createArgument<QRect>(value);
         break;
     case QMetaType::QPoint :
-        return new ArgumentImplementation<QPoint>(value);
+        return createArgument<QPoint>(value);
         break;
     case QMetaType::QUrl :
-        return new ArgumentImplementation<QUrl>(value);
+        return createArgument<QUrl>(value);
         break;
     case QMetaType::QRegExp :
-        return new ArgumentImplementation<QRegExp>(value);
+        return createArgument<QRegExp>(value);
         break;
     case QMetaType::QRegularExpression :
-        return new ArgumentImplementation<QRegularExpression>(value);
+        return createArgument<QRegularExpression>(value);
         break;
     case QMetaType::QDateTime :
-        return new ArgumentImplementation<QDateTime>(value);
+        return createArgument<QDateTime>(value);
         break;
     case QMetaType::QPointF :
-        return new ArgumentImplementation<QPointF>(value);
+        return createArgument<QPointF>(value);
         break;
     case QMetaType::QPalette :
-        return new ArgumentImplementation<QPalette>(value);
+        return createArgument<QPalette>(value);
         break;
     case QMetaType::QFont :
-        return new ArgumentImplementation<QFont>(value);
+        return createArgument<QFont>(value);
         break;
     case QMetaType::QBrush :
-        return new ArgumentImplementation<QBrush>(value);
+        return createArgument<QBrush>(value);
         break;
     case QMetaType::QRegion :
-        return new ArgumentImplementation<QRegion>(value);
+        return createArgument<QRegion>(value);
         break;
     case QMetaType::QBitArray :
-        return new ArgumentImplementation<QBitArray>(value);
+        return createArgument<QBitArray>(value);
         break;
     case QMetaType::QImage :
-        return new ArgumentImplementation<QImage>(value);
+        return createArgument<QImage>(value);
         break;
     case QMetaType::QKeySequence :
-        return new ArgumentImplementation<QKeySequence>(value);
+        return createArgument<QKeySequence>(value);
         break;
     case QMetaType::QSizePolicy :
-        return new ArgumentImplementation<QSizePolicy>(value);
+        return createArgument<QSizePolicy>(value);
         break;
     case QMetaType::QPixmap :
-        return new ArgumentImplementation<QPixmap>(value);
+        return createArgument<QPixmap>(value);
         break;
     case QMetaType::QLocale :
-        return new ArgumentImplementation<QLocale>(value);
+        return createArgument<QLocale>(value);
         break;
     case QMetaType::QBitmap :
-        return new ArgumentImplementation<QBitmap>(value);
+        return createArgument<QBitmap>(value);
         break;
     case QMetaType::QMatrix :
-        return new ArgumentImplementation<QMatrix>(value);
+        return createArgument<QMatrix>(value);
         break;
     case QMetaType::QTransform :
-        return new ArgumentImplementation<QTransform>(value);
+        return createArgument<QTransform>(value);
         break;
     case QMetaType::QMatrix4x4 :
-        return new ArgumentImplementation<QMatrix4x4>(value);
+        return createArgument<QMatrix4x4>(value);
         break;
     case QMetaType::QVector2D :
-        return new ArgumentImplementation<QVector2D>(value);
+        return createArgument<QVector2D>(value);
         break;
     case QMetaType::QVector3D :
-        return new ArgumentImplementation<QVector3D>(value);
+        return createArgument<QVector3D>(value);
         break;
     case QMetaType::QVector4D :
-        return new ArgumentImplementation<QVector4D>(value);
+        return createArgument<QVector4D>(value);
         break;
     case QMetaType::QQuaternion :
-        return new ArgumentImplementation<QQuaternion>(value);
+        return createArgument<QQuaternion>(value);
         break;
     case QMetaType::QEasingCurve :
-        return new ArgumentImplementation<QEasingCurve>(value);
+        return createArgument<QEasingCurve>(value);
         break;
     case QMetaType::QJsonValue :
-        return new ArgumentImplementation<QJsonValue>(value);
+        return createArgument<QJsonValue>(value);
         break;
     case QMetaType::QJsonObject :
-        return new ArgumentImplementation<QJsonObject>(value);
+        return createArgument<QJsonObject>(value);
         break;
     case QMetaType::QJsonArray :
-        return new ArgumentImplementation<QJsonArray>(value);
+        return createArgument<QJsonArray>(value);
         break;
     case QMetaType::QJsonDocument :
-        return new ArgumentImplementation<QJsonDocument>(value);
+        return createArgument<QJsonDocument>(value);
         break;
     case QMetaType::QCborValue :
-        return new ArgumentImplementation<QCborValue>(value);
+        return createArgument<QCborValue>(value);
         break;
     case QMetaType::QCborArray :
-        return new ArgumentImplementation<QCborArray>(value);
+        return createArgument<QCborArray>(value);
         break;
     case QMetaType::QCborMap :
-        return new ArgumentImplementation<QCborMap>(value);
+        return createArgument<QCborMap>(value);
         break;
     case QMetaType::QCborSimpleType :
-        return new ArgumentImplementation<QCborSimpleType>(value);
+        return createArgument<QCborSimpleType>(value);
         break;
     case QMetaType::QModelIndex :
-        return new ArgumentImplementation<QModelIndex>(value);
+        return createArgument<QModelIndex>(value);
         break;
     case QMetaType::QPersistentModelIndex :
-        return new ArgumentImplementation<QPersistentModelIndex>(value);
+        return createArgument<QPersistentModelIndex>(value);
         break;
     case QMetaType::QUuid :
-        return new ArgumentImplementation<QUuid>(value);
+        return createArgument<QUuid>(value);
         break;
     case QMetaType::QByteArrayList :
-        return new ArgumentImplementation<QByteArrayList>(value);
+        return createArgument<QByteArrayList>(value);
         break;
     default:
         //Usertype
@@ -1055,3 +1061,12 @@ Argument *Argument::create(const int requiredTypeId, const QJsonValue &value)
     }
 }
 
+template<typename T>
+Argument *Argument::createArgument(const QJsonValue &jsonValue)
+{
+    if(jsonValue != QJsonValue::Undefined){
+        return new ArgumentImplementation<T>(jsonValue);
+    }else{
+        return new ArgumentImplementation<T>();
+    }
+}
