@@ -57,6 +57,14 @@ ArgumentImplementation<int>::ArgumentImplementation(const QJsonValue& argument){
             throw QString("Cannot convert number to int, because it is out of range");
         }
         setValue((int)integerPart);
+    }else if( argument.isString() ){
+        bool ok;
+        int number = argument.toString().toInt(&ok);
+        if(!ok){
+            throw QString("Failed converting string to int");
+        }else{
+            setValue(number);
+        }
     }else{
         throw QString("Parameter of type %1 cannot be converted to number").arg(QString(argument.type()));
     }
@@ -79,6 +87,14 @@ ArgumentImplementation<unsigned int>::ArgumentImplementation(const QJsonValue& a
             throw QString("Cannot convert number to unsigned int, because it is out of range");
         }
         setValue((unsigned int)integerPart);
+    }else if( argument.isString() ){
+        bool ok;
+        unsigned int number = argument.toString().toUInt(&ok);
+        if(!ok){
+            throw QString("Failed converting string to unsigned int");
+        }else{
+            setValue(number);
+        }
     }else{
         throw QString("Parameter of type %1 cannot be converted to number").arg(QString(argument.type()));
     }
@@ -93,6 +109,14 @@ template<>
 ArgumentImplementation<double>::ArgumentImplementation(const QJsonValue& argument){
     if( argument.isDouble() ){
         setValue(argument.toDouble());
+    }else if( argument.isString() ){
+        bool ok;
+        double number = argument.toString().toDouble(&ok);
+        if(!ok){
+            throw QString("Failed converting string to double");
+        }else{
+            setValue(number);
+        }
     }else{
         throw QString("Parameter of type %1 cannot be converted to number").arg(QString(argument.type()));
     }
@@ -236,6 +260,14 @@ ArgumentImplementation<long>::ArgumentImplementation(const QJsonValue& argument)
             throw QString("Cannot convert number to long, because it is out of range");
         }
         setValue((long)integerPart);
+    }else if( argument.isString() ){
+        bool ok;
+        long number = argument.toString().toLong(&ok);
+        if(!ok){
+            throw QString("Failed converting string to long");
+        }else{
+            setValue(number);
+        }
     }else{
         throw QString("Parameter of type %1 cannot be converted to number").arg(QString(argument.type()));
     }
@@ -243,8 +275,12 @@ ArgumentImplementation<long>::ArgumentImplementation(const QJsonValue& argument)
 
 template<>
 QJsonValue ArgumentImplementation<long>::getJson(){
-    //TODO A long can be unrepresentable as a double, if it is too big. It should be put into a string in that case.
-    return QJsonValue((double)*value);
+    //All values bigger than 2^52 will be converted to strings, because of double precision.
+    if(*value >= std::pow(2,52) || *value <= -std::pow(2,52)){
+        return QString::number(*value);
+    }else{
+        return QJsonValue((double)*value);
+    }
 }
 
 template<>
@@ -259,6 +295,14 @@ ArgumentImplementation<long long>::ArgumentImplementation(const QJsonValue& argu
             throw QString("Cannot convert number to long long, because it is out of range");
         }
         setValue((long long)integerPart);
+    }else if( argument.isString() ){
+        bool ok;
+        long long number = argument.toString().toLongLong(&ok);
+        if(!ok){
+            throw QString("Failed converting string to long long");
+        }else{
+            setValue(number);
+        }
     }else{
         throw QString("Parameter of type %1 cannot be converted to number").arg(QString(argument.type()));
     }
@@ -266,8 +310,12 @@ ArgumentImplementation<long long>::ArgumentImplementation(const QJsonValue& argu
 
 template<>
 QJsonValue ArgumentImplementation<long long>::getJson(){
-    //TODO A long long can be unrepresentable as a double, if it is too big. It should be put into a string in that case.
-    return QJsonValue((double)*value);
+    //All values bigger than 2^52 will be converted to strings, because of double precision.
+    if(*value >= std::pow(2,52) || *value <= -std::pow(2,52)){
+        return QString::number(*value);
+    }else{
+        return QJsonValue((double)*value);
+    }
 }
 
 template<>
@@ -282,6 +330,14 @@ ArgumentImplementation<short>::ArgumentImplementation(const QJsonValue& argument
             throw QString("Cannot convert number to short, because it is out of range");
         }
         setValue(integerPart);
+    }else if( argument.isString() ){
+        bool ok;
+        short number = argument.toString().toShort(&ok);
+        if(!ok){
+            throw QString("Failed converting string to short");
+        }else{
+            setValue(number);
+        }
     }else{
         throw QString("Parameter of type %1 cannot be converted to number").arg(QString(argument.type()));
     }
@@ -332,6 +388,14 @@ ArgumentImplementation<unsigned long>::ArgumentImplementation(const QJsonValue& 
             throw QString("Cannot convert number to unsigned long, because it is out of range");
         }
         setValue(integerPart);
+    }else if( argument.isString() ){
+        bool ok;
+        unsigned long number = argument.toString().toULong(&ok);
+        if(!ok){
+            throw QString("Failed converting string to unsigned long");
+        }else{
+            setValue(number);
+        }
     }else{
         throw QString("Parameter of type %1 cannot be converted to number").arg(QString(argument.type()));
     }
@@ -339,8 +403,12 @@ ArgumentImplementation<unsigned long>::ArgumentImplementation(const QJsonValue& 
 
 template<>
 QJsonValue ArgumentImplementation<unsigned long>::getJson(){
-    //TODO An unsigned long can be unrepresentable as a double, if it is too big. It should be put into a string in that case.
-    return QJsonValue((double)*value);
+    //All values bigger than 2^52 will be converted to strings, because of double precision.
+    if(*value >= std::pow(2,52) || *value <= -std::pow(2,52)){
+        return QString::number(*value);
+    }else{
+        return QJsonValue((double)*value);
+    }
 }
 
 template<>
@@ -355,6 +423,14 @@ ArgumentImplementation<unsigned long long>::ArgumentImplementation(const QJsonVa
             throw QString("Cannot convert number to unsigned long long, because it is out of range");
         }
         setValue(integerPart);
+    }else if( argument.isString() ){
+        bool ok;
+        unsigned long long number = argument.toString().toULongLong(&ok);
+        if(!ok){
+            throw QString("Failed converting string to unsigned long long");
+        }else{
+            setValue(number);
+        }
     }else{
         throw QString("Parameter of type %1 cannot be converted to number").arg(QString(argument.type()));
     }
@@ -362,8 +438,12 @@ ArgumentImplementation<unsigned long long>::ArgumentImplementation(const QJsonVa
 
 template<>
 QJsonValue ArgumentImplementation<unsigned long long>::getJson(){
-    //TODO An unsigned long can be unrepresentable as a double, if it is too big. It should be put into a string in that case.
-    return QJsonValue((double)*value);
+    //All values bigger than 2^52 will be converted to strings, because of double precision.
+    if(*value >= std::pow(2,52) || *value <= -std::pow(2,52)){
+        return QString::number(*value);
+    }else{
+        return QJsonValue((double)*value);
+    }
 }
 
 template<>
@@ -378,6 +458,14 @@ ArgumentImplementation<unsigned short>::ArgumentImplementation(const QJsonValue&
             throw QString("Cannot convert number to unsigned short, because it is out of range");
         }
         setValue(integerPart);
+    }else if( argument.isString() ){
+        bool ok;
+        unsigned short number = argument.toString().toUShort(&ok);
+        if(!ok){
+            throw QString("Failed converting string to unsigned short");
+        }else{
+            setValue(number);
+        }
     }else{
         throw QString("Parameter of type %1 cannot be converted to number").arg(QString(argument.type()));
     }
@@ -450,6 +538,14 @@ ArgumentImplementation<float>::ArgumentImplementation(const QJsonValue& argument
         //TODO double(32bit) -> float(64bit) -> loss of precision, maybe throw
         double doubleValue = argument.toDouble();
         setValue(doubleValue);
+    }else if( argument.isString() ){
+        bool ok;
+        float number = argument.toString().toFloat(&ok);
+        if(!ok){
+            throw QString("Failed converting string to float");
+        }else{
+            setValue(number);
+        }
     }else{
         throw QString("Parameter of type %1 cannot be converted to number").arg(QString(argument.type()));
     }
