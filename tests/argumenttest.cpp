@@ -64,7 +64,14 @@ TEST(argumentTests, shortArgumentTest) {
     ASSERT_TRUE(roundtripWorks<short>(5));
     ASSERT_TRUE(roundtripWorks<short>(std::numeric_limits<short>::min()));
     ASSERT_TRUE(roundtripWorks<short>(std::numeric_limits<short>::max()));
+    ASSERT_EQ(argumentJsonToValue<short>("15"),15);
   });
+  ASSERT_THROW({
+    createArgument<short>(QJsonValue("a"));
+  }, exceptionType);
+  ASSERT_THROW({
+    createArgument<short>(QJsonValue(""));
+  }, exceptionType);
   ASSERT_THROW({
     createArgument<short>(QJsonValue(std::numeric_limits<short>::max() + 1ll));
   }, exceptionType);
@@ -73,9 +80,6 @@ TEST(argumentTests, shortArgumentTest) {
   }, exceptionType);
   ASSERT_THROW({
     createArgument<short>(QJsonValue(5.5f));
-  }, exceptionType);
-  ASSERT_THROW({
-    createArgument<short>(QJsonValue("15"));
   }, exceptionType);
   ASSERT_THROW({
     createArgument<short>(QJsonValue(false));
@@ -92,7 +96,14 @@ TEST(argumentTests, unsignedShortArgumentTest) {
     ASSERT_TRUE(roundtripWorks<unsigned short>(std::numeric_limits<unsigned short>::lowest()));
     ASSERT_TRUE(roundtripWorks<unsigned short>(std::numeric_limits<unsigned short>::min()));
     ASSERT_TRUE(roundtripWorks<unsigned short>(std::numeric_limits<unsigned short>::max()));
+    ASSERT_EQ(argumentJsonToValue<unsigned short>("15"),15);
   });
+  ASSERT_THROW({
+    createArgument<unsigned short>(QJsonValue("a"));
+  }, exceptionType);
+  ASSERT_THROW({
+    createArgument<unsigned short>(QJsonValue(""));
+  }, exceptionType);
   ASSERT_THROW({
     createArgument<unsigned short>(QJsonValue(std::numeric_limits<unsigned short>::max() + 1ll));
   }, exceptionType);
@@ -100,10 +111,7 @@ TEST(argumentTests, unsignedShortArgumentTest) {
     createArgument<unsigned short>(QJsonValue(std::numeric_limits<unsigned short>::min() - 1ll));
   }, exceptionType);
   ASSERT_THROW({
-    createArgument<unsigned long long>(QJsonValue(5.5f));
-  }, exceptionType);
-  ASSERT_THROW({
-    createArgument<unsigned short>(QJsonValue("15"));
+    createArgument<unsigned short>(QJsonValue(5.5f));
   }, exceptionType);
   ASSERT_THROW({
     createArgument<unsigned short>(QJsonValue(false));
@@ -120,7 +128,14 @@ TEST(argumentTests, intArgumentTest) {
     ASSERT_TRUE(roundtripWorks<int>(std::numeric_limits<int>::lowest()));
     ASSERT_TRUE(roundtripWorks<int>(std::numeric_limits<int>::min()));
     ASSERT_TRUE(roundtripWorks<int>(std::numeric_limits<int>::max()));
+    ASSERT_EQ(argumentJsonToValue<int>("15"),15);
   });
+  ASSERT_THROW({
+    createArgument<int>(QJsonValue("a"));
+  }, exceptionType);
+  ASSERT_THROW({
+    createArgument<int>(QJsonValue(""));
+  }, exceptionType);
   ASSERT_THROW({
     createArgument<int>(QJsonValue(std::numeric_limits<int>::max() + 1ll));
   }, exceptionType);
@@ -128,10 +143,7 @@ TEST(argumentTests, intArgumentTest) {
     createArgument<int>(QJsonValue(std::numeric_limits<int>::min() - 1ll));
   }, exceptionType);
   ASSERT_THROW({
-    createArgument<unsigned long long>(QJsonValue(5.5f));
-  }, exceptionType);
-  ASSERT_THROW({
-    createArgument<int>(QJsonValue("15"));
+    createArgument<int>(QJsonValue(5.5f));
   }, exceptionType);
   ASSERT_THROW({
     createArgument<int>(QJsonValue(false));
@@ -148,7 +160,14 @@ TEST(argumentTests, unsignedIntArgumentTest) {
     ASSERT_TRUE(roundtripWorks<unsigned int>(std::numeric_limits<unsigned int>::lowest()));
     ASSERT_TRUE(roundtripWorks<unsigned int>(std::numeric_limits<unsigned int>::min()));
     ASSERT_TRUE(roundtripWorks<unsigned int>(std::numeric_limits<unsigned int>::max()));
+    ASSERT_EQ(argumentJsonToValue<unsigned int>("15"),15);
   });
+  ASSERT_THROW({
+    createArgument<unsigned int>(QJsonValue("a"));
+  }, exceptionType);
+  ASSERT_THROW({
+    createArgument<unsigned int>(QJsonValue(""));
+  }, exceptionType);
   ASSERT_THROW({
     createArgument<unsigned int>(QJsonValue(std::numeric_limits<unsigned int>::max() + 1ll));
   }, exceptionType);
@@ -156,10 +175,7 @@ TEST(argumentTests, unsignedIntArgumentTest) {
     createArgument<unsigned int>(QJsonValue(std::numeric_limits<unsigned int>::lowest() - 1ll));
   }, exceptionType);
   ASSERT_THROW({
-    createArgument<unsigned long long>(QJsonValue(5.5f));
-  }, exceptionType);
-  ASSERT_THROW({
-    createArgument<unsigned int>(QJsonValue("15"));
+    createArgument<unsigned int>(QJsonValue(5.5f));
   }, exceptionType);
   ASSERT_THROW({
     createArgument<unsigned int>(QJsonValue(false));
@@ -176,12 +192,16 @@ TEST(argumentTests, longArgumentTest) {
     ASSERT_TRUE(roundtripWorks<long>(std::numeric_limits<long>::lowest()));
     ASSERT_TRUE(roundtripWorks<long>(std::numeric_limits<long>::min()));
     ASSERT_TRUE(roundtripWorks<long>(std::numeric_limits<long>::max()));
+    ASSERT_EQ(argumentJsonToValue<long>("15"),15);
   });
   ASSERT_THROW({
-    createArgument<unsigned long long>(QJsonValue(5.5f));
+    createArgument<long>(QJsonValue("a"));
   }, exceptionType);
   ASSERT_THROW({
-    createArgument<long>(QJsonValue("15"));
+    createArgument<long>(QJsonValue(""));
+  }, exceptionType);
+  ASSERT_THROW({
+    createArgument<long>(QJsonValue(5.5f));
   }, exceptionType);
   ASSERT_THROW({
     createArgument<long>(QJsonValue(false));
@@ -198,13 +218,16 @@ TEST(argumentTests, unsignedLongArgumentTest) {
     ASSERT_TRUE(roundtripWorks<unsigned long>(std::numeric_limits<unsigned long>::lowest()));
     ASSERT_TRUE(roundtripWorks<unsigned long>(std::numeric_limits<unsigned long>::min()));
     ASSERT_TRUE(roundtripWorks<unsigned long>(std::numeric_limits<unsigned long>::max()));
-    //TODO Add support for full size unsigned longs with strings
+    ASSERT_EQ(argumentJsonToValue<unsigned long>("15"),15);
   });
   ASSERT_THROW({
-    createArgument<unsigned long long>(QJsonValue(5.5f));
+    createArgument<unsigned long>(QJsonValue("a"));
   }, exceptionType);
   ASSERT_THROW({
-    createArgument<unsigned long>(QJsonValue("15"));
+    createArgument<unsigned long>(QJsonValue(""));
+  }, exceptionType);
+  ASSERT_THROW({
+    createArgument<unsigned long>(QJsonValue(5.5f));
   }, exceptionType);
   ASSERT_THROW({
     createArgument<unsigned long>(QJsonValue(false));
@@ -221,13 +244,16 @@ TEST(argumentTests, longLongArgumentTest) {
     ASSERT_TRUE(roundtripWorks<long long>(std::numeric_limits<long long>::lowest()));
     ASSERT_TRUE(roundtripWorks<long long>(std::numeric_limits<long long>::min()));
     ASSERT_TRUE(roundtripWorks<long long>(std::numeric_limits<long long>::max()));
-    //TODO Add support for full size long longs with strings
+    ASSERT_EQ(argumentJsonToValue<long long>("15"),15);
   });
   ASSERT_THROW({
-    createArgument<unsigned long long>(QJsonValue(5.5f));
+    createArgument<long long>(QJsonValue("a"));
   }, exceptionType);
   ASSERT_THROW({
-    createArgument<long long>(QJsonValue("15"));
+    createArgument<long long>(QJsonValue(""));
+  }, exceptionType);
+  ASSERT_THROW({
+    createArgument<long long>(QJsonValue(5.5f));
   }, exceptionType);
   ASSERT_THROW({
     createArgument<long long>(QJsonValue(false));
@@ -244,13 +270,16 @@ TEST(argumentTests, unsignedLongLongArgumentTest) {
     ASSERT_TRUE(roundtripWorks<unsigned long long>(std::numeric_limits<unsigned long long>::lowest()));
     ASSERT_TRUE(roundtripWorks<unsigned long long>(std::numeric_limits<unsigned long long>::min()));
     ASSERT_TRUE(roundtripWorks<unsigned long long>(std::numeric_limits<unsigned long long>::max()));
-    //TODO Add support for full size unsigned long longs with strings
+    ASSERT_EQ(argumentJsonToValue<unsigned long long>("15"),15);
   });
   ASSERT_THROW({
-    createArgument<unsigned long long>(QJsonValue(5.5f));
+    createArgument<unsigned long long>(QJsonValue("a"));
   }, exceptionType);
   ASSERT_THROW({
-    createArgument<unsigned long long>(QJsonValue("15"));
+    createArgument<unsigned long long>(QJsonValue(""));
+  }, exceptionType);
+  ASSERT_THROW({
+    createArgument<unsigned long long>(QJsonValue(5.5f));
   }, exceptionType);
   ASSERT_THROW({
     createArgument<unsigned long long>(QJsonValue(false));
@@ -383,9 +412,13 @@ TEST(argumentTests, floatArgumentTest) {
     ASSERT_TRUE(std::isnan(getArgumentValue<float>(createArgument<float>(QJsonValue(std::numeric_limits<float>::quiet_NaN())))));
     ASSERT_TRUE(std::isnan(getArgumentValue<float>(createArgument<float>(QJsonValue(std::numeric_limits<float>::signaling_NaN())))));
     ASSERT_NE(getArgumentValue<float>(createArgument<float>(QJsonValue(DBL_MIN*2))), DBL_MIN*2);
+    ASSERT_EQ(argumentJsonToValue<float>("15"),15);
   });
   ASSERT_THROW({
-    createArgument<float>(QJsonValue("15"));
+    createArgument<float>(QJsonValue("a"));
+  }, exceptionType);
+  ASSERT_THROW({
+    createArgument<float>(QJsonValue(""));
   }, exceptionType);
   ASSERT_THROW({
     createArgument<float>(QJsonValue(false));
@@ -407,9 +440,13 @@ TEST(argumentTests, doubleArgumentTest) {
     ASSERT_TRUE(roundtripWorks<double>(std::numeric_limits<double>::min()*2));
     ASSERT_TRUE(std::isnan(getArgumentValue<double>(createArgument<double>(QJsonValue(std::numeric_limits<double>::quiet_NaN())))));
     ASSERT_TRUE(std::isnan(getArgumentValue<double>(createArgument<double>(QJsonValue(std::numeric_limits<double>::signaling_NaN())))));
+    ASSERT_EQ(argumentJsonToValue<double>("15"),15);
   });
   ASSERT_THROW({
-    createArgument<double>(QJsonValue("15"));
+    createArgument<double>(QJsonValue("a"));
+  }, exceptionType);
+  ASSERT_THROW({
+    createArgument<double>(QJsonValue(""));
   }, exceptionType);
   ASSERT_THROW({
     createArgument<double>(QJsonValue(false));
