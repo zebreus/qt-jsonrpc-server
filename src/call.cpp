@@ -57,6 +57,8 @@ void jsonrpc::Call::invoke()
 
     //TODO detect errors
     //TODO async
+    //TODO possible error argument->getJson = undefined
+    //TODO handle throws in methods
     QJsonValue resultValue = argument->getJson();
     delete argument;
     emit onSuccess(resultValue);
