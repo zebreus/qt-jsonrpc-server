@@ -405,6 +405,26 @@ TEST(argumentTests, QCharArgumentTest) {
   }, exceptionType);
 }
 
+TEST(argumentTests, QStringArgumentTest) {
+  ASSERT_NO_THROW({
+    ASSERT_EQ(getArgumentValue<QString>(createArgument<QString>(QJsonValue(""))), "");
+    ASSERT_EQ(getArgumentValue<QString>(createArgument<QString>(QJsonValue("hallo"))), "hallo");
+    ASSERT_EQ(getArgumentValue<QString>(createArgument<QString>(QJsonValue("test ꨑ"))), "test ꨑ");
+  });
+  ASSERT_THROW({
+    createArgument<QString>(18);
+  }, exceptionType);
+  ASSERT_THROW({
+    createArgument<QString>('t');
+  }, exceptionType);
+  ASSERT_THROW({
+    createArgument<QString>(QJsonValue(false));
+  }, exceptionType);
+  ASSERT_THROW({
+    createArgument<QString>(QJsonValue::Undefined);
+  }, exceptionType);
+}
+
 
 
 
