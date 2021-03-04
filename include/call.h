@@ -13,12 +13,12 @@ namespace jsonrpc{
 class Call : public QObject{
     Q_OBJECT
 public:
-    Call(const QSharedPointer<Request>& request, QObject* target, QObject *parent = nullptr);
+    Call(QObject* target, const QString& method, const QList<QJsonValue>& arguments, QObject *parent = nullptr);
     void invoke();
 
 signals:
-    void onError(QSharedPointer<Error> error);
-    void onSuccess(QSharedPointer<Response> result);
+    void onError(Error error);
+    void onSuccess(QJsonValue result);
 
 private:
     QList<int> getRequiredParameterTypes() const;
@@ -32,7 +32,6 @@ private:
     QList<QSharedPointer<Argument>> arguments;
     QMetaMethod method;
     QObject* processor;
-    QJsonValue callId;
 
 };
 

@@ -1,6 +1,6 @@
 #include "argument.h"
 
-QGenericArgument Argument::getArgument()
+QGenericArgument& Argument::getArgument()
 {
     return argument;
 }

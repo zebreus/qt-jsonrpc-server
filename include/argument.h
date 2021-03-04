@@ -29,7 +29,7 @@
 class Argument {
 
 public:
-    QGenericArgument getArgument();
+    QGenericArgument& getArgument();
     virtual QJsonValue getJson() = 0;
     virtual ~Argument();
 
