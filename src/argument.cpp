@@ -130,7 +130,7 @@ ArgumentImplementation<QChar>::ArgumentImplementation(const QJsonValue& argument
 template<>
 QJsonValue ArgumentImplementation<QChar>::getJson(){
     //TODO maybe represent as short string
-    return QJsonValue(value->digitValue());
+    return QJsonValue(value->unicode());
 }
 
 template<>
@@ -166,13 +166,13 @@ ArgumentImplementation<QByteArray>::ArgumentImplementation(const QJsonValue& arg
                 if (integerPart > (double)UCHAR_MAX || integerPart < (double)SCHAR_MIN){
                     throw QString("Cannot convert number to byte for QByteArray, because it is out of range");
                 }
-                charPointer[position] = (char)(int)integerPart;
+                charPointer[position++] = (char)(int)integerPart;
             }else if( val.isString() ){
                 QByteArray charArray = val.toString().toUtf8();
                 if(charArray.length() != 1){
                     throw QString("Cannot convert string to byte for QByteArray, because it is longer than one byte");
                 }
-                charPointer[position] = charArray.at(0);
+                charPointer[position++] = charArray.at(0);
             }else{
                 throw QString("Parameter of type %1 cannot be converted to byte for QByteArray").arg(QString(val.type()));
             }
@@ -187,7 +187,7 @@ template<>
 QJsonValue ArgumentImplementation<QByteArray>::getJson(){
     QJsonArray array;
     for(char c: *value){
-        array.append(QJsonValue(c));
+        array.append(QJsonValue((double)c));
     }
     return array;
 }
@@ -1313,6 +1313,7 @@ template<typename T>
 ArgumentImplementation<T>::ArgumentImplementation()
 {
     value = new T();
+    argument = Q_ARG(T, *this->value);
 }
 
 Argument *Argument::create(const int requiredTypeId, const QJsonValue &value)
