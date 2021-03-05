@@ -28,6 +28,7 @@ SOURCES += \
     src/request.cpp \
     src/requestmanager.cpp \
     src/response.cpp \
+    src/exceptions.cpp \
     test/testservice.cpp \
     test/main.cpp
 
@@ -43,6 +44,7 @@ HEADERS += \
     include/requestmanager.h \
     include/response.h \
     include/server.h \
+    include/exceptions.h \
     test/testservice.h
 
 test{
