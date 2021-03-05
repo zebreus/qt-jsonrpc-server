@@ -63,7 +63,8 @@ test{
     HEADERS -= test/testservice.h
     HEADERS += tests/calltest.hpp
     SOURCES += tests/argumenttest.cpp \
-               tests/calltest.cpp
+               tests/calltest.cpp \
+               tests/exceptionstest.cpp
 }
 else{
     message(Building app)
