@@ -1,17 +1,18 @@
 #include "call.h"
 
-jsonrpc::Call::Call(QObject* target, const QString& method, const QList<QJsonValue>& arguments, QObject *parent):
+using namespace jsonrpc;
+
+Call::Call(QObject* target, const QString& method, const QList<QJsonValue>& arguments, QObject *parent):
     QObject(parent), processor(target)
 {
 
     //Throwing an Error object if an error is encountered during construction
     //TODO improve error handling
-    //callId = request->getId();
     setMethod(method);
     setArguments(arguments);
 }
 
-void jsonrpc::Call::invoke()
+void Call::invoke()
 {
     QMetaType::Type returnType = (QMetaType::Type)method.returnType();
     Argument* argument = Argument::create(returnType);
@@ -65,7 +66,7 @@ void jsonrpc::Call::invoke()
     //emit onSuccess(QSharedPointer<Response>(new Response(callId, resultValue)));
 }
 
-void jsonrpc::Call::setMethod(const QString &methodName)
+void Call::setMethod(const QString &methodName)
 {
     int methodOffset = processor->metaObject()->methodOffset();
     //From the position after all methods of superclasses(methodOffset) to end of all methods(methodCount).
@@ -77,24 +78,18 @@ void jsonrpc::Call::setMethod(const QString &methodName)
         }
     }
 
-    QString errorMessage = QString("Method not found: %1");
-    errorMessage = errorMessage.arg(methodName);
-    throw Error(Error::Code::MethodNotFound, errorMessage);
+    throw exceptions::UnknownMethodName(methodName);
 }
 
-void jsonrpc::Call::setArguments(const QList<QJsonValue> &providedArguments)
+void Call::setArguments(const QList<QJsonValue> &providedArguments)
 {
     if(providedArguments.size() > 10){
-        QString errorMessage = QString("Maximum number of parameters exceeded (%1/10).");
-        errorMessage = errorMessage.arg(QString(providedArguments.size()));
-        throw Error(Error::Code::InvalidParams, errorMessage);
+        throw exceptions::InvalidSignature("The requested method has an invalid signature.");
     }
     QList<int> requiredParameterTypeIds = getRequiredParameterTypes();
     //TODO default/void parameters
     if(providedArguments.size() != requiredParameterTypeIds.size()){
-        QString errorMessage = "Parameter amount mismatch (%1:%2)";
-        errorMessage = errorMessage.arg(QString(providedArguments.size()), QString(requiredParameterTypeIds.size()));
-        throw Error(Error::Code::InvalidParams, errorMessage);
+        throw exceptions::WrongArgumentCount(requiredParameterTypeIds.size(), providedArguments.size());
     }
 
     for(int i = 0;i<requiredParameterTypeIds.size();i++){
@@ -102,7 +97,7 @@ void jsonrpc::Call::setArguments(const QList<QJsonValue> &providedArguments)
     }
 }
 
-QList<int> jsonrpc::Call::getRequiredParameterTypes() const
+QList<int> Call::getRequiredParameterTypes() const
 {
     // Get parameter types
     QList<int> requiredParameterTypes;
@@ -112,7 +107,7 @@ QList<int> jsonrpc::Call::getRequiredParameterTypes() const
     return requiredParameterTypes;
 }
 
-void jsonrpc::Call::addArgument(const int requiredTypeId, const QJsonValue &providedParameter)
+void Call::addArgument(const int requiredTypeId, const QJsonValue &providedParameter)
 {
     Argument* argument;
 

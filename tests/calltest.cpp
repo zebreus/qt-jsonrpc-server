@@ -110,7 +110,7 @@ TEST(callTests, callFailsWithTooFewParameters) {
     QScopedPointer<Call> call(nullptr);
     ASSERT_THROW({
         call.reset(new Call(&target, method, arguments));
-    }, Error);
+    }, exceptions::WrongArgumentCount);
 }
 
 TEST(callTests, callFailsWithTooManyParameters) {
@@ -120,7 +120,7 @@ TEST(callTests, callFailsWithTooManyParameters) {
     QScopedPointer<Call> call(nullptr);
     ASSERT_THROW({
         call.reset(new Call(&target, method, arguments));
-    }, Error);
+    }, exceptions::WrongArgumentCount);
 }
 
 TEST(callTests, callFailsWithNonexistanMethodName) {
@@ -130,7 +130,7 @@ TEST(callTests, callFailsWithNonexistanMethodName) {
     QScopedPointer<Call> call(nullptr);
     ASSERT_THROW({
         call.reset(new Call(&target, method, arguments));
-    }, Error);
+    }, exceptions::UnknownMethodName);
 }
 
 TEST(callTests, callOnSuperObjectWorks) {
@@ -150,7 +150,7 @@ TEST(callTests, callOnSuperMethodFails) {
     QScopedPointer<Call> call(nullptr);
     ASSERT_THROW({
         call.reset(new Call(&target, method, arguments));
-    }, Error);
+    }, exceptions::UnknownMethodName);
 }
 
 #endif
