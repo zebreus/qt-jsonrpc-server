@@ -15,6 +15,7 @@
 #include <limits>
 
 using namespace testing;
+using namespace jsonrpc;
 
 //Convert to argument and back
 template<typename T>
@@ -47,8 +48,6 @@ T& getArgumentValue(const QSharedPointer<Argument>& argument){
     return *((T*)argument->getArgument().data());
 }
 
-using exceptionType = QString;
-
 TEST(argumentTests, argumentCreateWithUndefinedWorks) {
     ASSERT_NO_THROW({
       ASSERT_EQ(QSharedPointer<Argument>(Argument::create(QMetaType::Int))->getJson(), 0);
@@ -68,25 +67,25 @@ TEST(argumentTests, shortArgumentTest) {
   });
   ASSERT_THROW({
     createArgument<short>(QJsonValue("a"));
-  }, exceptionType);
+  }, exceptions::WrongArgumentType);
   ASSERT_THROW({
     createArgument<short>(QJsonValue(""));
-  }, exceptionType);
+  }, exceptions::WrongArgumentType);
   ASSERT_THROW({
     createArgument<short>(QJsonValue(std::numeric_limits<short>::max() + 1ll));
-  }, exceptionType);
+  }, exceptions::WrongArgumentType);
   ASSERT_THROW({
     createArgument<short>(QJsonValue(std::numeric_limits<short>::min() - 1ll));
-  }, exceptionType);
+  }, exceptions::WrongArgumentType);
   ASSERT_THROW({
     createArgument<short>(QJsonValue(5.5f));
-  }, exceptionType);
+  }, exceptions::WrongArgumentType);
   ASSERT_THROW({
     createArgument<short>(QJsonValue(false));
-  }, exceptionType);
+  }, exceptions::WrongArgumentType);
   ASSERT_THROW({
     createArgument<short>(QJsonValue::Undefined);
-  }, exceptionType);
+  }, exceptions::WrongArgumentType);
 }
 
 TEST(argumentTests, unsignedShortArgumentTest) {
@@ -100,25 +99,25 @@ TEST(argumentTests, unsignedShortArgumentTest) {
   });
   ASSERT_THROW({
     createArgument<unsigned short>(QJsonValue("a"));
-  }, exceptionType);
+  }, exceptions::WrongArgumentType);
   ASSERT_THROW({
     createArgument<unsigned short>(QJsonValue(""));
-  }, exceptionType);
+  }, exceptions::WrongArgumentType);
   ASSERT_THROW({
     createArgument<unsigned short>(QJsonValue(std::numeric_limits<unsigned short>::max() + 1ll));
-  }, exceptionType);
+  }, exceptions::WrongArgumentType);
   ASSERT_THROW({
     createArgument<unsigned short>(QJsonValue(std::numeric_limits<unsigned short>::min() - 1ll));
-  }, exceptionType);
+  }, exceptions::WrongArgumentType);
   ASSERT_THROW({
     createArgument<unsigned short>(QJsonValue(5.5f));
-  }, exceptionType);
+  }, exceptions::WrongArgumentType);
   ASSERT_THROW({
     createArgument<unsigned short>(QJsonValue(false));
-  }, exceptionType);
+  }, exceptions::WrongArgumentType);
   ASSERT_THROW({
     createArgument<unsigned short>(QJsonValue::Undefined);
-  }, exceptionType);
+  }, exceptions::WrongArgumentType);
 }
 
 TEST(argumentTests, intArgumentTest) {
@@ -132,25 +131,25 @@ TEST(argumentTests, intArgumentTest) {
   });
   ASSERT_THROW({
     createArgument<int>(QJsonValue("a"));
-  }, exceptionType);
+  }, exceptions::WrongArgumentType);
   ASSERT_THROW({
     createArgument<int>(QJsonValue(""));
-  }, exceptionType);
+  }, exceptions::WrongArgumentType);
   ASSERT_THROW({
     createArgument<int>(QJsonValue(std::numeric_limits<int>::max() + 1ll));
-  }, exceptionType);
+  }, exceptions::WrongArgumentType);
   ASSERT_THROW({
     createArgument<int>(QJsonValue(std::numeric_limits<int>::min() - 1ll));
-  }, exceptionType);
+  }, exceptions::WrongArgumentType);
   ASSERT_THROW({
     createArgument<int>(QJsonValue(5.5f));
-  }, exceptionType);
+  }, exceptions::WrongArgumentType);
   ASSERT_THROW({
     createArgument<int>(QJsonValue(false));
-  }, exceptionType);
+  }, exceptions::WrongArgumentType);
   ASSERT_THROW({
     createArgument<int>(QJsonValue::Undefined);
-  }, exceptionType);
+  }, exceptions::WrongArgumentType);
 }
 
 TEST(argumentTests, unsignedIntArgumentTest) {
@@ -164,25 +163,25 @@ TEST(argumentTests, unsignedIntArgumentTest) {
   });
   ASSERT_THROW({
     createArgument<unsigned int>(QJsonValue("a"));
-  }, exceptionType);
+  }, exceptions::WrongArgumentType);
   ASSERT_THROW({
     createArgument<unsigned int>(QJsonValue(""));
-  }, exceptionType);
+  }, exceptions::WrongArgumentType);
   ASSERT_THROW({
     createArgument<unsigned int>(QJsonValue(std::numeric_limits<unsigned int>::max() + 1ll));
-  }, exceptionType);
+  }, exceptions::WrongArgumentType);
   ASSERT_THROW({
     createArgument<unsigned int>(QJsonValue(std::numeric_limits<unsigned int>::lowest() - 1ll));
-  }, exceptionType);
+  }, exceptions::WrongArgumentType);
   ASSERT_THROW({
     createArgument<unsigned int>(QJsonValue(5.5f));
-  }, exceptionType);
+  }, exceptions::WrongArgumentType);
   ASSERT_THROW({
     createArgument<unsigned int>(QJsonValue(false));
-  }, exceptionType);
+  }, exceptions::WrongArgumentType);
   ASSERT_THROW({
     createArgument<unsigned int>(QJsonValue::Undefined);
-  }, exceptionType);
+  }, exceptions::WrongArgumentType);
 }
 
 TEST(argumentTests, longArgumentTest) {
@@ -196,19 +195,19 @@ TEST(argumentTests, longArgumentTest) {
   });
   ASSERT_THROW({
     createArgument<long>(QJsonValue("a"));
-  }, exceptionType);
+  }, exceptions::WrongArgumentType);
   ASSERT_THROW({
     createArgument<long>(QJsonValue(""));
-  }, exceptionType);
+  }, exceptions::WrongArgumentType);
   ASSERT_THROW({
     createArgument<long>(QJsonValue(5.5f));
-  }, exceptionType);
+  }, exceptions::WrongArgumentType);
   ASSERT_THROW({
     createArgument<long>(QJsonValue(false));
-  }, exceptionType);
+  }, exceptions::WrongArgumentType);
   ASSERT_THROW({
     createArgument<long>(QJsonValue::Undefined);
-  }, exceptionType);
+  }, exceptions::WrongArgumentType);
 }
 
 TEST(argumentTests, unsignedLongArgumentTest) {
@@ -222,19 +221,19 @@ TEST(argumentTests, unsignedLongArgumentTest) {
   });
   ASSERT_THROW({
     createArgument<unsigned long>(QJsonValue("a"));
-  }, exceptionType);
+  }, exceptions::WrongArgumentType);
   ASSERT_THROW({
     createArgument<unsigned long>(QJsonValue(""));
-  }, exceptionType);
+  }, exceptions::WrongArgumentType);
   ASSERT_THROW({
     createArgument<unsigned long>(QJsonValue(5.5f));
-  }, exceptionType);
+  }, exceptions::WrongArgumentType);
   ASSERT_THROW({
     createArgument<unsigned long>(QJsonValue(false));
-  }, exceptionType);
+  }, exceptions::WrongArgumentType);
   ASSERT_THROW({
     createArgument<unsigned long>(QJsonValue::Undefined);
-  }, exceptionType);
+  }, exceptions::WrongArgumentType);
 }
 
 TEST(argumentTests, longLongArgumentTest) {
@@ -248,19 +247,19 @@ TEST(argumentTests, longLongArgumentTest) {
   });
   ASSERT_THROW({
     createArgument<long long>(QJsonValue("a"));
-  }, exceptionType);
+  }, exceptions::WrongArgumentType);
   ASSERT_THROW({
     createArgument<long long>(QJsonValue(""));
-  }, exceptionType);
+  }, exceptions::WrongArgumentType);
   ASSERT_THROW({
     createArgument<long long>(QJsonValue(5.5f));
-  }, exceptionType);
+  }, exceptions::WrongArgumentType);
   ASSERT_THROW({
     createArgument<long long>(QJsonValue(false));
-  }, exceptionType);
+  }, exceptions::WrongArgumentType);
   ASSERT_THROW({
     createArgument<long long>(QJsonValue::Undefined);
-  }, exceptionType);
+  }, exceptions::WrongArgumentType);
 }
 
 TEST(argumentTests, unsignedLongLongArgumentTest) {
@@ -274,19 +273,19 @@ TEST(argumentTests, unsignedLongLongArgumentTest) {
   });
   ASSERT_THROW({
     createArgument<unsigned long long>(QJsonValue("a"));
-  }, exceptionType);
+  }, exceptions::WrongArgumentType);
   ASSERT_THROW({
     createArgument<unsigned long long>(QJsonValue(""));
-  }, exceptionType);
+  }, exceptions::WrongArgumentType);
   ASSERT_THROW({
     createArgument<unsigned long long>(QJsonValue(5.5f));
-  }, exceptionType);
+  }, exceptions::WrongArgumentType);
   ASSERT_THROW({
     createArgument<unsigned long long>(QJsonValue(false));
-  }, exceptionType);
+  }, exceptions::WrongArgumentType);
   ASSERT_THROW({
     createArgument<unsigned long long>(QJsonValue::Undefined);
-  }, exceptionType);
+  }, exceptions::WrongArgumentType);
 }
 
 //Boolean type
@@ -300,16 +299,16 @@ TEST(argumentTests, boolArgumentTest) {
   });
   ASSERT_THROW({
     createArgument<bool>(QJsonValue("true"));
-  }, exceptionType);
+  }, exceptions::WrongArgumentType);
   ASSERT_THROW({
     createArgument<bool>(QJsonValue("false"));
-  }, exceptionType);
+  }, exceptions::WrongArgumentType);
   ASSERT_THROW({
     createArgument<bool>(QJsonValue(0));
-  }, exceptionType);
+  }, exceptions::WrongArgumentType);
   ASSERT_THROW({
     createArgument<bool>(QJsonValue::Undefined);
-  }, exceptionType);
+  }, exceptions::WrongArgumentType);
 }
 
 //Character types
@@ -328,19 +327,19 @@ TEST(argumentTests, charArgumentTest) {
   });
   ASSERT_THROW({
     createArgument<char>(QJsonValue(std::numeric_limits<signed char>::max() + 1i));
-  }, exceptionType);
+  }, exceptions::WrongArgumentType);
   ASSERT_THROW({
     createArgument<char>(QJsonValue(std::numeric_limits<unsigned char>::min() - 1i));
-  }, exceptionType);
+  }, exceptions::WrongArgumentType);
   ASSERT_THROW({
     createArgument<char>(QJsonValue("15"));
-  }, exceptionType);
+  }, exceptions::WrongArgumentType);
   ASSERT_THROW({
     createArgument<char>(QJsonValue(false));
-  }, exceptionType);
+  }, exceptions::WrongArgumentType);
   ASSERT_THROW({
     createArgument<char>(QJsonValue::Undefined);
-  }, exceptionType);
+  }, exceptions::WrongArgumentType);
 }
 
 TEST(argumentTests, unsignedCharArgumentTest) {
@@ -355,19 +354,19 @@ TEST(argumentTests, unsignedCharArgumentTest) {
   });
   ASSERT_THROW({
     createArgument<unsigned char>(QJsonValue(std::numeric_limits<unsigned char>::max() + 1i));
-  }, exceptionType);
+  }, exceptions::WrongArgumentType);
   ASSERT_THROW({
     createArgument<unsigned char>(QJsonValue(std::numeric_limits<unsigned char>::min() - 1i));
-  }, exceptionType);
+  }, exceptions::WrongArgumentType);
   ASSERT_THROW({
     createArgument<unsigned char>(QJsonValue("15"));
-  }, exceptionType);
+  }, exceptions::WrongArgumentType);
   ASSERT_THROW({
     createArgument<unsigned char>(QJsonValue(false));
-  }, exceptionType);
+  }, exceptions::WrongArgumentType);
   ASSERT_THROW({
     createArgument<unsigned char>(QJsonValue::Undefined);
-  }, exceptionType);
+  }, exceptions::WrongArgumentType);
 }
 
 TEST(argumentTests, signedCharArgumentTest) {
@@ -382,19 +381,19 @@ TEST(argumentTests, signedCharArgumentTest) {
   });
   ASSERT_THROW({
     createArgument<signed char>(QJsonValue(std::numeric_limits<signed char>::max() + 1i));
-  }, exceptionType);
+  }, exceptions::WrongArgumentType);
   ASSERT_THROW({
     createArgument<signed char>(QJsonValue(std::numeric_limits<signed char>::min() - 1i));
-  }, exceptionType);
+  }, exceptions::WrongArgumentType);
   ASSERT_THROW({
     createArgument<signed char>(QJsonValue("15"));
-  }, exceptionType);
+  }, exceptions::WrongArgumentType);
   ASSERT_THROW({
     createArgument<signed char>(QJsonValue(false));
-  }, exceptionType);
+  }, exceptions::WrongArgumentType);
   ASSERT_THROW({
     createArgument<signed char>(QJsonValue::Undefined);
-  }, exceptionType);
+  }, exceptions::WrongArgumentType);
 }
 
 //Floating point types
@@ -416,16 +415,16 @@ TEST(argumentTests, floatArgumentTest) {
   });
   ASSERT_THROW({
     createArgument<float>(QJsonValue("a"));
-  }, exceptionType);
+  }, exceptions::WrongArgumentType);
   ASSERT_THROW({
     createArgument<float>(QJsonValue(""));
-  }, exceptionType);
+  }, exceptions::WrongArgumentType);
   ASSERT_THROW({
     createArgument<float>(QJsonValue(false));
-  }, exceptionType);
+  }, exceptions::WrongArgumentType);
   ASSERT_THROW({
     createArgument<float>(QJsonValue::Undefined);
-  }, exceptionType);
+  }, exceptions::WrongArgumentType);
 }
 
 TEST(argumentTests, doubleArgumentTest) {
@@ -444,16 +443,16 @@ TEST(argumentTests, doubleArgumentTest) {
   });
   ASSERT_THROW({
     createArgument<double>(QJsonValue("a"));
-  }, exceptionType);
+  }, exceptions::WrongArgumentType);
   ASSERT_THROW({
     createArgument<double>(QJsonValue(""));
-  }, exceptionType);
+  }, exceptions::WrongArgumentType);
   ASSERT_THROW({
     createArgument<double>(QJsonValue(false));
-  }, exceptionType);
+  }, exceptions::WrongArgumentType);
   ASSERT_THROW({
     createArgument<double>(QJsonValue::Undefined);
-  }, exceptionType);
+  }, exceptions::WrongArgumentType);
 }
 
 //Qt core types
@@ -468,25 +467,25 @@ TEST(argumentTests, QCharArgumentTest) {
   });
   ASSERT_THROW({
     createArgument<QChar>(QJsonValue(pow(2,16)));
-  }, exceptionType);
+  }, exceptions::WrongArgumentType);
   ASSERT_THROW({
     createArgument<QChar>(QJsonValue(-1));
-  }, exceptionType);
+  }, exceptions::WrongArgumentType);
   ASSERT_THROW({
     createArgument<QChar>(QJsonValue(""));
-  }, exceptionType);
+  }, exceptions::WrongArgumentType);
   ASSERT_THROW({
     createArgument<QChar>(QJsonValue("aa"));
-  }, exceptionType);
+  }, exceptions::WrongArgumentType);
   ASSERT_THROW({
     createArgument<QChar>(QJsonValue("𐄂"));
-  }, exceptionType);
+  }, exceptions::WrongArgumentType);
   ASSERT_THROW({
     createArgument<QChar>(QJsonValue(false));
-  }, exceptionType);
+  }, exceptions::WrongArgumentType);
   ASSERT_THROW({
     createArgument<QChar>(QJsonValue::Undefined);
-  }, exceptionType);
+  }, exceptions::WrongArgumentType);
 }
 
 TEST(argumentTests, QStringArgumentTest) {
@@ -501,16 +500,16 @@ TEST(argumentTests, QStringArgumentTest) {
   });
   ASSERT_THROW({
     createArgument<QString>(18);
-  }, exceptionType);
+  }, exceptions::WrongArgumentType);
   ASSERT_THROW({
     createArgument<QString>('t');
-  }, exceptionType);
+  }, exceptions::WrongArgumentType);
   ASSERT_THROW({
     createArgument<QString>(QJsonValue(false));
-  }, exceptionType);
+  }, exceptions::WrongArgumentType);
   ASSERT_THROW({
     createArgument<QString>(QJsonValue::Undefined);
-  }, exceptionType);
+  }, exceptions::WrongArgumentType);
 }
 
 TEST(argumentTests, QByteArrayArgumentTest) {
@@ -522,16 +521,16 @@ TEST(argumentTests, QByteArrayArgumentTest) {
   });
   ASSERT_THROW({
     createArgument<QByteArray>(18);
-  }, exceptionType);
+  }, exceptions::WrongArgumentType);
   ASSERT_THROW({
     createArgument<QByteArray>('t');
-  }, exceptionType);
+  }, exceptions::WrongArgumentType);
   ASSERT_THROW({
     createArgument<QByteArray>(QJsonValue(false));
-  }, exceptionType);
+  }, exceptions::WrongArgumentType);
   ASSERT_THROW({
     createArgument<QByteArray>(QJsonValue::Undefined);
-  }, exceptionType);
+  }, exceptions::WrongArgumentType);
 }
 
 TEST(argumentTests, NullPtrTArgumentTest) {
@@ -541,13 +540,13 @@ TEST(argumentTests, NullPtrTArgumentTest) {
   });
   ASSERT_THROW({
     createArgument<std::nullptr_t>('t');
-  }, exceptionType);
+  }, exceptions::WrongArgumentType);
   ASSERT_THROW({
     createArgument<std::nullptr_t>(QJsonValue(false));
-  }, exceptionType);
+  }, exceptions::WrongArgumentType);
   ASSERT_THROW({
     createArgument<std::nullptr_t>(QJsonValue::Undefined);
-  }, exceptionType);
+  }, exceptions::WrongArgumentType);
 }
 
 

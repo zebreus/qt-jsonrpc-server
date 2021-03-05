@@ -100,7 +100,7 @@ TEST(callTests, callFailsWithWrongParameterTypes) {
     QScopedPointer<Call> call(nullptr);
     ASSERT_THROW({
         call.reset(new Call(&target, method, arguments));
-    }, QString);
+    }, exceptions::WrongArgumentType);
 }
 
 TEST(callTests, callFailsWithTooFewParameters) {

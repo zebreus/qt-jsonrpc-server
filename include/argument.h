@@ -9,6 +9,7 @@
 #include <QDate>
 #include <cmath>
 #include <QSize>
+#include <exceptions.h>
 
 #if defined(QT_GUI_LIB) or defined(QT_MODULE_GUI)
 #include <QCursor>
@@ -25,6 +26,8 @@
 #if defined(QT_WIDGETS_LIB) or defined(QT_MODULE_WIDGETS)
 #include <QSizePolicy>
 #endif
+
+namespace jsonrpc{
 
 class Argument {
 
@@ -59,7 +62,6 @@ private:
     T* value;
 };
 
-
-
+}
 
 #endif // ARGUMENT_H

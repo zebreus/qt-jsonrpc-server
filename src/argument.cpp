@@ -1,5 +1,7 @@
 #include "argument.h"
 
+using namespace jsonrpc;
+
 QGenericArgument& Argument::getArgument()
 {
     return argument;
@@ -36,7 +38,7 @@ ArgumentImplementation<bool>::ArgumentImplementation(const QJsonValue& argument)
     if( argument.isBool() ){
         setValue(argument.toBool());
     }else{
-        throw QString("Parameter of type %1 cannot be converted to boolean").arg(QString(argument.type()));
+        throw exceptions::WrongArgumentType("boolean", argument);
     }
 }
 
@@ -51,22 +53,22 @@ ArgumentImplementation<int>::ArgumentImplementation(const QJsonValue& argument){
         double doubleValue = argument.toDouble();
         double integerPart;
         if(std::modf(doubleValue, &integerPart) != 0.0){
-            throw QString("Cannot convert number to int, because it is not integer");
+            throw exceptions::WrongArgumentType("int", argument, "it is not integer.");
         }
         if (integerPart > (double)INT_MAX || integerPart < (double)INT_MIN){
-            throw QString("Cannot convert number to int, because it is out of range");
+            throw exceptions::WrongArgumentType("int", argument, "it is out of range.");
         }
         setValue((int)integerPart);
     }else if( argument.isString() ){
         bool ok;
         int number = argument.toString().toInt(&ok);
         if(!ok){
-            throw QString("Failed converting string to int");
+            throw exceptions::WrongArgumentType("int", argument, "it is not a valid int.");
         }else{
             setValue(number);
         }
     }else{
-        throw QString("Parameter of type %1 cannot be converted to number").arg(QString(argument.type()));
+        throw exceptions::WrongArgumentType("int", argument);
     }
 }
 
@@ -81,22 +83,22 @@ ArgumentImplementation<unsigned int>::ArgumentImplementation(const QJsonValue& a
         double doubleValue = argument.toDouble();
         double integerPart;
         if(std::modf(doubleValue, &integerPart) != 0.0){
-            throw QString("Cannot convert number to unsigned int, because it is not integer");
+            throw exceptions::WrongArgumentType("unsigned int", argument, "it is not integer.");
         }
         if (integerPart > (double)UINT_MAX || integerPart < (double)0){
-            throw QString("Cannot convert number to unsigned int, because it is out of range");
+            throw exceptions::WrongArgumentType("unsigned int", argument, "it is out of range.");
         }
         setValue((unsigned int)integerPart);
     }else if( argument.isString() ){
         bool ok;
         unsigned int number = argument.toString().toUInt(&ok);
         if(!ok){
-            throw QString("Failed converting string to unsigned int");
+            throw exceptions::WrongArgumentType("unsigned int", argument, "it is not a valid int.");
         }else{
             setValue(number);
         }
     }else{
-        throw QString("Parameter of type %1 cannot be converted to number").arg(QString(argument.type()));
+        throw exceptions::WrongArgumentType("unsigned int", argument);
     }
 }
 
@@ -113,12 +115,12 @@ ArgumentImplementation<double>::ArgumentImplementation(const QJsonValue& argumen
         bool ok;
         double number = argument.toString().toDouble(&ok);
         if(!ok){
-            throw QString("Failed converting string to double");
+            throw exceptions::WrongArgumentType("double", argument, "it is not a valid int.");
         }else{
             setValue(number);
         }
     }else{
-        throw QString("Parameter of type %1 cannot be converted to number").arg(QString(argument.type()));
+        throw exceptions::WrongArgumentType("double", argument);
     }
 }
 
@@ -132,22 +134,24 @@ template<>
 ArgumentImplementation<QChar>::ArgumentImplementation(const QJsonValue& argument){
     if( argument.isString() ){
         QString stringValue = argument.toString();
-        if(stringValue.length() != 1){
-            throw QString("Cannot convert string to char, because it is not one char long");
+        if(stringValue.length() == 0){
+            throw exceptions::WrongArgumentType("QChar", argument, "it is empty.");
+        }else if(stringValue.length() > 1){
+            throw exceptions::WrongArgumentType("QChar", argument, "it is longer than one QChar.");
         }
         setValue(stringValue.front());
     }else if( argument.isDouble() ){
         double doubleValue = argument.toDouble();
         double integerPart;
         if(std::modf(doubleValue, &integerPart) != 0.0){
-            throw QString("Cannot convert number to QChar, because it is not integer");
+            throw exceptions::WrongArgumentType("QChar", argument, "it is not integer.");
         }
         if (integerPart > (double)USHRT_MAX || integerPart < (double)0){
-            throw QString("Cannot convert number to QChar, because it is out of range");
+            throw exceptions::WrongArgumentType("QChar", argument, "it is out of range.");
         }
         setValue((unsigned short)integerPart);
     }else{
-        throw QString("Parameter of type %1 cannot be converted to text").arg(QString(argument.type()));
+        throw exceptions::WrongArgumentType("QChar", argument);
     }
 }
 
@@ -162,7 +166,7 @@ ArgumentImplementation<QString>::ArgumentImplementation(const QJsonValue& argume
     if( argument.isString() ){
         setValue(argument.toString());
     }else{
-        throw QString("Parameter of type %1 cannot be converted to text").arg(QString(argument.type()));
+        throw exceptions::WrongArgumentType("QString", argument);
     }
 }
 
@@ -185,25 +189,28 @@ ArgumentImplementation<QByteArray>::ArgumentImplementation(const QJsonValue& arg
                 double doubleValue = val.toDouble();
                 double integerPart;
                 if(std::modf(doubleValue, &integerPart) != 0.0){
-                    throw QString("Cannot convert number to byte for QByteArray, because it is not integer");
+                    throw exceptions::WrongArgumentType("byte for QByteArray", argument, "it is not integer.");
                 }
                 if (integerPart > (double)UCHAR_MAX || integerPart < (double)SCHAR_MIN){
-                    throw QString("Cannot convert number to byte for QByteArray, because it is out of range");
+                    throw exceptions::WrongArgumentType("byte for QByteArray", argument, "it is out of range.");
                 }
                 charPointer[position++] = (char)(int)integerPart;
             }else if( val.isString() ){
                 QByteArray charArray = val.toString().toUtf8();
-                if(charArray.length() != 1){
-                    throw QString("Cannot convert string to byte for QByteArray, because it is longer than one byte");
+                if(charArray.length() == 0){
+                    //TODO maybe an empty string is a nullbyte
+                    throw exceptions::WrongArgumentType("byte for QByteArray", argument, "it is empty.");
+                }else if(charArray.length() > 1){
+                    throw exceptions::WrongArgumentType("byte for QByteArray", argument, "it is longer than one char.");
                 }
                 charPointer[position++] = charArray.at(0);
             }else{
-                throw QString("Parameter of type %1 cannot be converted to byte for QByteArray").arg(QString(val.type()));
+                throw exceptions::WrongArgumentType("byte for QByteArray", val);
             }
         }
         setValue(QByteArray(charPointer.get(), array.size()));
     }else{
-        throw QString("Parameter of type %1 cannot be converted to text").arg(QString(argument.type()));
+        throw exceptions::WrongArgumentType("QByteArray", argument);
     }
 }
 
@@ -225,10 +232,10 @@ ArgumentImplementation<std::nullptr_t>::ArgumentImplementation(const QJsonValue&
         if(argument.toDouble() == 0){
             setValue(nullptr);
         }else{
-            throw QString("Parameter of type %1 cannot be converted to nullptr").arg(QString(argument.type()));
+            throw exceptions::WrongArgumentType("nullptr_t", argument, "it is not 0.");
         }
     }else{
-        throw QString("Parameter of type %1 cannot be converted to nullptr").arg(QString(argument.type()));
+        throw exceptions::WrongArgumentType("nullptr_t", argument);
     }
 }
 
@@ -240,12 +247,12 @@ QJsonValue ArgumentImplementation<std::nullptr_t>::getJson(){
 template<>
 ArgumentImplementation<void*>::ArgumentImplementation(const QJsonValue& argument){
     //voidpointer will always fails
-    throw QString("Parameter of type %1 cannot be converted to void pointer").arg(QString(argument.type()));
+    throw exceptions::WrongArgumentType("void pointer", argument, "you would only transfer the pointer and not what it points to.");
 }
 
 template<>
 QJsonValue ArgumentImplementation<void*>::getJson(){
-    throw QJsonValue::Undefined;
+    return QJsonValue::Undefined;
 }
 
 template<>
@@ -254,22 +261,22 @@ ArgumentImplementation<long>::ArgumentImplementation(const QJsonValue& argument)
         double doubleValue = argument.toDouble();
         double integerPart;
         if(std::modf(doubleValue, &integerPart) != 0.0){
-            throw QString("Cannot convert number to long, because it is not integer");
+            throw exceptions::WrongArgumentType("long", argument, "it is not integer.");
         }
         if (integerPart > (double)LONG_MAX || integerPart < (double)LONG_MIN){
-            throw QString("Cannot convert number to long, because it is out of range");
+            throw exceptions::WrongArgumentType("long", argument, "it is out of range.");
         }
         setValue((long)integerPart);
     }else if( argument.isString() ){
         bool ok;
         long number = argument.toString().toLong(&ok);
         if(!ok){
-            throw QString("Failed converting string to long");
+            throw exceptions::WrongArgumentType("long", argument, "it is not a valid int.");
         }else{
             setValue(number);
         }
     }else{
-        throw QString("Parameter of type %1 cannot be converted to number").arg(QString(argument.type()));
+        throw exceptions::WrongArgumentType("long", argument);
     }
 }
 
@@ -289,22 +296,22 @@ ArgumentImplementation<long long>::ArgumentImplementation(const QJsonValue& argu
         double doubleValue = argument.toDouble();
         double integerPart;
         if(std::modf(doubleValue, &integerPart) != 0.0){
-            throw QString("Cannot convert number to long long, because it is not integer");
+            throw exceptions::WrongArgumentType("long long", argument, "it is not integer.");
         }
         if (integerPart > (double)LLONG_MAX || integerPart < (double)LLONG_MIN){
-            throw QString("Cannot convert number to long long, because it is out of range");
+            throw exceptions::WrongArgumentType("long long", argument, "it is out of range.");
         }
         setValue((long long)integerPart);
     }else if( argument.isString() ){
         bool ok;
         long long number = argument.toString().toLongLong(&ok);
         if(!ok){
-            throw QString("Failed converting string to long long");
+            throw exceptions::WrongArgumentType("long long", argument, "it is not a valid int.");
         }else{
             setValue(number);
         }
     }else{
-        throw QString("Parameter of type %1 cannot be converted to number").arg(QString(argument.type()));
+        throw exceptions::WrongArgumentType("long long", argument);
     }
 }
 
@@ -324,22 +331,22 @@ ArgumentImplementation<short>::ArgumentImplementation(const QJsonValue& argument
         double doubleValue = argument.toDouble();
         double integerPart;
         if(std::modf(doubleValue, &integerPart) != 0.0){
-            throw QString("Cannot convert number to short, because it is not integer");
+            throw exceptions::WrongArgumentType("short", argument, "it is not integer.");
         }
         if (integerPart > (double)SHRT_MAX || integerPart < (double)SHRT_MIN){
-            throw QString("Cannot convert number to short, because it is out of range");
+            throw exceptions::WrongArgumentType("short", argument, "it is out of range.");
         }
         setValue(integerPart);
     }else if( argument.isString() ){
         bool ok;
         short number = argument.toString().toShort(&ok);
         if(!ok){
-            throw QString("Failed converting string to short");
+            throw exceptions::WrongArgumentType("short", argument, "it is not a valid int.");
         }else{
             setValue(number);
         }
     }else{
-        throw QString("Parameter of type %1 cannot be converted to number").arg(QString(argument.type()));
+        throw exceptions::WrongArgumentType("short", argument);
     }
 }
 
@@ -354,20 +361,23 @@ ArgumentImplementation<char>::ArgumentImplementation(const QJsonValue& argument)
         double doubleValue = argument.toDouble();
         double integerPart;
         if(std::modf(doubleValue, &integerPart) != 0.0){
-            throw QString("Cannot convert number to char, because it is not integer");
+            throw exceptions::WrongArgumentType("char", argument, "it is not integer.");
         }
         if (integerPart > (double)UCHAR_MAX || integerPart < (double)SCHAR_MIN){
-            throw QString("Cannot convert number to char, because it is out of range");
+            throw exceptions::WrongArgumentType("char", argument, "it is out of range.");
         }
         setValue((char)(int)integerPart);
     }else if( argument.isString() ){
         QByteArray charArray = argument.toString().toUtf8();
-        if(charArray.length() != 1){
-            throw QString("Cannot convert string to char, because it is not one char long");
+        if(charArray.length() == 0){
+            //TODO maybe an empty string is a nullbyte
+            throw exceptions::WrongArgumentType("char", argument, "it is empty.");
+        }else if(charArray.length() > 1){
+            throw exceptions::WrongArgumentType("char", argument, "it is longer than one char.");
         }
         setValue(charArray.at(0));
     }else{
-        throw QString("Parameter of type %1 cannot be converted to number").arg(QString(argument.type()));
+        throw exceptions::WrongArgumentType("char", argument);
     }
 }
 
@@ -382,22 +392,22 @@ ArgumentImplementation<unsigned long>::ArgumentImplementation(const QJsonValue& 
         double doubleValue = argument.toDouble();
         double integerPart;
         if(std::modf(doubleValue, &integerPart) != 0.0){
-            throw QString("Cannot convert number to unsigned long, because it is not integer");
+            throw exceptions::WrongArgumentType("unsigned long", argument, "it is not integer.");
         }
         if (integerPart > (double)ULONG_MAX || integerPart < (double)0){
-            throw QString("Cannot convert number to unsigned long, because it is out of range");
+            throw exceptions::WrongArgumentType("unsigned long", argument, "it is out of range.");
         }
         setValue(integerPart);
     }else if( argument.isString() ){
         bool ok;
         unsigned long number = argument.toString().toULong(&ok);
         if(!ok){
-            throw QString("Failed converting string to unsigned long");
+            throw exceptions::WrongArgumentType("unsigned long", argument, "it is not a valid int.");
         }else{
             setValue(number);
         }
     }else{
-        throw QString("Parameter of type %1 cannot be converted to number").arg(QString(argument.type()));
+        throw exceptions::WrongArgumentType("unsigned long", argument);
     }
 }
 
@@ -417,22 +427,22 @@ ArgumentImplementation<unsigned long long>::ArgumentImplementation(const QJsonVa
         double doubleValue = argument.toDouble();
         double integerPart;
         if(std::modf(doubleValue, &integerPart) != 0.0){
-            throw QString("Cannot convert number to unsigned long long, because it is not integer");
+            throw exceptions::WrongArgumentType("unsigned long long", argument, "it is not integer.");
         }
         if (integerPart > (double)ULLONG_MAX || integerPart < (double)0){
-            throw QString("Cannot convert number to unsigned long long, because it is out of range");
+            throw exceptions::WrongArgumentType("unsigned long long", argument, "it is out of range.");
         }
         setValue(integerPart);
     }else if( argument.isString() ){
         bool ok;
         unsigned long long number = argument.toString().toULongLong(&ok);
         if(!ok){
-            throw QString("Failed converting string to unsigned long long");
+            throw exceptions::WrongArgumentType("unsigned long long", argument, "it is not a valid int.");
         }else{
             setValue(number);
         }
     }else{
-        throw QString("Parameter of type %1 cannot be converted to number").arg(QString(argument.type()));
+        throw exceptions::WrongArgumentType("unsigned long long", argument);
     }
 }
 
@@ -452,22 +462,22 @@ ArgumentImplementation<unsigned short>::ArgumentImplementation(const QJsonValue&
         double doubleValue = argument.toDouble();
         double integerPart;
         if(std::modf(doubleValue, &integerPart) != 0.0){
-            throw QString("Cannot convert number to unsigned short, because it is not integer");
+            throw exceptions::WrongArgumentType("unsigned short", argument, "it is not integer.");
         }
         if (integerPart > (double)USHRT_MAX || integerPart < (double)0){
-            throw QString("Cannot convert number to unsigned short, because it is out of range");
+            throw exceptions::WrongArgumentType("unsigned short", argument, "it is out of range.");
         }
         setValue(integerPart);
     }else if( argument.isString() ){
         bool ok;
         unsigned short number = argument.toString().toUShort(&ok);
         if(!ok){
-            throw QString("Failed converting string to unsigned short");
+            throw exceptions::WrongArgumentType("unsigned short", argument, "it is not a valid int.");
         }else{
             setValue(number);
         }
     }else{
-        throw QString("Parameter of type %1 cannot be converted to number").arg(QString(argument.type()));
+        throw exceptions::WrongArgumentType("unsigned short", argument);
     }
 }
 
@@ -482,20 +492,23 @@ ArgumentImplementation<signed char>::ArgumentImplementation(const QJsonValue& ar
         double doubleValue = argument.toDouble();
         double integerPart;
         if(std::modf(doubleValue, &integerPart) != 0.0){
-            throw QString("Cannot convert number to unsigned char, because it is not integer");
+            throw exceptions::WrongArgumentType("signed char", argument, "it is not integer.");
         }
         if (integerPart > (double)SCHAR_MAX || integerPart < (double)SCHAR_MIN){
-            throw QString("Cannot convert number to unsigned char, because it is out of range");
+            throw exceptions::WrongArgumentType("signed char", argument, "it is out of range.");
         }
         setValue(integerPart);
     }else if( argument.isString() ){
         QByteArray charArray = argument.toString().toUtf8();
-        if(charArray.length() != 1){
-            throw QString("Cannot convert string to char, because it is not one char long");
+        if(charArray.length() == 0){
+            //TODO maybe an empty string is a nullbyte
+            throw exceptions::WrongArgumentType("signed char", argument, "it is empty.");
+        }else if(charArray.length() > 1){
+            throw exceptions::WrongArgumentType("signed char", argument, "it is longer than one char.");
         }
         setValue(charArray.at(0));
     }else{
-        throw QString("Parameter of type %1 cannot be converted to number").arg(QString(argument.type()));
+        throw exceptions::WrongArgumentType("signed char", argument);
     }
 }
 
@@ -510,20 +523,23 @@ ArgumentImplementation<unsigned char>::ArgumentImplementation(const QJsonValue& 
         double doubleValue = argument.toDouble();
         double integerPart;
         if(std::modf(doubleValue, &integerPart) != 0.0){
-            throw QString("Cannot convert number to unsigned char, because it is not integer");
+            throw exceptions::WrongArgumentType("unsigned char", argument, "it is not integer.");
         }
         if (integerPart > (double)UCHAR_MAX || integerPart < (double)0){
-            throw QString("Cannot convert number to unsigned char, because it is out of range");
+            throw exceptions::WrongArgumentType("unsigned char", argument, "it is out of range.");
         }
         setValue(integerPart);
     }else if( argument.isString() ){
         QByteArray charArray = argument.toString().toUtf8();
-        if(charArray.length() != 1){
-            throw QString("Cannot convert string to char, because it is not one char long");
+        if(charArray.length() == 0){
+            //TODO maybe an empty string is a nullbyte
+            throw exceptions::WrongArgumentType("unsigned char", argument, "it is empty.");
+        }else if(charArray.length() > 1){
+            throw exceptions::WrongArgumentType("unsigned char", argument, "it is longer than one char.");
         }
         setValue(charArray.at(0));
     }else{
-        throw QString("Parameter of type %1 cannot be converted to number").arg(QString(argument.type()));
+        throw exceptions::WrongArgumentType("unsigned char", argument);
     }
 }
 
@@ -542,12 +558,12 @@ ArgumentImplementation<float>::ArgumentImplementation(const QJsonValue& argument
         bool ok;
         float number = argument.toString().toFloat(&ok);
         if(!ok){
-            throw QString("Failed converting string to float");
+            throw exceptions::WrongArgumentType("float", argument, "it is not a valid int.");
         }else{
             setValue(number);
         }
     }else{
-        throw QString("Parameter of type %1 cannot be converted to number").arg(QString(argument.type()));
+        throw exceptions::WrongArgumentType("float", argument);
     }
 }
 
@@ -559,7 +575,7 @@ QJsonValue ArgumentImplementation<float>::getJson(){
 template<>
 ArgumentImplementation<QObject*>::ArgumentImplementation(const QJsonValue& argument){
     //pointers will always fails
-    throw QString("Parameter of type %1 cannot be converted to QObject pointer").arg(QString(argument.type()));
+    throw exceptions::WrongArgumentType("QObject*", argument, "you would only transfer the pointer and not what it points to.");
 }
 
 template<>
@@ -583,7 +599,7 @@ template<>
 ArgumentImplementation<QCursor>::ArgumentImplementation(const QJsonValue& argument){
     Q_UNUSED(argument);
     //TODO implement QCursor type
-    throw QString("QCursor type not implemented");
+    throw exceptions::WrongArgumentType("QCursor", argument, "this type is not yet implemented.");
 }
 
 template<>
@@ -607,7 +623,7 @@ ArgumentImplementation<QDate>::ArgumentImplementation(const QJsonValue& argument
             if(date.isValid()){
                 setValue(date);
             }else{
-                throw QString("Cannot convert string to QDate, because it is formatted incorrectly. Use TextDate or ISODate.");
+                throw exceptions::WrongArgumentType("QDate", argument, "it is formatted incorrectly. Use TextDate or ISODate.");
             }
         }
     }if( argument.isArray() ){
@@ -618,16 +634,16 @@ ArgumentImplementation<QDate>::ArgumentImplementation(const QJsonValue& argument
                 if(date.isValid()){
                     setValue(date);
                 }else{
-                    throw QString("Cannot convert array to QDate, because it's values are out of range.");
+                    throw exceptions::WrongArgumentType("QDate", argument, "the values are out of range.");
                 }
             }else{
-                throw QString("Cannot convert array to QDate, because it's values are not integers.");
+                throw exceptions::WrongArgumentType("QDate", argument, "the array does not consist of three numbers.");
             }
         }else{
-            throw QString("Cannot convert array to QDate, because it has the wrong length.");
+            throw exceptions::WrongArgumentType("QDate", argument, "the array does not consist of three numbers.");
         }
     }else{
-        throw QString("Parameter of type %1 cannot be converted to date. Required format \"ddd MMM d yyyy\"").arg(QString(argument.type()));
+        throw exceptions::WrongArgumentType("QDate", argument);
     }
 }
 
@@ -640,7 +656,7 @@ template<>
 ArgumentImplementation<QSize>::ArgumentImplementation(const QJsonValue& argument){
     Q_UNUSED(argument);
     //TODO implement QSize type
-    throw QString("QSize type not implemented");
+    throw exceptions::WrongArgumentType("QSize", argument, "this type is not yet implemented.");
 }
 
 template<>
@@ -653,7 +669,7 @@ template<>
 ArgumentImplementation<QTime>::ArgumentImplementation(const QJsonValue& argument){
     Q_UNUSED(argument);
     //TODO implement QTime type
-    throw QString("QTime type not implemented");
+    throw exceptions::WrongArgumentType("QTime", argument, "this type is not yet implemented.");
 }
 
 template<>
@@ -665,7 +681,7 @@ template<>
 ArgumentImplementation<QVariantList>::ArgumentImplementation(const QJsonValue& argument){
     Q_UNUSED(argument);
     //TODO implement QVariantList type
-    throw QString("QVariantList type not implemented");
+    throw exceptions::WrongArgumentType("QVariantList", argument, "this type is not yet implemented.");
 }
 
 template<>
@@ -678,7 +694,7 @@ template<>
 ArgumentImplementation<QPolygon>::ArgumentImplementation(const QJsonValue& argument){
     Q_UNUSED(argument);
     //TODO implement QPolygon type
-    throw QString("QPolygon type not implemented");
+    throw exceptions::WrongArgumentType("QPolygon", argument, "this type is not yet implemented.");
 }
 
 template<>
@@ -691,7 +707,7 @@ template<>
 ArgumentImplementation<QPolygonF>::ArgumentImplementation(const QJsonValue& argument){
     Q_UNUSED(argument);
     //TODO implement QPolygonF type
-    throw QString("QPolygonF type not implemented");
+    throw exceptions::WrongArgumentType("QPolygonF", argument, "this type is not yet implemented.");
 }
 
 template<>
@@ -704,7 +720,7 @@ template<>
 ArgumentImplementation<QColor>::ArgumentImplementation(const QJsonValue& argument){
     Q_UNUSED(argument);
     //TODO implement QColor type
-    throw QString("QColor type not implemented");
+    throw exceptions::WrongArgumentType("QColor", argument, "this type is not yet implemented.");
 }
 
 template<>
@@ -717,7 +733,7 @@ template<>
 ArgumentImplementation<QColorSpace>::ArgumentImplementation(const QJsonValue& argument){
     Q_UNUSED(argument);
     //TODO implement QColorSpace type
-    throw QString("QColorSpace type not implemented");
+    throw exceptions::WrongArgumentType("QColorSpace", argument, "this type is not yet implemented.");
 }
 
 template<>
@@ -730,7 +746,7 @@ template<>
 ArgumentImplementation<QSizeF>::ArgumentImplementation(const QJsonValue& argument){
     Q_UNUSED(argument);
     //TODO implement QSizeF type
-    throw QString("QSizeF type not implemented");
+    throw exceptions::WrongArgumentType("QSizeF", argument, "this type is not yet implemented.");
 }
 
 template<>
@@ -743,7 +759,7 @@ template<>
 ArgumentImplementation<QRectF>::ArgumentImplementation(const QJsonValue& argument){
     Q_UNUSED(argument);
     //TODO implement QRectF type
-    throw QString("QRectF type not implemented");
+    throw exceptions::WrongArgumentType("QRectF", argument, "this type is not yet implemented.");
 }
 
 template<>
@@ -756,7 +772,7 @@ template<>
 ArgumentImplementation<QLine>::ArgumentImplementation(const QJsonValue& argument){
     Q_UNUSED(argument);
     //TODO implement QLine type
-    throw QString("QLine type not implemented");
+    throw exceptions::WrongArgumentType("QLine", argument, "this type is not yet implemented.");
 }
 
 template<>
@@ -769,7 +785,7 @@ template<>
 ArgumentImplementation<QTextLength>::ArgumentImplementation(const QJsonValue& argument){
     Q_UNUSED(argument);
     //TODO implement QTextLength type
-    throw QString("QTextLength type not implemented");
+    throw exceptions::WrongArgumentType("QTextLength", argument, "this type is not yet implemented.");
 }
 
 template<>
@@ -782,7 +798,7 @@ template<>
 ArgumentImplementation<QStringList>::ArgumentImplementation(const QJsonValue& argument){
     Q_UNUSED(argument);
     //TODO implement QStringList type
-    throw QString("QStringList type not implemented");
+    throw exceptions::WrongArgumentType("QStringList", argument, "this type is not yet implemented.");
 }
 
 template<>
@@ -798,7 +814,7 @@ template<>
 ArgumentImplementation<QVariantMap>::ArgumentImplementation(const QJsonValue& argument){
     Q_UNUSED(argument);
     //TODO implement QVariantMap type
-    throw QString("QVariantMap type not implemented");
+    throw exceptions::WrongArgumentType("QVariantMap", argument, "this type is not yet implemented.");
 }
 
 template<>
@@ -811,7 +827,7 @@ template<>
 ArgumentImplementation<QVariantHash>::ArgumentImplementation(const QJsonValue& argument){
     Q_UNUSED(argument);
     //TODO implement QVariantHash type
-    throw QString("QVariantHash type not implemented");
+    throw exceptions::WrongArgumentType("QVariantHash", argument, "this type is not yet implemented.");
 }
 
 template<>
@@ -824,7 +840,7 @@ template<>
 ArgumentImplementation<QIcon>::ArgumentImplementation(const QJsonValue& argument){
     Q_UNUSED(argument);
     //TODO implement QIcon type
-    throw QString("QIcon type not implemented");
+    throw exceptions::WrongArgumentType("QIcon", argument, "this type is not yet implemented.");
 }
 
 template<>
@@ -837,7 +853,7 @@ template<>
 ArgumentImplementation<QPen>::ArgumentImplementation(const QJsonValue& argument){
     Q_UNUSED(argument);
     //TODO implement QPen type
-    throw QString("QPen type not implemented");
+    throw exceptions::WrongArgumentType("QPen", argument, "this type is not yet implemented.");
 }
 
 template<>
@@ -850,7 +866,7 @@ template<>
 ArgumentImplementation<QLineF>::ArgumentImplementation(const QJsonValue& argument){
     Q_UNUSED(argument);
     //TODO implement QLineF type
-    throw QString("QLineF type not implemented");
+    throw exceptions::WrongArgumentType("QLineF", argument, "this type is not yet implemented.");
 }
 
 template<>
@@ -863,7 +879,7 @@ template<>
 ArgumentImplementation<QTextFormat>::ArgumentImplementation(const QJsonValue& argument){
     Q_UNUSED(argument);
     //TODO implement QTextFormat type
-    throw QString("QTextFormat type not implemented");
+    throw exceptions::WrongArgumentType("QTextFormat", argument, "this type is not yet implemented.");
 }
 
 template<>
@@ -876,7 +892,7 @@ template<>
 ArgumentImplementation<QRect>::ArgumentImplementation(const QJsonValue& argument){
     Q_UNUSED(argument);
     //TODO implement QRect type
-    throw QString("QRect type not implemented");
+    throw exceptions::WrongArgumentType("QRect", argument, "this type is not yet implemented.");
 }
 
 template<>
@@ -889,7 +905,7 @@ template<>
 ArgumentImplementation<QPoint>::ArgumentImplementation(const QJsonValue& argument){
     Q_UNUSED(argument);
     //TODO implement QPoint type
-    throw QString("QPoint type not implemented");
+    throw exceptions::WrongArgumentType("QPoint", argument, "this type is not yet implemented.");
 }
 
 template<>
@@ -905,11 +921,11 @@ ArgumentImplementation<QUrl>::ArgumentImplementation(const QJsonValue& argument)
         if(url.isValid()){
             setValue(url);
         }else{
-            throw QString("Cannot convert string to QUrl, because it is formatted incorrectly");
+            throw exceptions::WrongArgumentType("QUrl", argument, "it is formatted incorrectly.");
         }
 
     }else{
-        throw QString("Parameter of type %1 cannot be converted to text").arg(QString(argument.type()));
+        throw exceptions::WrongArgumentType("QUrl", argument);
     }
 }
 
@@ -923,7 +939,7 @@ template<>
 ArgumentImplementation<QRegExp>::ArgumentImplementation(const QJsonValue& argument){
     Q_UNUSED(argument);
     //TODO implement QRegExp type
-    throw QString("QRegExp type not implemented");
+    throw exceptions::WrongArgumentType("QRegExp", argument, "this type is not yet implemented.");
 }
 
 template<>
@@ -936,7 +952,7 @@ template<>
 ArgumentImplementation<QRegularExpression>::ArgumentImplementation(const QJsonValue& argument){
     Q_UNUSED(argument);
     //TODO implement QRegularExpression type
-    throw QString("QRegularExpression type not implemented");
+    throw exceptions::WrongArgumentType("QRegularExpression", argument, "this type is not yet implemented.");
 }
 
 template<>
@@ -949,7 +965,7 @@ template<>
 ArgumentImplementation<QDateTime>::ArgumentImplementation(const QJsonValue& argument){
     Q_UNUSED(argument);
     //TODO implement QDateTime type
-    throw QString("QDateTime type not implemented");
+    throw exceptions::WrongArgumentType("QDateTime", argument, "this type is not yet implemented.");
 }
 
 template<>
@@ -961,7 +977,7 @@ template<>
 ArgumentImplementation<QPointF>::ArgumentImplementation(const QJsonValue& argument){
     Q_UNUSED(argument);
     //TODO implement QPointF type
-    throw QString("QPointF type not implemented");
+    throw exceptions::WrongArgumentType("QPointF", argument, "this type is not yet implemented.");
 }
 
 template<>
@@ -974,7 +990,7 @@ template<>
 ArgumentImplementation<QPalette>::ArgumentImplementation(const QJsonValue& argument){
     Q_UNUSED(argument);
     //TODO implement QPalette type
-    throw QString("QPalette type not implemented");
+    throw exceptions::WrongArgumentType("QPalette", argument, "this type is not yet implemented.");
 }
 
 template<>
@@ -987,7 +1003,7 @@ template<>
 ArgumentImplementation<QFont>::ArgumentImplementation(const QJsonValue& argument){
     Q_UNUSED(argument);
     //TODO implement QFont type
-    throw QString("QFont type not implemented");
+    throw exceptions::WrongArgumentType("QFont", argument, "this type is not yet implemented.");
 }
 
 template<>
@@ -1000,7 +1016,7 @@ template<>
 ArgumentImplementation<QBrush>::ArgumentImplementation(const QJsonValue& argument){
     Q_UNUSED(argument);
     //TODO implement QBrush type
-    throw QString("QBrush type not implemented");
+    throw exceptions::WrongArgumentType("QBrush", argument, "this type is not yet implemented.");
 }
 
 template<>
@@ -1013,7 +1029,7 @@ template<>
 ArgumentImplementation<QRegion>::ArgumentImplementation(const QJsonValue& argument){
     Q_UNUSED(argument);
     //TODO implement QRegion type
-    throw QString("QRegion type not implemented");
+    throw exceptions::WrongArgumentType("QRegion", argument, "this type is not yet implemented.");
 }
 
 template<>
@@ -1026,7 +1042,7 @@ template<>
 ArgumentImplementation<QBitArray>::ArgumentImplementation(const QJsonValue& argument){
     Q_UNUSED(argument);
     //TODO implement QBitArray type
-    throw QString("QBitArray type not implemented");
+    throw exceptions::WrongArgumentType("QBitArray", argument, "this type is not yet implemented.");
 }
 
 template<>
@@ -1039,7 +1055,7 @@ template<>
 ArgumentImplementation<QImage>::ArgumentImplementation(const QJsonValue& argument){
     Q_UNUSED(argument);
     //TODO implement QImage type
-    throw QString("QImage type not implemented");
+    throw exceptions::WrongArgumentType("QImage", argument, "this type is not yet implemented.");
 }
 
 template<>
@@ -1052,7 +1068,7 @@ template<>
 ArgumentImplementation<QKeySequence>::ArgumentImplementation(const QJsonValue& argument){
     Q_UNUSED(argument);
     //TODO implement QKeySequence type
-    throw QString("QKeySequence type not implemented");
+    throw exceptions::WrongArgumentType("QKeySequence", argument, "this type is not yet implemented.");
 }
 
 template<>
@@ -1065,7 +1081,7 @@ template<>
 ArgumentImplementation<QSizePolicy>::ArgumentImplementation(const QJsonValue& argument){
     Q_UNUSED(argument);
     //TODO implement QSizePolicy type
-    throw QString("QSizePolicy type not implemented");
+    throw exceptions::WrongArgumentType("QSizePolicy", argument, "this type is not yet implemented.");
 }
 
 template<>
@@ -1078,7 +1094,7 @@ template<>
 ArgumentImplementation<QPixmap>::ArgumentImplementation(const QJsonValue& argument){
     Q_UNUSED(argument);
     //TODO implement QPixmap type
-    throw QString("QPixmap type not implemented");
+    throw exceptions::WrongArgumentType("QPixmap", argument, "this type is not yet implemented.");
 }
 
 template<>
@@ -1091,7 +1107,7 @@ template<>
 ArgumentImplementation<QLocale>::ArgumentImplementation(const QJsonValue& argument){
     Q_UNUSED(argument);
     //TODO implement QLocale type
-    throw QString("QLocale type not implemented");
+    throw exceptions::WrongArgumentType("QLocale", argument, "this type is not yet implemented.");
 }
 
 template<>
@@ -1104,7 +1120,7 @@ template<>
 ArgumentImplementation<QBitmap>::ArgumentImplementation(const QJsonValue& argument){
     Q_UNUSED(argument);
     //TODO implement QBitmap type
-    throw QString("QBitmap type not implemented");
+    throw exceptions::WrongArgumentType("QBitmap", argument, "this type is not yet implemented.");
 }
 
 template<>
@@ -1117,7 +1133,7 @@ template<>
 ArgumentImplementation<QMatrix>::ArgumentImplementation(const QJsonValue& argument){
     Q_UNUSED(argument);
     //TODO implement QMatrix type
-    throw QString("QMatrix type not implemented");
+    throw exceptions::WrongArgumentType("QMatrix", argument, "this type is not yet implemented.");
 }
 
 template<>
@@ -1130,7 +1146,7 @@ template<>
 ArgumentImplementation<QTransform>::ArgumentImplementation(const QJsonValue& argument){
     Q_UNUSED(argument);
     //TODO implement QTransform type
-    throw QString("QTransform type not implemented");
+    throw exceptions::WrongArgumentType("QTransform", argument, "this type is not yet implemented.");
 }
 
 template<>
@@ -1143,7 +1159,7 @@ template<>
 ArgumentImplementation<QMatrix4x4>::ArgumentImplementation(const QJsonValue& argument){
     Q_UNUSED(argument);
     //TODO implement QMatrix4x4 type
-    throw QString("QMatrix4x4 type not implemented");
+    throw exceptions::WrongArgumentType("QMatrix4x4", argument, "this type is not yet implemented.");
 }
 
 template<>
@@ -1156,7 +1172,7 @@ template<>
 ArgumentImplementation<QVector2D>::ArgumentImplementation(const QJsonValue& argument){
     Q_UNUSED(argument);
     //TODO implement QVector2D type
-    throw QString("QVector2D type not implemented");
+    throw exceptions::WrongArgumentType("QVector2D", argument, "this type is not yet implemented.");
 }
 
 template<>
@@ -1169,7 +1185,7 @@ template<>
 ArgumentImplementation<QVector3D>::ArgumentImplementation(const QJsonValue& argument){
     Q_UNUSED(argument);
     //TODO implement QVector3D type
-    throw QString("QVector3D type not implemented");
+    throw exceptions::WrongArgumentType("QVector3D", argument, "this type is not yet implemented.");
 }
 
 template<>
@@ -1182,7 +1198,7 @@ template<>
 ArgumentImplementation<QVector4D>::ArgumentImplementation(const QJsonValue& argument){
     Q_UNUSED(argument);
     //TODO implement QVector4D type
-    throw QString("QVector4D type not implemented");
+    throw exceptions::WrongArgumentType("QVector4D", argument, "this type is not yet implemented.");
 }
 
 template<>
@@ -1195,7 +1211,7 @@ template<>
 ArgumentImplementation<QQuaternion>::ArgumentImplementation(const QJsonValue& argument){
     Q_UNUSED(argument);
     //TODO implement QQuaternion type
-    throw QString("QQuaternion type not implemented");
+    throw exceptions::WrongArgumentType("QQuaternion", argument, "this type is not yet implemented.");
 }
 
 template<>
@@ -1208,7 +1224,7 @@ template<>
 ArgumentImplementation<QEasingCurve>::ArgumentImplementation(const QJsonValue& argument){
     Q_UNUSED(argument);
     //TODO implement QEasingCurve type
-    throw QString("QEasingCurve type not implemented");
+    throw exceptions::WrongArgumentType("QEasingCurve", argument, "this type is not yet implemented.");
 }
 
 template<>
@@ -1233,7 +1249,7 @@ ArgumentImplementation<QJsonObject>::ArgumentImplementation(const QJsonValue& ar
     if( argument.isObject() ){
         setValue(argument.toObject());
     }else{
-        throw QString("Parameter of type %1 cannot be converted to object").arg(QString(argument.type()));
+        throw exceptions::WrongArgumentType("QJsonObject", argument);
     }
 }
 
@@ -1247,7 +1263,7 @@ ArgumentImplementation<QJsonArray>::ArgumentImplementation(const QJsonValue& arg
     if( argument.isArray() ){
         setValue(argument.toArray());
     }else{
-        throw QString("Parameter of type %1 cannot be converted to array").arg(QString(argument.type()));
+        throw exceptions::WrongArgumentType("QJsonArray", argument);
     }
 }
 
@@ -1269,11 +1285,11 @@ ArgumentImplementation<QJsonDocument>::ArgumentImplementation(const QJsonValue& 
         if(!document.isNull()){
             setValue(document);
         }else{
-            throw QString("Cannot convert string to QJsonDocument, because it is formatted incorrectly");
+            throw exceptions::WrongArgumentType("QJsonDocument", argument, "it is formatted incorrectly.");
         }
 
     }else{
-        throw QString("Parameter of type %1 cannot be converted to array").arg(QString(argument.type()));
+        throw exceptions::WrongArgumentType("QJsonDocument", argument);
     }
 }
 
@@ -1305,7 +1321,7 @@ template<>
 ArgumentImplementation<QCborArray>::ArgumentImplementation(const QJsonValue& argument){
     Q_UNUSED(argument);
     //TODO implement QCborArray type
-    throw QString("QCborArray type not implemented");
+    throw exceptions::WrongArgumentType("QCborArray", argument, "this type is not yet implemented.");
 }
 
 template<>
@@ -1318,7 +1334,7 @@ template<>
 ArgumentImplementation<QCborMap>::ArgumentImplementation(const QJsonValue& argument){
     Q_UNUSED(argument);
     //TODO implement QCborMap type
-    throw QString("QCborMap type not implemented");
+    throw exceptions::WrongArgumentType("QCborMap", argument, "this type is not yet implemented.");
 }
 
 template<>
@@ -1331,7 +1347,7 @@ template<>
 ArgumentImplementation<QCborSimpleType>::ArgumentImplementation(const QJsonValue& argument){
     Q_UNUSED(argument);
     //TODO implement QCborSimpleType type
-    throw QString("QCborSimpleType type not implemented");
+    throw exceptions::WrongArgumentType("QCborSimpleType", argument, "this type is not yet implemented.");
 }
 
 template<>
@@ -1344,7 +1360,7 @@ template<>
 ArgumentImplementation<QModelIndex>::ArgumentImplementation(const QJsonValue& argument){
     Q_UNUSED(argument);
     //TODO implement QModelIndex type
-    throw QString("QModelIndex type not implemented");
+    throw exceptions::WrongArgumentType("QModelIndex", argument, "this type is not yet implemented.");
 }
 
 template<>
@@ -1357,7 +1373,7 @@ template<>
 ArgumentImplementation<QPersistentModelIndex>::ArgumentImplementation(const QJsonValue& argument){
     Q_UNUSED(argument);
     //TODO implement QPersistentModelIndex type
-    throw QString("QPersistentModelIndex type not implemented");
+    throw exceptions::WrongArgumentType("QPersistentModelIndex", argument, "this type is not yet implemented.");
 }
 
 template<>
@@ -1373,10 +1389,10 @@ ArgumentImplementation<QUuid>::ArgumentImplementation(const QJsonValue& argument
         if(!uuid.isNull()){
             setValue(uuid);
         }else{
-            throw QString("Cannot convert string to QUuid, because it is formatted incorrectly");
+            throw exceptions::WrongArgumentType("QUuid", argument, "it is formatted incorrectly.");
         }
     }else{
-        throw QString("Parameter of type %1 cannot be converted to text").arg(QString(argument.type()));
+        throw exceptions::WrongArgumentType("QUuid", argument);
     }
 }
 
@@ -1390,7 +1406,7 @@ template<>
 ArgumentImplementation<QByteArrayList>::ArgumentImplementation(const QJsonValue& argument){
     Q_UNUSED(argument);
     //TODO implement QByteArrayList type
-    throw QString("QByteArrayList type not implemented");
+    throw exceptions::WrongArgumentType("QByteArrayList", argument, "this type is not yet implemented.");
 }
 
 template<>
@@ -1417,11 +1433,11 @@ Argument *Argument::create(const int requiredTypeId, const QJsonValue &value)
     switch((QMetaType::Type)requiredTypeId){
     case QMetaType::Void :
         //TODO decide how to handle void
-        throw QString("void not implemented");
+        throw exceptions::WrongArgumentType("void", value, " void types are not implemented.");
         break;
     case QMetaType::UnknownType :
         //Target type unregistered
-        throw QString("Unknown/Unregistered target type");
+        throw exceptions::InvalidSignature("The requested method has an invalid signature.");
         break;
     case QMetaType::Bool :
         return createArgument<bool>(value);
@@ -1662,7 +1678,8 @@ Argument *Argument::create(const int requiredTypeId, const QJsonValue &value)
         break;
     default:
         //Usertype
-        throw QString("Support for usertypes not implemented");
+        QString requiredTypeName = QMetaType::typeName((QMetaType::Type)requiredTypeId);
+        throw exceptions::WrongArgumentType(requiredTypeName, value, "user defined types are not yet supported.");
     }
 }
 
