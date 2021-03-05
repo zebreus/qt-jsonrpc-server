@@ -25,6 +25,10 @@ public slots:
     inline int noParams(){
         return 564;
     };
+private slots:
+    inline int privateSlot(){
+        return 564;
+    };
 };
 
 #endif

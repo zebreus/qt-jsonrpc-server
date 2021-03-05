@@ -72,6 +72,10 @@ void Call::setMethod(const QString &methodName)
     //From the position after all methods of superclasses(methodOffset) to end of all methods(methodCount).
     for(int methodIndex = methodOffset; methodIndex < processor->metaObject()->methodCount() ; methodIndex++){
         QMetaMethod testMethod = processor->metaObject()->method(methodIndex);
+        if(testMethod.access() != QMetaMethod::Public){
+            throw exceptions::UnknownMethodName(methodName);
+        }
+        //TODO Decide if slots and methods should both be callable or not
         if(testMethod.name() == methodName){
             method = testMethod;
             return;

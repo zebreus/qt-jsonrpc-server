@@ -153,4 +153,14 @@ TEST(callTests, callOnSuperMethodFails) {
     }, exceptions::UnknownMethodName);
 }
 
+TEST(callTests, callOnPrivateMethodFails) {
+    QList<QJsonValue> arguments{};
+    MockTarget target;
+    QString method("privateSlot");
+    QScopedPointer<Call> call(nullptr);
+    ASSERT_THROW({
+        call.reset(new Call(&target, method, arguments));
+    }, exceptions::UnknownMethodName);
+}
+
 #endif
