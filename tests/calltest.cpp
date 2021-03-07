@@ -1,5 +1,5 @@
-#ifndef ARGUMENT_TEST_CPP
-#define ARGUMENT_TEST_CPP
+#ifndef CALL_TEST_CPP
+#define CALL_TEST_CPP
 
 
 #include <gmock/gmock-matchers.h>

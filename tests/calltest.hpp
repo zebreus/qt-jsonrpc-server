@@ -1,5 +1,5 @@
-#ifndef CALL_TEST_CPP
-#define CALL_TEST_CPP
+#ifndef CALL_TEST_HPP
+#define CALL_TEST_HPP
 
 #include <QObject>
 #include <QString>
