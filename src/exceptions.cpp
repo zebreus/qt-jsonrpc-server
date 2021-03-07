@@ -8,7 +8,7 @@ exceptions::JsonrpcException::JsonrpcException(const QString &message): message(
 exceptions::JsonrpcException::~JsonrpcException(){
 }
 
-Error exceptions::JsonrpcException::generateError(const QJsonValue &id){
+Error exceptions::JsonrpcException::generateError(const QJsonValue &id) const{
     return Error(id, Error::InternalError, message);
 }
 
@@ -30,7 +30,7 @@ exceptions::InvalidSignature *exceptions::InvalidSignature::clone() const {
     return new InvalidSignature(*this);
 }
 
-Error exceptions::InvalidSignature::generateError(const QJsonValue &id){
+Error exceptions::InvalidSignature::generateError(const QJsonValue &id) const{
     return Error(id, Error::MethodNotFound, message);
 }
 
@@ -49,16 +49,16 @@ exceptions::UnknownMethodName *exceptions::UnknownMethodName::clone() const {
     return new UnknownMethodName(*this);
 }
 
-Error exceptions::UnknownMethodName::generateError(const QJsonValue &id){
+Error exceptions::UnknownMethodName::generateError(const QJsonValue &id) const{
     return Error(id, Error::MethodNotFound, message);
 }
 
 exceptions::WrongArgumentCount::WrongArgumentCount(int expected, int delivered, const QString& name){
-    message = "Method " + name + " expected " + expected + " arguments, but got " + delivered + ".";
+    message = "Method " + name + " expected " + QString::number(expected) + " arguments, but got " + QString::number(delivered) + ".";
 }
 
 exceptions::WrongArgumentCount::WrongArgumentCount(int expected, int delivered){
-    message = QString("Method expected ") + expected + " arguments, but got " + delivered + ".";
+    message = QString("Method expected ") + QString::number(expected) + " arguments, but got " + QString::number(delivered) + ".";
 }
 
 void exceptions::WrongArgumentCount::raise() const {
@@ -69,7 +69,7 @@ exceptions::WrongArgumentCount *exceptions::WrongArgumentCount::clone() const {
     return new WrongArgumentCount(*this);
 }
 
-Error exceptions::WrongArgumentCount::generateError(const QJsonValue &id){
+Error exceptions::WrongArgumentCount::generateError(const QJsonValue &id) const{
     return Error(id, Error::MethodNotFound, message);
 }
 
@@ -96,7 +96,7 @@ exceptions::WrongArgumentType::WrongArgumentType(const QString &expectedType, co
         receivedType = "string";
         break;
     case QJsonValue::Type::Array:
-        receivedType = QString("array (size ") + receivedValue.toArray().size() + ")";
+        receivedType = QString("array (size ") + QString::number(receivedValue.toArray().size()) + ")";
         break;
     case QJsonValue::Type::Object:
         receivedType = "object";
@@ -126,7 +126,7 @@ exceptions::WrongArgumentType *exceptions::WrongArgumentType::clone() const {
     return new WrongArgumentType(*this);
 }
 
-Error exceptions::WrongArgumentType::generateError(const QJsonValue &id){
+Error exceptions::WrongArgumentType::generateError(const QJsonValue &id) const{
     return Error(id, Error::InvalidParams, message);
 }
 
@@ -142,6 +142,6 @@ exceptions::InvokationFailed *exceptions::InvokationFailed::clone() const {
     return new InvokationFailed(*this);
 }
 
-Error exceptions::InvokationFailed::generateError(const QJsonValue &id){
+Error exceptions::InvokationFailed::generateError(const QJsonValue &id) const{
     return Error(id, Error::InternalError, message);
 }
