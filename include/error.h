@@ -1,51 +1,45 @@
 #ifndef ERROR_H
 #define ERROR_H
 
-#include "message.h"
 #include <QJsonObject>
 #include <QJsonValue>
 #include <QString>
 
-namespace jsonrpc{
+#include "message.h"
 
-class Error : public Message {
+namespace jsonrpc {
+
+class Error: public Message {
  public:
-    enum Code {
-        ParseError = -32700,
-        InvalidRequest = -32600,
-        MethodNotFound = -32601,
-        InvalidParams = -32602,
-        InternalError = -32603
-    };
+  enum Code { ParseError = -32700, InvalidRequest = -32600, MethodNotFound = -32601, InvalidParams = -32602, InternalError = -32603 };
 
  public:
+  Error(const QJsonObject& message);
 
-    Error(const QJsonObject& message);
+  int getCode() const;
 
-    int getCode() const;
+  QString getMessage() const;
 
-    QString getMessage() const;
+  QJsonValue getData() const;
 
-    QJsonValue getData() const;
+  bool hasData() const;
 
-    bool hasData() const;
+  QJsonObject toJson() const override;
 
-    QJsonObject toJson() const override;
+  Error(int code, const QString& errorMessage, const QJsonValue& data);
 
-    Error(int code, const QString& errorMessage, const QJsonValue& data);
+  Error(int code, const QString& errorMessage);
 
-    Error(int code, const QString& errorMessage);
+  Error(const QJsonValue& id, int code, const QString& errorMessage, const QJsonValue& data);
 
-    Error(const QJsonValue& id, int code, const QString& errorMessage, const QJsonValue& data);
-
-    Error(const QJsonValue& id, int code, const QString& errorMessage);
+  Error(const QJsonValue& id, int code, const QString& errorMessage);
 
  private:
-    int code;
-    QString message;
-    QJsonValue data;
+  int code;
+  QString message;
+  QJsonValue data;
 };
 
-}
+}  // namespace jsonrpc
 
-#endif // ERROR_H
+#endif  // ERROR_H

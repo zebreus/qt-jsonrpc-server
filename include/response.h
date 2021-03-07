@@ -1,30 +1,29 @@
 #ifndef RESPONSE_H
 #define RESPONSE_H
 
-#include "message.h"
 #include <QJsonObject>
 #include <QJsonValue>
 
-namespace jsonrpc{
+#include "message.h"
 
-class Response : public Message {
+namespace jsonrpc {
 
+class Response: public Message {
  public:
+  Response(const QJsonObject& message);
 
-    Response(const QJsonObject& message);
+  QJsonValue getResult() const;
 
-    QJsonValue getResult() const;
+  QJsonObject toJson() const override;
 
-    QJsonObject toJson() const override;
+  Response(const QJsonValue& result);
 
-    Response(const QJsonValue& result);
-
-    Response(const QJsonValue& id, const QJsonValue& result);
+  Response(const QJsonValue& id, const QJsonValue& result);
 
  private:
-    QJsonValue result;
+  QJsonValue result;
 };
 
-}
+}  // namespace jsonrpc
 
-#endif // RESPONSE_H
+#endif  // RESPONSE_H

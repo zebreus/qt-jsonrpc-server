@@ -1,67 +1,70 @@
 #ifndef ARGUMENT_H
 #define ARGUMENT_H
 
-#include <QMetaType>
-#include <QJsonValue>
-#include <QJsonArray>
-#include <QJsonObject>
-#include <QJsonDocument>
-#include <QDate>
-#include <cmath>
-#include <QSize>
 #include <exceptions.h>
 
+#include <QDate>
+#include <QJsonArray>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonValue>
+#include <QMetaType>
+#include <QSize>
+#include <cmath>
+
 #if defined(QT_GUI_LIB) or defined(QT_MODULE_GUI)
-#include <QCursor>
-#include <QPolygon>
+#include <QBitArray>
 #include <QColor>
 #include <QColorSpace>
-#include <QLine>
-#include <QTextLength>
+#include <QCursor>
 #include <QIcon>
+#include <QLine>
 #include <QPalette>
-#include <QBitArray>
+#include <QPolygon>
+#include <QTextLength>
 #include <QtGui>
 #endif
 #if defined(QT_WIDGETS_LIB) or defined(QT_MODULE_WIDGETS)
 #include <QSizePolicy>
 #endif
 
-namespace jsonrpc{
+namespace jsonrpc {
 
 class Argument {
+ public:
+  QGenericArgument& getArgument();
+  virtual QJsonValue getJson() = 0;
+  virtual ~Argument();
 
-public:
-    QGenericArgument& getArgument();
-    virtual QJsonValue getJson() = 0;
-    virtual ~Argument();
+  static Argument* create(const int requiredTypeId, const QJsonValue& value = QJsonValue::Undefined);
 
-    static Argument* create(const int requiredTypeId, const QJsonValue& value = QJsonValue::Undefined);
-protected:
-    template<typename T>
-    static Argument* createArgument(const QJsonValue& jsonValue);
-    Argument();
+ protected:
+  template<typename T>
+  static Argument* createArgument(const QJsonValue& jsonValue);
+  Argument();
 
-private:
-    Argument(Argument const&) = delete;
-    Argument& operator=(Argument const&) = delete;
-protected:
-    QGenericArgument argument;
+ private:
+  Argument(Argument const&) = delete;
+  Argument& operator=(Argument const&) = delete;
+
+ protected:
+  QGenericArgument argument;
 };
 
 template<typename T>
-class ArgumentImplementation : public Argument{
-public:
-    ~ArgumentImplementation() override;
-    ArgumentImplementation(const QJsonValue& argument);
-    ArgumentImplementation();
+class ArgumentImplementation: public Argument {
+ public:
+  ~ArgumentImplementation() override;
+  ArgumentImplementation(const QJsonValue& argument);
+  ArgumentImplementation();
 
-    QJsonValue getJson() override;
-private:
-    void setValue(const T& t);
-    T* value;
+  QJsonValue getJson() override;
+
+ private:
+  void setValue(const T& t);
+  T* value;
 };
 
-}
+}  // namespace jsonrpc
 
-#endif // ARGUMENT_H
+#endif  // ARGUMENT_H

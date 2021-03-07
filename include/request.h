@@ -1,39 +1,38 @@
 #ifndef REQUEST_H
 #define REQUEST_H
 
-#include "message.h"
-#include <QJsonObject>
 #include <QJsonArray>
+#include <QJsonObject>
 #include <QJsonValue>
 #include <QList>
 #include <QString>
 
-namespace jsonrpc{
+#include "message.h"
 
-class Request : public Message {
+namespace jsonrpc {
 
-public:
+class Request: public Message {
+ public:
+  Request(const QJsonObject& message);
 
-    Request(const QJsonObject& message);
+  QString getMethodName() const;
 
-    QString getMethodName() const;
+  QList<QJsonValue> getArguments() const;
 
-    QList<QJsonValue> getArguments() const;
+  QJsonObject toJson() const override;
 
-    QJsonObject toJson() const override;
+  Request(const QString& methodName, const QList<QJsonValue>& arguments);
 
-    Request(const QString& methodName, const QList<QJsonValue>& arguments);
+  Request(const QJsonValue& id, const QString& methodName, const QList<QJsonValue>& arguments);
 
-    Request(const QJsonValue& id, const QString& methodName, const QList<QJsonValue>& arguments);
+ private:
+  QString methodName;
+  QList<QJsonValue> arguments;
 
-private:
-    QString methodName;
-    QList<QJsonValue> arguments;
-
-private:
-    bool buildArguments(const QJsonValue& passedArguments);
+ private:
+  bool buildArguments(const QJsonValue& passedArguments);
 };
 
-}
+}  // namespace jsonrpc
 
-#endif // REQUEST_H
+#endif  // REQUEST_H

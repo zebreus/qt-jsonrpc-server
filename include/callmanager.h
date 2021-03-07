@@ -3,32 +3,32 @@
 
 #include <QObject>
 #include <QSharedPointer>
+
+#include "call.h"
+#include "error.h"
+#include "exceptions.h"
 #include "request.h"
 #include "response.h"
-#include "error.h"
-#include "call.h"
-#include "exceptions.h"
 
-namespace jsonrpc{
+namespace jsonrpc {
 
-class CallManager : public QObject{
-    Q_OBJECT
+class CallManager: public QObject {
+  Q_OBJECT
 
-public:
+ public:
+  CallManager(QObject* target, QObject* parent = nullptr);
+  void processRequest(const QSharedPointer<Request>& request);
 
-    CallManager(QObject* target, QObject* parent = nullptr);
-    void processRequest(const QSharedPointer<Request>& request);
+ public slots:
 
-public slots:
+  void receiveError(QSharedPointer<Error> error);
+  void receiveSuccess(QSharedPointer<Response> result);
 
-    void receiveError(QSharedPointer<Error> error);
-    void receiveSuccess(QSharedPointer<Response> result);
+ signals:
+  void respond(QSharedPointer<Message> message);
 
-signals:
-    void respond(QSharedPointer<Message> message);
-
-public:
-    QObject* processor;
+ public:
+  QObject* processor;
 };
-}
-#endif // CALLMANAGER_H
+}  // namespace jsonrpc
+#endif  // CALLMANAGER_H
