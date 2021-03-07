@@ -7,6 +7,7 @@
 #include "response.h"
 #include "error.h"
 #include "call.h"
+#include "exceptions.h"
 
 namespace jsonrpc{
 

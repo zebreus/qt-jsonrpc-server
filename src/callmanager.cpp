@@ -10,26 +10,33 @@ void jsonrpc::CallManager::processRequest(const QSharedPointer<jsonrpc::Request>
 {
     QJsonValue id = request->getId();
 
+    //This should be safe, as long as Call throws or emits onError or onSuccess.
     Call* call;
+
     try{
         call = new Call(processor, request->getMethodName(), request->getArguments(),this);
-    }catch(const Error& error){
-        QSharedPointer<jsonrpc::Error> response(new jsonrpc::Error(id, error.getCode(), error.getMessage()));
-        emit respond(response);
+    }catch(const exceptions::JsonrpcException& exception){
+        emit respond(QSharedPointer<Error>::create((&exception)->generateError(id)));
+        return;
     }
 
     connect(call, &Call::onError, this, [this, id, call](const Error& error){
-        QSharedPointer<jsonrpc::Error> response(new jsonrpc::Error(id, error.getCode(), error.getMessage()));
+        QSharedPointer<Error> response(new jsonrpc::Error(id, error.getCode(), error.getMessage()));
         call->deleteLater();
         emit respond(response);
     });
     connect(call, &Call::onSuccess, this, [this, id, call](const QJsonValue& result){
-        QSharedPointer<jsonrpc::Response> response(new jsonrpc::Response(id, result));
+        QSharedPointer<Response> response(new jsonrpc::Response(id, result));
         call->deleteLater();
         emit respond(response);
     });
 
-    call->invoke();
+    try{
+        call->invoke();
+    }catch(const exceptions::JsonrpcException& exception){
+        emit respond(QSharedPointer<Error>::create(exception.generateError(id)));
+        delete call;
+    }
 }
 
 void jsonrpc::CallManager::receiveError(QSharedPointer<jsonrpc::Error> error)

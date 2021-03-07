@@ -64,7 +64,8 @@ test{
     HEADERS += tests/calltest.hpp
     SOURCES += tests/argumenttest.cpp \
                tests/calltest.cpp \
-               tests/exceptionstest.cpp
+               tests/exceptionstest.cpp \
+               tests/callmanagertest.cpp
 }
 else{
     message(Building app)
