@@ -15,6 +15,10 @@ public slots:
 //TODO Find out if googlemock can help with this
 class MockTarget : public SuperMock{
     Q_OBJECT
+public:
+    inline int emptyMethod(){
+        return 345;
+    };
 public slots:
     inline int addNumbers(int a, int b){
         return a+b;
@@ -25,10 +29,20 @@ public slots:
     inline int noParams(){
         return 564;
     };
+    inline void emitSignalA(){
+        emit signalA();
+    };
+    inline void emitSignalB(){
+        emit signalB("text");
+    };
 private slots:
     inline int privateSlot(){
         return 564;
     };
+signals:
+    void signalA();
+    void signalB(QString text);
 };
+
 
 #endif

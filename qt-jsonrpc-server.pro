@@ -29,6 +29,7 @@ SOURCES += \
     src/requestmanager.cpp \
     src/response.cpp \
     src/exceptions.cpp \
+    src/signalconverter.cpp \
     test/testservice.cpp \
     test/main.cpp
 
@@ -45,6 +46,7 @@ HEADERS += \
     include/response.h \
     include/server.h \
     include/exceptions.h \
+    include/signalconverter.h \
     test/testservice.h
 
 test{
@@ -65,7 +67,8 @@ test{
     SOURCES += tests/argumenttest.cpp \
                tests/calltest.cpp \
                tests/exceptionstest.cpp \
-               tests/callmanagertest.cpp
+               tests/callmanagertest.cpp \
+               tests/signalconvertertest.cpp
 }
 else{
     message(Building app)
