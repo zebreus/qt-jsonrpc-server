@@ -1,7 +1,7 @@
 QT -= gui
 QT += websockets
 
-CONFIG += c++17 console
+CONFIG += c++2a console
 CONFIG -= app_bundle
 
 INCLUDEPATH += include/

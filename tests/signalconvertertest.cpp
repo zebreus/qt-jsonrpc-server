@@ -20,19 +20,19 @@ TEST(signalConverterTests, testSignalsGetConverted) {
   SignalConverter converter;
   converter.attach(&emitter);
 
-  QString returnValue;
-  QObject::connect(&converter, &SignalConverter::convertedSignal, [&returnValue](QString text) {
-    returnValue = text;
+  QSharedPointer<jsonrpc::Message> returnValue(nullptr);
+  QObject::connect(&converter, &SignalConverter::convertedSignal, [&returnValue](const QSharedPointer<jsonrpc::Message>& message) {
+    returnValue = message;
   });
 
   emit emitter.signalA();
 
   QTime limit = QTime::currentTime().addMSecs(500);
-  while(QTime::currentTime() < limit && returnValue == "") {
+  while(QTime::currentTime() < limit && returnValue == nullptr) {
     QCoreApplication::processEvents(QEventLoop::AllEvents, 50);
   }
 
-  ASSERT_EQ(returnValue, "signalA");
+  ASSERT_EQ(((jsonrpc::Request*)returnValue.get())->getMethodName(), "signalA");
 }
 
 TEST(signalConverterTests, testMethodsAndSlotsDoNotGetConverted) {
@@ -41,7 +41,7 @@ TEST(signalConverterTests, testMethodsAndSlotsDoNotGetConverted) {
   converter.attach(&emitter);
 
   bool convertedSignal = false;
-  QObject::connect(&converter, &SignalConverter::convertedSignal, [&convertedSignal](QString) {
+  QObject::connect(&converter, &SignalConverter::convertedSignal, [&convertedSignal](const QSharedPointer<jsonrpc::Message>& message) {
     convertedSignal = true;
   });
 
@@ -52,7 +52,7 @@ TEST(signalConverterTests, testMethodsAndSlotsDoNotGetConverted) {
   emit emitter.emptyMethod();
 
   QTime limit = QTime::currentTime().addMSecs(200);
-  while(QTime::currentTime() < limit) {
+  while(QTime::currentTime() < limit && convertedSignal == false) {
     QCoreApplication::processEvents(QEventLoop::AllEvents, 50);
   }
 

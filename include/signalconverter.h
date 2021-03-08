@@ -1,6 +1,11 @@
 #ifndef SIGNALCONVERTER_H
 #define SIGNALCONVERTER_H
 
+#include <argument.h>
+#include <exceptions.h>
+#include <message.h>
+#include <request.h>
+
 #include <QDebug>
 #include <QMap>
 #include <QMetaMethod>
@@ -17,7 +22,7 @@ class PrivateSignalConverter: public QObject {
  public:
   explicit PrivateSignalConverter(QObject* parent = nullptr);
  signals:
-  void convertedSignal(const QString& message);
+  void convertedSignal(const QSharedPointer<Message>& message);
 };
 
 // Attaches to a QObject and converts all public signals it emits to Request messages
@@ -29,9 +34,12 @@ class SignalConverter: public PrivateSignalConverter {
 
  private:
   void connectIfPossible(QObject* target, const QMetaMethod& method);
+  QSharedPointer<Message> createMessage(void** arguments, const QMetaMethod& method);
 
   int dynamicSlotOffset;
-  QMap<int, QString> associatedStrings;
+  QMap<int, QMetaMethod> methodIds;
+  int messageId;
+  static constexpr int initialMessageId = 10000;
 };
 
 }  // namespace jsonrpc
