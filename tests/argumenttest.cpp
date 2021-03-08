@@ -56,6 +56,25 @@ TEST(argumentTests, argumentCreateWithUndefinedWorks) {
   });
 }
 
+TEST(argumentTests, argumentVoidPointerConstructorWorks) {
+  QString myString = "COOL STRING";
+  QSharedPointer<Argument> argument;
+
+  ASSERT_NO_THROW({ argument.reset(Argument::create(QMetaType::QString, (void*)(&myString))); });
+
+  ASSERT_EQ(getArgumentValue<QString>(argument), "COOL STRING");
+}
+
+TEST(argumentTests, argumentVoidPointerConstructorCreatesCopy) {
+  QString myString = "COOL STRING";
+  QSharedPointer<Argument> argument;
+
+  ASSERT_NO_THROW({ argument.reset(Argument::create(QMetaType::QString, (void*)(&myString))); });
+
+  myString = "UNCOOL STRING";
+  ASSERT_EQ(getArgumentValue<QString>(argument), "COOL STRING");
+}
+
 // Integer types
 
 TEST(argumentTests, shortArgumentTest) {

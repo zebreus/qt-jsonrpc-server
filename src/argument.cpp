@@ -25,6 +25,11 @@ ArgumentImplementation<T>::ArgumentImplementation(const QJsonValue&) {
   static_assert(!std::is_same<T, T>::value, "Argument is not implemented for the type");
 }
 
+template<typename T>
+ArgumentImplementation<T>::ArgumentImplementation(T* const& argument) {
+  setValue(*argument);
+}
+
 template<>
 ArgumentImplementation<bool>::ArgumentImplementation(const QJsonValue& argument) {
   if(argument.isBool()) {
@@ -1421,11 +1426,20 @@ ArgumentImplementation<T>::ArgumentImplementation() {
   argument = Q_ARG(T, *this->value);
 }
 
-Argument* Argument::create(const int requiredTypeId, const QJsonValue& value) {
+Argument* Argument::create(const int requiredTypeId) {
+  return Argument::create(requiredTypeId, QJsonValue::Undefined);
+}
+
+template Argument* Argument::create<QJsonValue>(const int requiredTypeId, const QJsonValue& value);
+
+template Argument* Argument::create<void*>(const int requiredTypeId, void* const& value);
+
+template<typename T>
+Argument* Argument::create(const int requiredTypeId, const T& value) {
   switch((QMetaType::Type)requiredTypeId) {
     case QMetaType::Void:
       // TODO decide how to handle void
-      throw exceptions::WrongArgumentType("void", value, " void types are not implemented.");
+      throw exceptions::WrongArgumentType("void", getTypeName(value), " void types are not implemented.");
       break;
     case QMetaType::UnknownType:
       // Target type unregistered
@@ -1671,7 +1685,7 @@ Argument* Argument::create(const int requiredTypeId, const QJsonValue& value) {
     default:
       // Usertype
       QString requiredTypeName = QMetaType::typeName((QMetaType::Type)requiredTypeId);
-      throw exceptions::WrongArgumentType(requiredTypeName, value, "user defined types are not yet supported.");
+      throw exceptions::WrongArgumentType(requiredTypeName, getTypeName(value), "user defined types are not yet supported.");
   }
 }
 
@@ -1682,4 +1696,40 @@ Argument* Argument::createArgument(const QJsonValue& jsonValue) {
   } else {
     return new ArgumentImplementation<T>();
   }
+}
+
+template<typename T>
+Argument* Argument::createArgument(void* const& value) {
+  return new ArgumentImplementation<T>((T* const&)value);
+}
+
+QString Argument::getTypeName(const QJsonValue& value) {
+  switch(value.type()) {
+    case QJsonValue::Type::Null:
+      return "null";
+      break;
+    case QJsonValue::Type::Bool:
+      return "bool";
+      break;
+    case QJsonValue::Type::Double:
+      return "number";
+      break;
+    case QJsonValue::Type::String:
+      return "string";
+      break;
+    case QJsonValue::Type::Array:
+      return QString("array (size ") + QString::number(value.toArray().size()) + ")";
+      break;
+    case QJsonValue::Type::Object:
+      return "object";
+      break;
+    default:
+    case QJsonValue::Type::Undefined:
+      return "undefined";
+      break;
+  }
+}
+
+QString Argument::getTypeName(void* const&) {
+  return "pointer";
 }
