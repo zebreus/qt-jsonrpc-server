@@ -11,7 +11,6 @@
 #include "error.h"
 #include "message.h"
 #include "request.h"
-#include "requestmanager.h"
 #include "response.h"
 
 namespace jsonrpc {
@@ -40,7 +39,6 @@ class MessageProcessor: public QObject {
 
  public:
   CallManager* callManager;
-  RequestManager* requestManager;
   QObject* processor;
 };
 

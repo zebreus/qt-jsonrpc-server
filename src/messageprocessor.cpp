@@ -1,10 +1,8 @@
 #include "messageprocessor.h"
 
 jsonrpc::MessageProcessor::MessageProcessor(QObject* processor, QObject* parent): QObject(parent), processor(processor) {
-  requestManager = new RequestManager(processor, this);
   callManager = new CallManager(processor, this);
   connect(callManager, &CallManager::respond, this, &MessageProcessor::processOutgoingMessage);
-  connect(requestManager, &RequestManager::sendingRequest, this, &MessageProcessor::processOutgoingMessage);
 }
 
 void jsonrpc::MessageProcessor::processIncomingDocument(const QJsonDocument& jsonDocument) {
@@ -71,12 +69,12 @@ void jsonrpc::MessageProcessor::processIncomingRequest(const QSharedPointer<json
   callManager->processRequest(request);
 }
 
-void jsonrpc::MessageProcessor::processIncomingResponse(const QSharedPointer<jsonrpc::Response>& response) {
-  requestManager->processResponse(response);
+void jsonrpc::MessageProcessor::processIncomingResponse(const QSharedPointer<jsonrpc::Response>&) {
+  qDebug() << "Got incoming response, this was unexpected.";
 }
 
-void jsonrpc::MessageProcessor::processIncomingError(const QSharedPointer<jsonrpc::Error>& error) {
-  requestManager->processError(error);
+void jsonrpc::MessageProcessor::processIncomingError(const QSharedPointer<jsonrpc::Error>&) {
+  qDebug() << "Got incoming error, this was unexpected.";
 }
 
 void jsonrpc::MessageProcessor::processIncomingMessage(const QString& message) {

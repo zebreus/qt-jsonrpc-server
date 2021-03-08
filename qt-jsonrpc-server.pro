@@ -26,7 +26,6 @@ SOURCES += \
     src/message.cpp \
     src/messageprocessor.cpp \
     src/request.cpp \
-    src/requestmanager.cpp \
     src/response.cpp \
     src/exceptions.cpp \
     src/signalconverter.cpp \
@@ -42,7 +41,6 @@ HEADERS += \
     include/message.h \
     include/messageprocessor.h \
     include/request.h \
-    include/requestmanager.h \
     include/response.h \
     include/server.h \
     include/exceptions.h \
