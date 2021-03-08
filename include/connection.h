@@ -7,6 +7,7 @@
 #include <QObject>
 #include <QReturnArgument>
 #include <QString>
+#include <QWebSocket>
 #include <QtWebSockets/QWebSocket>
 #include <cmath>
 
@@ -19,9 +20,8 @@ class Connection: public QObject {
   Q_OBJECT
  public:
   explicit Connection(QWebSocket* websocket, QObject* target, QObject* parent = nullptr);
+  ~Connection();
  public slots:
-  void receiveIncomingMessage(const QString& message);
-  void receiveOutgoingMessage(const QString& message);
   void disconnect();
 
  signals:
@@ -30,6 +30,7 @@ class Connection: public QObject {
 
  public:
   QObject* processor;
+  CallManager* callManager;
   QWebSocket* webSocket;
   MessageProcessor* messageProcessor;
 };

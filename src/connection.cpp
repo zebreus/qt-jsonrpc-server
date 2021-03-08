@@ -2,20 +2,21 @@
 
 jsonrpc::Connection::Connection(QWebSocket* webSocket, QObject* target, QObject* parent)
     : QObject(parent), processor(target), webSocket(webSocket) {
-  messageProcessor = new MessageProcessor(target, this);
-  connect(webSocket, &QWebSocket::textMessageReceived, this, &Connection::receiveIncomingMessage);
   connect(webSocket, &QWebSocket::disconnected, this, &Connection::disconnect);
-  connect(messageProcessor, &MessageProcessor::outgoingMessage, this, &Connection::receiveOutgoingMessage);
-  connect(this, &Connection::incomingMessage, messageProcessor, &MessageProcessor::processIncomingMessage);
+
+  messageProcessor = new MessageProcessor(this);
+  connect(webSocket, &QWebSocket::textMessageReceived, messageProcessor, &MessageProcessor::receiveMessage);
+  connect(webSocket, &QWebSocket::binaryMessageReceived, messageProcessor, &MessageProcessor::receiveMessage);
+  connect(messageProcessor, &MessageProcessor::outgoingMessage, this, [webSocket](QString message) {
+    webSocket->sendBinaryMessage(message.toUtf8());
+  });
+
+  callManager = new CallManager(target, this);
+  connect(messageProcessor, &MessageProcessor::receivedRequest, callManager, &CallManager::processRequest);
+  connect(callManager, &CallManager::respond, messageProcessor, &MessageProcessor::sendMessage);
 }
 
-void jsonrpc::Connection::receiveIncomingMessage(const QString& message) {
-  emit incomingMessage(message);
-}
-
-void jsonrpc::Connection::receiveOutgoingMessage(const QString& message) {
-  webSocket->sendBinaryMessage(message.toUtf8());
-}
+jsonrpc::Connection::~Connection() {}
 
 void jsonrpc::Connection::disconnect() {
   qDebug() << "disconnected";

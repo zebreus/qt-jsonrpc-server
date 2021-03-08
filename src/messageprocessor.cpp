@@ -1,9 +1,6 @@
 #include "messageprocessor.h"
 
-jsonrpc::MessageProcessor::MessageProcessor(QObject* processor, QObject* parent): QObject(parent), processor(processor) {
-  callManager = new CallManager(processor, this);
-  connect(callManager, &CallManager::respond, this, &MessageProcessor::processOutgoingMessage);
-}
+jsonrpc::MessageProcessor::MessageProcessor(QObject* parent): QObject(parent) {}
 
 void jsonrpc::MessageProcessor::processIncomingDocument(const QJsonDocument& jsonDocument) {
   // Decide if message is a batch and handle
@@ -14,13 +11,13 @@ void jsonrpc::MessageProcessor::processIncomingDocument(const QJsonDocument& jso
   } else if(jsonDocument.isArray()) {
     // Batch call
     QJsonArray jsonArray = jsonDocument.array();
-    for(QJsonValue jsonRpcObject : jsonArray) {
+    for(const QJsonValue& jsonRpcObject : jsonArray) {
       if(jsonRpcObject.isObject()) {
         processIncomingObject(jsonRpcObject.toObject());
       } else {
         QString errorMessage = "Entry of batch request is no json object";
         Error* error = new Error(QJsonValue::Null, Error::Code::InvalidRequest, errorMessage);
-        processOutgoingMessage(QSharedPointer<Error>(error));
+        sendMessage(QSharedPointer<Error>(error));
       }
     }
   } else if(jsonDocument.isEmpty()) {
@@ -29,7 +26,7 @@ void jsonrpc::MessageProcessor::processIncomingDocument(const QJsonDocument& jso
     // Document is null, probably some kind of parsing error, should not happen
     QString errorMessage = "Request is null";
     Error* error = new Error(QJsonValue::Null, Error::Code::ParseError, errorMessage);
-    processOutgoingMessage(QSharedPointer<Error>(error));
+    sendMessage(QSharedPointer<Error>(error));
   }
 }
 
@@ -37,47 +34,35 @@ void jsonrpc::MessageProcessor::processIncomingObject(const QJsonObject& message
   if(!message.value("method").isUndefined()) {
     try {
       Request* request = new Request(message);
-      processIncomingRequest(QSharedPointer<Request>(request));
+      emit receivedRequest(QSharedPointer<Request>(request));
     } catch(const QString& errorMessage) {
       Error* error = new Error(message.value("id"), Error::Code::InvalidRequest, errorMessage);
-      processOutgoingMessage(QSharedPointer<Error>(error));
+      sendMessage(QSharedPointer<Error>(error));
     }
   } else if(!message.value("error").isUndefined()) {
     try {
       Error* error = new Error(message);
-      processIncomingError(QSharedPointer<Error>(error));
+      emit receivedError(QSharedPointer<Error>(error));
     } catch(const QString& errorMessage) {
       Error* error = new Error(message.value("id"), Error::Code::InvalidRequest, errorMessage);
-      processOutgoingMessage(QSharedPointer<Error>(error));
+      sendMessage(QSharedPointer<Error>(error));
     }
   } else if(!message.value("result").isUndefined()) {
     try {
       Response* response = new Response(message);
-      processIncomingResponse(QSharedPointer<Response>(response));
+      emit receivedResponse(QSharedPointer<Response>(response));
     } catch(const QString& errorMessage) {
       Error* error = new Error(message.value("id"), Error::Code::InvalidRequest, errorMessage);
-      processOutgoingMessage(QSharedPointer<Error>(error));
+      sendMessage(QSharedPointer<Error>(error));
     }
   } else {
     QString errorMessage = "Message is no request response or error";
     Error* error = new Error(message.value("id"), Error::Code::InvalidRequest, errorMessage);
-    processOutgoingMessage(QSharedPointer<Error>(error));
+    sendMessage(QSharedPointer<Error>(error));
   }
 }
 
-void jsonrpc::MessageProcessor::processIncomingRequest(const QSharedPointer<jsonrpc::Request>& request) {
-  callManager->processRequest(request);
-}
-
-void jsonrpc::MessageProcessor::processIncomingResponse(const QSharedPointer<jsonrpc::Response>&) {
-  qDebug() << "Got incoming response, this was unexpected.";
-}
-
-void jsonrpc::MessageProcessor::processIncomingError(const QSharedPointer<jsonrpc::Error>&) {
-  qDebug() << "Got incoming error, this was unexpected.";
-}
-
-void jsonrpc::MessageProcessor::processIncomingMessage(const QString& message) {
+void jsonrpc::MessageProcessor::receiveMessage(const QString& message) {
   QJsonParseError err;
   QJsonDocument jsonDocument = QJsonDocument::fromJson(message.toUtf8(), &err);
   if(err.error == QJsonParseError::NoError) {
@@ -87,11 +72,11 @@ void jsonrpc::MessageProcessor::processIncomingMessage(const QString& message) {
     QString errorMessage = "Error parsing json";
     QJsonValue detailedErrorMessage = err.errorString();
     Error* error = new Error(QJsonValue::Null, Error::Code::ParseError, errorMessage, detailedErrorMessage);
-    processOutgoingMessage(QSharedPointer<Error>(error));
+    sendMessage(QSharedPointer<Error>(error));
   }
 }
 
-void jsonrpc::MessageProcessor::processOutgoingMessage(const QSharedPointer<jsonrpc::Message>& message) {
+void jsonrpc::MessageProcessor::sendMessage(const QSharedPointer<jsonrpc::Message>& message) {
   QJsonObject jsonObject = message->toJson();
   QJsonDocument document(jsonObject);
   emit outgoingMessage(document.toJson(QJsonDocument::Compact));
