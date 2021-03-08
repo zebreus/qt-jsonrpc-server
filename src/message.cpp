@@ -30,9 +30,9 @@ QJsonObject Message::toJson() const {
   return jsonMessage;
 }
 
-Message::Message() {
-  QString uuid = QUuid::createUuid().toString(QUuid::Id128);
-  id = QJsonValue(uuid);
+Message::Message(): id(QJsonValue::Null) {
+  // QString uuid = QUuid::createUuid().toString(QUuid::Id128);
+  // id = QJsonValue(uuid);
 }
 
 Message::Message(const QJsonValue& id): id(id) {

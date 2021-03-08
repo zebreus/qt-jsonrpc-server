@@ -4,7 +4,7 @@ using namespace jsonrpc;
 
 PrivateSignalConverter::PrivateSignalConverter(QObject* parent): QObject(parent) {}
 
-SignalConverter::SignalConverter(QObject* parent): PrivateSignalConverter(parent), dynamicSlotOffset(100), messageId(initialMessageId) {}
+SignalConverter::SignalConverter(QObject* parent): PrivateSignalConverter(parent), dynamicSlotOffset(100) {}
 
 void SignalConverter::attach(QObject* target) {
   const QMetaObject* targetMetaObject = target->metaObject();
@@ -23,7 +23,15 @@ int SignalConverter::qt_metacall(QMetaObject::Call call, int id, void** argument
     return id;
   }
   if(call == QMetaObject::InvokeMetaMethod) {
-    emit convertedSignal(createMessage(arguments, methodIds[id]));
+    try {
+      emit convertedSignal(createMessage(arguments, methodIds[id]));
+    } catch(const exceptions::JsonrpcException& exception) {
+      // This can probably happen, if the signal has unsupported types
+      // TODO Decide on how to handle it
+      // This is not optimal, as Errors are being sent, without a prior request with the same messageId
+      qDebug() << "Failed to convert signal to message. " << exception.generateError("").getMessage();
+      return -1;
+    }
   } else {
     qDebug() << "Something else " << QString::number(call);
   }
@@ -44,18 +52,10 @@ QSharedPointer<Message> SignalConverter::createMessage(void** arguments, const Q
   QList<QJsonValue> jsonArguments;
   for(int parameterIndex = 0; parameterIndex < method.parameterCount(); parameterIndex++) {
     const int& parameterType = method.parameterType(parameterIndex);
-    try {
-      QScopedPointer<Argument> argument(Argument::create(parameterType, arguments[parameterIndex + 1]));
-      jsonArguments.append(argument->getJson());
-    } catch(const exceptions::JsonrpcException& exception) {
-      // This can probably happen, if the signal has unsupported types
-      // TODO Decide on how to handle it
-      // This is not optimal, as Errors are being sent, without a prior request with the same messageId
-      QSharedPointer<Error> response(new jsonrpc::Error(exception.generateError(messageId++)));
-      return response;
-    }
+    QScopedPointer<Argument> argument(Argument::create(parameterType, arguments[parameterIndex + 1]));
+    jsonArguments.append(argument->getJson());
   }
 
-  QSharedPointer<Request> response(new jsonrpc::Request(messageId++, name, jsonArguments));
+  QSharedPointer<Request> response(new jsonrpc::Request(name, jsonArguments));
   return response;
 }

@@ -38,8 +38,6 @@ class SignalConverter: public PrivateSignalConverter {
 
   int dynamicSlotOffset;
   QMap<int, QMetaMethod> methodIds;
-  int messageId;
-  static constexpr int initialMessageId = 10000;
 };
 
 }  // namespace jsonrpc
