@@ -1,7 +1,7 @@
 #ifndef CALL_TEST_CPP
 #define CALL_TEST_CPP
 
-#include "calltest.hpp"
+#include "mocktarget.hpp"
 
 #include <argument.h>
 #include <call.h>

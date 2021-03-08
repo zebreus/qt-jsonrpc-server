@@ -10,7 +10,7 @@
 #include <QJsonValue>
 #include <QObject>
 
-#include "calltest.hpp"
+#include "mocktarget.hpp"
 
 using namespace testing;
 using namespace jsonrpc;
@@ -41,7 +41,7 @@ TEST(signalConverterTests, testMethodsAndSlotsDoNotGetConverted) {
   converter.attach(&emitter);
 
   bool convertedSignal = false;
-  QObject::connect(&converter, &SignalConverter::convertedSignal, [&convertedSignal](const QSharedPointer<jsonrpc::Message>& message) {
+  QObject::connect(&converter, &SignalConverter::convertedSignal, [&convertedSignal](const QSharedPointer<jsonrpc::Message>&) {
     convertedSignal = true;
   });
 

@@ -18,7 +18,7 @@
 #include <QTime>
 #include <limits>
 
-#include "calltest.hpp"
+#include "mocktarget.hpp"
 
 using namespace testing;
 using namespace jsonrpc;

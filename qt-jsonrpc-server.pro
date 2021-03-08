@@ -56,17 +56,20 @@ test{
     INCLUDEPATH += src
 
     CONFIG += thread
-    LIBS += -lgtest -lgtest_main
+    LIBS += -lgtest
 
     SOURCES -= test/testservice.cpp
     SOURCES -= test/main.cpp
     HEADERS -= test/testservice.h
-    HEADERS += tests/calltest.hpp
+    HEADERS += tests/mocktarget.hpp
     SOURCES += tests/argumenttest.cpp \
                tests/calltest.cpp \
                tests/exceptionstest.cpp \
                tests/callmanagertest.cpp \
-               tests/signalconvertertest.cpp
+               tests/signalconvertertest.cpp \
+               tests/servertest.cpp \
+               tests/mocktarget.cpp \
+               tests/main.cpp
 }
 else{
     message(Building app)
