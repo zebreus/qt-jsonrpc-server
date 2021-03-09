@@ -231,4 +231,78 @@ TEST_F(ConnectionTests, connectionDoesNotFailOnDeactivate) {
   EXPECT_EQ(receivedErrors.size(), 0);
 }
 
+TEST_F(ConnectionTests, connectionDoesEmitSignalAfterActivation) {
+  QSharedPointer<Request> emitRequest(new Request(34, "emitSignalA", {}));
+
+  QSharedPointer<Request> activateRequest(new Request(35, "rpc.qt.activate", {}));
+
+  sendMessageToConnection(activateRequest);
+
+  processEvents(500, [this]() {
+    return receivedResponses.size() == 0;
+  });
+
+  EXPECT_EQ(receivedResponses.size(), 1);
+  EXPECT_EQ(receivedRequests.size(), 0);
+  EXPECT_EQ(receivedErrors.size(), 0);
+
+  sendMessageToConnection(emitRequest);
+
+  processEvents(500, [this]() {
+    return !(receivedResponses.size() == 2 && receivedRequests.size() == 1);
+  });
+
+  EXPECT_EQ(receivedResponses.size(), 2);
+  EXPECT_EQ(receivedRequests.size(), 1);
+  EXPECT_EQ(receivedErrors.size(), 0);
+}
+
+TEST_F(ConnectionTests, connectionDoesNotEmitSignalAfterDeactivation) {
+  QSharedPointer<Request> emitRequest(new Request(34, "emitSignalA", {}));
+
+  QSharedPointer<Request> activateRequest(new Request(35, "rpc.qt.activate", {}));
+
+  QSharedPointer<Request> deactivateRequest(new Request(35, "rpc.qt.deactivate", {}));
+
+  sendMessageToConnection(activateRequest);
+
+  processEvents(500, [this]() {
+    return receivedResponses.size() == 0;
+  });
+
+  EXPECT_EQ(receivedResponses.size(), 1);
+  EXPECT_EQ(receivedRequests.size(), 0);
+  EXPECT_EQ(receivedErrors.size(), 0);
+
+  sendMessageToConnection(emitRequest);
+
+  processEvents(500, [this]() {
+    return !(receivedResponses.size() == 2 && receivedRequests.size() == 1);
+  });
+
+  EXPECT_EQ(receivedResponses.size(), 2);
+  EXPECT_EQ(receivedRequests.size(), 1);
+  EXPECT_EQ(receivedErrors.size(), 0);
+
+  sendMessageToConnection(deactivateRequest);
+
+  processEvents(500, [this]() {
+    return !(receivedResponses.size() == 3 && receivedRequests.size() == 1);
+  });
+
+  EXPECT_EQ(receivedResponses.size(), 3);
+  EXPECT_EQ(receivedRequests.size(), 1);
+  EXPECT_EQ(receivedErrors.size(), 0);
+
+  sendMessageToConnection(emitRequest);
+
+  processEvents(500, [this]() {
+    return !(receivedResponses.size() == 4 && receivedRequests.size() == 1);
+  });
+
+  EXPECT_EQ(receivedResponses.size(), 4);
+  EXPECT_EQ(receivedRequests.size(), 1);
+  EXPECT_EQ(receivedErrors.size(), 0);
+}
+
 #endif
