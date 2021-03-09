@@ -67,6 +67,9 @@ class ConnectionTests: public ::testing::Test {
                               messageProcessor.get(),
                               &MessageProcessor::receiveMessage,
                               Qt::DirectConnection);
+    QCoreApplication::connect(connection.get(), &Connection::sendMessage, messageProcessor.get(), [this](const QString& string) {
+      receivedMessages.append(string);
+    });
   }
 
   void sendMessageToConnection(const QString& message) {
@@ -83,7 +86,11 @@ class ConnectionTests: public ::testing::Test {
   }
 
   QString getLastMessageStringFromConnection() {
-    return receivedMessages.back();
+    if(receivedMessages.size() > 0) {
+      return receivedMessages.last();
+    } else {
+      return "";
+    }
   }
 
   QSharedPointer<jsonrpc::Request> getLastRequest() {
@@ -164,7 +171,7 @@ TEST_F(ConnectionTests, connectionDoesNotRespondToNotification) {
 
   sendMessageToConnection(request);
 
-  processEvents(500, [this]() {
+  processEvents(400, [this]() {
     return receivedResponses.size() == 0;
   });
 
@@ -173,4 +180,20 @@ TEST_F(ConnectionTests, connectionDoesNotRespondToNotification) {
   EXPECT_EQ(receivedErrors.size(), 0);
 }
 
+TEST_F(ConnectionTests, connectionDoesNotEmitSignalBeforeActivation) {
+  QJsonValue id(34);
+  QString method = "emitSignalA";
+  QList<QJsonValue> arguments = {};
+  QSharedPointer<Request> request(new Request(id, method, arguments));
+
+  sendMessageToConnection(request);
+
+  processEvents(500, [this]() {
+    return receivedResponses.size() == 0;
+  });
+
+  EXPECT_EQ(receivedResponses.size(), 1);
+  EXPECT_EQ(receivedRequests.size(), 0);
+  EXPECT_EQ(receivedErrors.size(), 0);
+}
 #endif

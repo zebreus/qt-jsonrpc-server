@@ -1438,8 +1438,9 @@ template<typename T>
 Argument* Argument::create(const int requiredTypeId, const T& value) {
   switch((QMetaType::Type)requiredTypeId) {
     case QMetaType::Void:
-      // TODO decide how to handle void
-      throw exceptions::WrongArgumentType("void", getTypeName(value), " void types are not implemented.");
+      // TODO Find better way to handle void
+      // throw exceptions::WrongArgumentType("void", getTypeName(value), " void types are not implemented.");
+      return createArgument<bool>(false);
       break;
     case QMetaType::UnknownType:
       // Target type unregistered
