@@ -1,16 +1,18 @@
 #include "request.h"
 
+#include <exceptions.h>
+
 namespace jsonrpc {
 
 Request::Request(const QJsonObject& message): Message(message) {
   QJsonValue jsonMethodName = message.value("method");
   if(!jsonMethodName.isString()) {
-    throw "Invalid request";
+    throw exceptions::InvalidRequest();
   }
   methodName = jsonMethodName.toString();
 
   if(!buildArguments(message.value("params"))) {
-    throw "Invalid request";
+    throw exceptions::InvalidRequest();
   }
 }
 
@@ -29,7 +31,7 @@ QJsonObject Request::toJson() const {
 
   if(arguments.size() != 0) {
     QJsonArray requestArguments;
-    for(QJsonValue argument : arguments) {
+    for(const QJsonValue& argument : arguments) {
       requestArguments.append(argument);
     }
     requestMessageJson.insert("params", requestArguments);

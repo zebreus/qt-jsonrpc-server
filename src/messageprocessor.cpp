@@ -31,34 +31,21 @@ void jsonrpc::MessageProcessor::processIncomingDocument(const QJsonDocument& jso
 }
 
 void jsonrpc::MessageProcessor::processIncomingObject(const QJsonObject& message) {
-  if(!message.value("method").isUndefined()) {
-    try {
+  try {
+    if(!message.value("method").isUndefined()) {
       Request* request = new Request(message);
       emit receivedRequest(QSharedPointer<Request>(request));
-    } catch(const QString& errorMessage) {
-      Error* error = new Error(message.value("id"), Error::Code::InvalidRequest, errorMessage);
-      sendMessage(QSharedPointer<Error>(error));
-    }
-  } else if(!message.value("error").isUndefined()) {
-    try {
+    } else if(!message.value("error").isUndefined()) {
       Error* error = new Error(message);
       emit receivedError(QSharedPointer<Error>(error));
-    } catch(const QString& errorMessage) {
-      Error* error = new Error(message.value("id"), Error::Code::InvalidRequest, errorMessage);
-      sendMessage(QSharedPointer<Error>(error));
-    }
-  } else if(!message.value("result").isUndefined()) {
-    try {
+    } else if(!message.value("result").isUndefined()) {
       Response* response = new Response(message);
       emit receivedResponse(QSharedPointer<Response>(response));
-    } catch(const QString& errorMessage) {
-      Error* error = new Error(message.value("id"), Error::Code::InvalidRequest, errorMessage);
-      sendMessage(QSharedPointer<Error>(error));
+    } else {
+      throw exceptions::InvalidMessage("Message is no request, response or error.");
     }
-  } else {
-    QString errorMessage = "Message is no request response or error";
-    Error* error = new Error(message.value("id"), Error::Code::InvalidRequest, errorMessage);
-    sendMessage(QSharedPointer<Error>(error));
+  } catch(const exceptions::JsonrpcException& exception) {
+    sendMessage(QSharedPointer<Error>::create(exception.generateError(message.value("id"))));
   }
 }
 

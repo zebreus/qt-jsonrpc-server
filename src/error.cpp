@@ -1,5 +1,7 @@
 #include "error.h"
 
+#include <exceptions.h>
+
 namespace jsonrpc {
 
 Error::Error(const QJsonObject& message): Message(message) {
@@ -9,20 +11,20 @@ Error::Error(const QJsonObject& message): Message(message) {
     if(jsonErrorCode.isDouble()) {
       code = jsonErrorCode.toInt();
     } else {
-      throw "Invalid error";
+      throw exceptions::InvalidError();
     }
 
     QJsonValue jsonErrorMessage = jsonError.toObject().value("message");
     if(jsonErrorMessage.isString()) {
       this->message = jsonErrorMessage.toString();
     } else {
-      throw "Invalid error";
+      throw exceptions::InvalidError();
     }
 
     QJsonValue data = jsonError.toObject().value("data");
 
   } else {
-    throw "Invalid error";
+    throw exceptions::InvalidError();
   }
 }
 
@@ -39,15 +41,14 @@ QJsonValue Error::getData() const {
 }
 
 bool Error::hasData() const {
-  return !(data.isUndefined() || data.isNull());
+  return !data.isUndefined();
 }
 
 QJsonObject Error::toJson() const {
   QJsonObject errorObject;
   errorObject.insert("code", code);
   errorObject.insert("message", message);
-  // TODO check if just adding QJsonValue::Undefined has the same effect
-  if(!data.isUndefined()) {
+  if(hasData()) {
     errorObject.insert("data", data);
   }
 

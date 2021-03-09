@@ -1,11 +1,13 @@
 #include "response.h"
 
+#include <exceptions.h>
+
 namespace jsonrpc {
 
 Response::Response(const QJsonObject& message): Message(message) {
   result = message.value("result");
   if(result.isUndefined()) {
-    throw "Invalid result";
+    throw exceptions::InvalidResponse();
   }
 }
 
