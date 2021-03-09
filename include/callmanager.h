@@ -27,7 +27,7 @@ class CallManager: public QObject {
  signals:
   void respond(QSharedPointer<Message> message);
 
- public:
+ private:
   QObject* processor;
 };
 }  // namespace jsonrpc

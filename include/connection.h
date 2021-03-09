@@ -11,7 +11,9 @@
 #include <QtWebSockets/QWebSocket>
 #include <cmath>
 
+#include "callmanager.h"
 #include "messageprocessor.h"
+#include "signalconverter.h"
 
 namespace jsonrpc {
 
@@ -23,16 +25,24 @@ class Connection: public QObject {
   ~Connection();
  public slots:
   void disconnect();
+ private slots:
+  void processRequest(const QSharedPointer<Request>& request);
+
+ private:
+  void activateSignals();
+  void deactivateSignals();
+  void describeInterface();
 
  signals:
   void incomingMessage(QString message);
   void outgoingMessage(const QString& message);
 
- public:
+ private:
   QObject* processor;
   CallManager* callManager;
   QWebSocket* webSocket;
   MessageProcessor* messageProcessor;
+  SignalConverter* signalConverter;
 };
 
 }  // namespace jsonrpc
