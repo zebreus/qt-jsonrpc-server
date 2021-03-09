@@ -69,6 +69,7 @@ test{
                tests/signalconvertertest.cpp \
                tests/servertest.cpp \
                tests/mocktarget.cpp \
+               tests/connectiontest.cpp \
                tests/main.cpp
 }
 else{

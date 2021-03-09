@@ -18,7 +18,7 @@ namespace jsonrpc {
 class MessageProcessor: public QObject {
   Q_OBJECT
  public:
-  explicit MessageProcessor(QObject* parent);
+  explicit MessageProcessor(QObject* parent = nullptr);
 
  private:
   void processIncomingDocument(const QJsonDocument& message);
