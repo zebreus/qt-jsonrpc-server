@@ -305,4 +305,91 @@ TEST_F(ConnectionTests, connectionDoesNotEmitSignalAfterDeactivation) {
   EXPECT_EQ(receivedErrors.size(), 0);
 }
 
+TEST_F(ConnectionTests, connectionRespondWithCorrectValue) {
+  QSharedPointer<Request> addRequest(new Request(39, "addNumbers", {-18, 6000000}));
+
+  sendMessageToConnection(addRequest);
+
+  processEvents(500, [this]() {
+    return receivedResponses.size() == 0;
+  });
+
+  EXPECT_EQ(receivedResponses.size(), 1);
+  EXPECT_EQ(receivedRequests.size(), 0);
+  EXPECT_EQ(receivedErrors.size(), 0);
+  QSharedPointer<Response> response = getLastResponse();
+  ASSERT_NE(response, nullptr);
+  ASSERT_EQ(response->getId(), QJsonValue(39));
+  ASSERT_EQ(response->getResult(), QJsonValue(6000000 - 18));
+}
+
+TEST_F(ConnectionTests, connectionFailsOnWrongArgumentCount) {
+  QSharedPointer<Request> addRequest1(new Request(39, "addNumbers", {-18, 6000000, 20}));
+  QSharedPointer<Request> addRequest2(new Request(40, "addNumbers", {-18}));
+  QSharedPointer<Request> addRequest3(new Request(41, "addNumbers", {}));
+  QSharedPointer<Request> addRequest4(new Request(42, "addNumbers", {40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40}));
+
+  sendMessageToConnection(addRequest1);
+  sendMessageToConnection(addRequest2);
+  sendMessageToConnection(addRequest3);
+  sendMessageToConnection(addRequest4);
+
+  processEvents(500, [this]() {
+    return receivedErrors.size() == 4;
+  });
+
+  EXPECT_EQ(receivedResponses.size(), 0);
+  EXPECT_EQ(receivedRequests.size(), 0);
+  EXPECT_EQ(receivedErrors.size(), 4);
+  for(QSharedPointer<Error> error : receivedErrors) {
+    EXPECT_EQ(error->getCode(), Error::MethodNotFound);
+  }
+}
+
+TEST_F(ConnectionTests, connectionFailsOnWrongArgumentTypes) {
+  QSharedPointer<Request> addRequest1(new Request(39, "addNumbers", {5, "four"}));
+  QSharedPointer<Request> addRequest2(new Request(40, "addNumbers", {"five", 4}));
+  QSharedPointer<Request> addRequest3(new Request(41, "addNumbers", {"sadfa", "sfd"}));
+  QSharedPointer<Request> addRequest4(new Request(42, "addNumbers", {5.5, QJsonValue::Undefined}));
+
+  sendMessageToConnection(addRequest1);
+  sendMessageToConnection(addRequest2);
+  sendMessageToConnection(addRequest3);
+  sendMessageToConnection(addRequest4);
+
+  processEvents(500, [this]() {
+    return receivedErrors.size() == 4;
+  });
+
+  EXPECT_EQ(receivedResponses.size(), 0);
+  EXPECT_EQ(receivedRequests.size(), 0);
+  EXPECT_EQ(receivedErrors.size(), 4);
+  for(QSharedPointer<Error> error : receivedErrors) {
+    EXPECT_EQ(error->getCode(), Error::InvalidParams);
+  }
+}
+
+TEST_F(ConnectionTests, connectionFailsOnNonexistantMethod) {
+  QSharedPointer<Request> addRequest1(new Request(39, "addNumbers ", {5, 5}));
+  QSharedPointer<Request> addRequest2(new Request(40, " addNumbers", {5, 5}));
+  QSharedPointer<Request> addRequest3(new Request(41, "_addNumbers", {5, 5}));
+  QSharedPointer<Request> addRequest4(new Request(42, "äddNumbers", {5, 5}));
+
+  sendMessageToConnection(addRequest1);
+  sendMessageToConnection(addRequest2);
+  sendMessageToConnection(addRequest3);
+  sendMessageToConnection(addRequest4);
+
+  processEvents(500, [this]() {
+    return receivedErrors.size() == 4;
+  });
+
+  EXPECT_EQ(receivedResponses.size(), 0);
+  EXPECT_EQ(receivedRequests.size(), 0);
+  EXPECT_EQ(receivedErrors.size(), 4);
+  for(QSharedPointer<Error> error : receivedErrors) {
+    EXPECT_EQ(error->getCode(), Error::MethodNotFound);
+  }
+}
+
 #endif
