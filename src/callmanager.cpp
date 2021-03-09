@@ -4,6 +4,7 @@ jsonrpc::CallManager::CallManager(QObject* target, QObject* parent): QObject(par
 
 void jsonrpc::CallManager::processRequest(const QSharedPointer<jsonrpc::Request>& request) {
   QJsonValue id = request->getId();
+  bool sendResponse = request->hasId();
 
   // This should be safe, as long as Call throws or emits onError or onSuccess.
   Call* call;
@@ -11,25 +12,33 @@ void jsonrpc::CallManager::processRequest(const QSharedPointer<jsonrpc::Request>
   try {
     call = new Call(processor, request->getMethodName(), request->getArguments(), this);
   } catch(const exceptions::JsonrpcException& exception) {
-    emit respond(QSharedPointer<Error>::create((&exception)->generateError(id)));
+    if(sendResponse) {
+      emit respond(QSharedPointer<Error>::create(exception.generateError(id)));
+    }
     return;
   }
 
-  connect(call, &Call::onError, this, [this, id, call](const Error& error) {
-    QSharedPointer<Error> response(new jsonrpc::Error(id, error.getCode(), error.getMessage()));
+  connect(call, &Call::onError, this, [this, id, call, sendResponse](const Error& error) {
+    if(sendResponse) {
+      QSharedPointer<Error> response(new jsonrpc::Error(id, error.getCode(), error.getMessage()));
+      emit respond(response);
+    }
     call->deleteLater();
-    emit respond(response);
   });
-  connect(call, &Call::onSuccess, this, [this, id, call](const QJsonValue& result) {
-    QSharedPointer<Response> response(new jsonrpc::Response(id, result));
+  connect(call, &Call::onSuccess, this, [this, id, call, sendResponse](const QJsonValue& result) {
+    if(sendResponse) {
+      QSharedPointer<Response> response(new jsonrpc::Response(id, result));
+      emit respond(response);
+    }
     call->deleteLater();
-    emit respond(response);
   });
 
   try {
     call->invoke();
   } catch(const exceptions::JsonrpcException& exception) {
-    emit respond(QSharedPointer<Error>::create(exception.generateError(id)));
+    if(sendResponse) {
+      emit respond(QSharedPointer<Error>::create(exception.generateError(id)));
+    }
     delete call;
   }
 }

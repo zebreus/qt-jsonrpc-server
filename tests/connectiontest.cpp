@@ -128,14 +128,49 @@ class ConnectionTests: public ::testing::Test {
   void TearDown() override {}
 };
 
-TEST_F(ConnectionTests, connectionRespondsWithCorrectId) {
+TEST_F(ConnectionTests, connectionRespondsToRequest) {
   sendMessageToConnection("{\"jsonrpc\":\"2.0\",\"method\":\"echoString\",\"params\":[\"stringd\"],\"id\":\"3\"}");
   processEvents(500, [this]() {
     return receivedResponses.size() == 0;
   });
-  ASSERT_NE(receivedResponses.size(), 0);
+  EXPECT_NE(receivedResponses.size(), 0);
+  EXPECT_EQ(receivedRequests.size(), 0);
+  EXPECT_EQ(receivedErrors.size(), 0);
+}
+
+TEST_F(ConnectionTests, connectionRespondsWithCorrectId) {
+  QJsonValue id(34);
+  QString method = "echoString";
+  QList<QJsonValue> arguments = {"String"};
+  QSharedPointer<Request> request(new Request(id, method, arguments));
+
+  sendMessageToConnection(request);
+
+  processEvents(500, [this]() {
+    return receivedResponses.size() == 0;
+  });
+
+  EXPECT_NE(receivedResponses.size(), 0);
+  EXPECT_EQ(receivedRequests.size(), 0);
+  EXPECT_EQ(receivedErrors.size(), 0);
   ASSERT_NE(getLastResponse(), nullptr);
-  ASSERT_EQ(getLastResponse()->getId(), QJsonValue("3"));
+  ASSERT_EQ(getLastResponse()->getId(), QJsonValue(34));
+}
+
+TEST_F(ConnectionTests, connectionDoesNotRespondToNotification) {
+  QString method = "echoString";
+  QList<QJsonValue> arguments = {"String"};
+  QSharedPointer<Request> request(new Request(method, arguments));
+
+  sendMessageToConnection(request);
+
+  processEvents(500, [this]() {
+    return receivedResponses.size() == 0;
+  });
+
+  EXPECT_EQ(receivedResponses.size(), 0);
+  EXPECT_EQ(receivedRequests.size(), 0);
+  EXPECT_EQ(receivedErrors.size(), 0);
 }
 
 #endif
