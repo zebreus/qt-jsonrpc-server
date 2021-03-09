@@ -21,10 +21,14 @@ namespace jsonrpc {
 class Connection: public QObject {
   Q_OBJECT
  public:
-  explicit Connection(QWebSocket* websocket, QObject* target, QObject* parent = nullptr);
+  explicit Connection(QObject* target, QObject* parent = nullptr);
   ~Connection();
  public slots:
   void disconnect();
+  void receiveMessage(const QString& message);
+ signals:
+  void sendMessage(const QString& message);
+
  private slots:
   void processRequest(const QSharedPointer<Request>& request);
 
@@ -33,14 +37,9 @@ class Connection: public QObject {
   void deactivateSignals();
   void describeInterface();
 
- signals:
-  void incomingMessage(QString message);
-  void outgoingMessage(const QString& message);
-
  private:
   QObject* processor;
   CallManager* callManager;
-  QWebSocket* webSocket;
   MessageProcessor* messageProcessor;
   SignalConverter* signalConverter;
 };

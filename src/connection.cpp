@@ -1,15 +1,8 @@
 #include "connection.h"
 
-jsonrpc::Connection::Connection(QWebSocket* webSocket, QObject* target, QObject* parent)
-    : QObject(parent), processor(target), webSocket(webSocket) {
-  connect(webSocket, &QWebSocket::disconnected, this, &Connection::disconnect);
-
+jsonrpc::Connection::Connection(QObject* target, QObject* parent): QObject(parent), processor(target) {
   messageProcessor = new MessageProcessor(this);
-  connect(webSocket, &QWebSocket::textMessageReceived, messageProcessor, &MessageProcessor::receiveMessage);
-  connect(webSocket, &QWebSocket::binaryMessageReceived, messageProcessor, &MessageProcessor::receiveMessage);
-  connect(messageProcessor, &MessageProcessor::outgoingMessage, this, [webSocket](QString message) {
-    webSocket->sendBinaryMessage(message.toUtf8());
-  });
+  connect(messageProcessor, &MessageProcessor::outgoingMessage, this, &Connection::sendMessage);
 
   callManager = new CallManager(target, this);
   connect(messageProcessor, &MessageProcessor::receivedRequest, callManager, &CallManager::processRequest);
@@ -22,6 +15,10 @@ void jsonrpc::Connection::disconnect() {
   qDebug() << "disconnected";
   // TODO something
   deleteLater();
+}
+
+void jsonrpc::Connection::receiveMessage(const QString& message) {
+  messageProcessor->receiveMessage(message);
 }
 
 void jsonrpc::Connection::processRequest(const QSharedPointer<jsonrpc::Request>& request) {

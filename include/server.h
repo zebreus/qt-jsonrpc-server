@@ -85,8 +85,17 @@ template<class T>
 void Server<T, true>::onNewConnection() {
   QWebSocket* webSocket = webSocketServer->nextPendingConnection();
   T* target = constructorFunction();
-  Connection* connection = new Connection(webSocket, target, this);
+  Connection* connection = new Connection(target, this);
   ((QObject*)target)->setParent(connection);
+  ((QObject*)webSocket)->setParent(connection);
+
+  connect(webSocket, &QWebSocket::disconnected, connection, &Connection::disconnect);
+  connect(connection, &Connection::sendMessage, webSocket, [webSocket](const QString& message) {
+    webSocket->sendBinaryMessage(message.toUtf8());
+  });
+  connect(webSocket, &QWebSocket::textMessageReceived, connection, &Connection::receiveMessage);
+  connect(webSocket, &QWebSocket::binaryMessageReceived, connection, &Connection::receiveMessage);
+
   connections.push_back(connection);
 }
 
