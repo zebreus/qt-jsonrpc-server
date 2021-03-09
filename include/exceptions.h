@@ -74,6 +74,54 @@ class InvokationFailed: public JsonrpcException {
   Error generateError(const QJsonValue& id) const override;
 };
 
+class ParseError: public JsonrpcException {
+ public:
+  ParseError();
+  void raise() const override;
+  ParseError* clone() const override;
+  Error generateError(const QJsonValue& id) const override;
+  virtual Error generateError() const;
+};
+
+class InvalidMessage: public JsonrpcException {
+ public:
+  InvalidMessage(const QString& message);
+  void raise() const override;
+  InvalidMessage* clone() const override;
+  Error generateError(const QJsonValue& id) const override;
+  virtual Error generateError() const;
+
+ protected:
+  InvalidMessage();
+};
+
+class InvalidRequest: public InvalidMessage {
+ public:
+  InvalidRequest();
+  void raise() const override;
+  InvalidRequest* clone() const override;
+  Error generateError(const QJsonValue& id) const override;
+  Error generateError() const override;
+};
+
+class InvalidResponse: public InvalidMessage {
+ public:
+  InvalidResponse();
+  void raise() const override;
+  InvalidResponse* clone() const override;
+  Error generateError(const QJsonValue& id) const override;
+  Error generateError() const override;
+};
+
+class InvalidError: public InvalidMessage {
+ public:
+  InvalidError();
+  void raise() const override;
+  InvalidError* clone() const override;
+  Error generateError(const QJsonValue& id) const override;
+  Error generateError() const override;
+};
+
 }  // namespace exceptions
 }  // namespace jsonrpc
 
