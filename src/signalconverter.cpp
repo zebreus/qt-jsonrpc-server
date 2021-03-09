@@ -4,7 +4,9 @@ using namespace jsonrpc;
 
 PrivateSignalConverter::PrivateSignalConverter(QObject* parent): QObject(parent) {}
 
-SignalConverter::SignalConverter(QObject* parent): PrivateSignalConverter(parent), dynamicSlotOffset(100) {}
+SignalConverter::SignalConverter(QObject* target, QObject* parent): PrivateSignalConverter(parent), dynamicSlotOffset(100) {
+  attach(target);
+}
 
 void SignalConverter::attach(QObject* target) {
   const QMetaObject* targetMetaObject = target->metaObject();

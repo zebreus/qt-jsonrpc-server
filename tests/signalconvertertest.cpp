@@ -17,8 +17,7 @@ using namespace jsonrpc;
 
 TEST(signalConverterTests, testSignalsGetConverted) {
   MockTarget emitter;
-  SignalConverter converter;
-  converter.attach(&emitter);
+  SignalConverter converter(&emitter);
 
   QSharedPointer<jsonrpc::Message> returnValue(nullptr);
   QObject::connect(&converter, &SignalConverter::convertedSignal, [&returnValue](const QSharedPointer<jsonrpc::Message>& message) {
@@ -37,8 +36,7 @@ TEST(signalConverterTests, testSignalsGetConverted) {
 
 TEST(signalConverterTests, testMethodsAndSlotsDoNotGetConverted) {
   MockTarget emitter;
-  SignalConverter converter;
-  converter.attach(&emitter);
+  SignalConverter converter(&emitter);
 
   bool convertedSignal = false;
   QObject::connect(&converter, &SignalConverter::convertedSignal, [&convertedSignal](const QSharedPointer<jsonrpc::Message>&) {
@@ -61,8 +59,7 @@ TEST(signalConverterTests, testMethodsAndSlotsDoNotGetConverted) {
 
 TEST(signalConverterTests, convertedSignalIsNotification) {
   MockTarget emitter;
-  SignalConverter converter;
-  converter.attach(&emitter);
+  SignalConverter converter(&emitter);
 
   QSharedPointer<jsonrpc::Message> returnValue(nullptr);
   QObject::connect(&converter, &SignalConverter::convertedSignal, [&returnValue](const QSharedPointer<jsonrpc::Message>& message) {

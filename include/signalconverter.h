@@ -28,11 +28,11 @@ class PrivateSignalConverter: public QObject {
 // Attaches to a QObject and converts all public signals it emits to Request messages
 class SignalConverter: public PrivateSignalConverter {
  public:
-  SignalConverter(QObject* parent = nullptr);
-  void attach(QObject* target);
+  SignalConverter(QObject* target, QObject* parent = nullptr);
   int qt_metacall(QMetaObject::Call, int, void**) override;
 
  private:
+  void attach(QObject* target);
   void connectIfPossible(QObject* target, const QMetaMethod& method);
   QSharedPointer<Message> createMessage(void** arguments, const QMetaMethod& method);
 
