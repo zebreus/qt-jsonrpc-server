@@ -72,6 +72,16 @@ class ArgumentImplementation: public Argument {
   T* value;
 };
 
+class VoidArgument: public Argument {
+ public:
+  VoidArgument();
+  VoidArgument(const QJsonValue& value);
+  QJsonValue getJson() override;
+
+ private:
+  int nothing[0];
+};
+
 }  // namespace jsonrpc
 
 #endif  // ARGUMENT_H

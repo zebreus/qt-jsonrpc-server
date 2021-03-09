@@ -1438,9 +1438,12 @@ template<typename T>
 Argument* Argument::create(const int requiredTypeId, const T& value) {
   switch((QMetaType::Type)requiredTypeId) {
     case QMetaType::Void:
-      // TODO Find better way to handle void
-      // throw exceptions::WrongArgumentType("void", getTypeName(value), " void types are not implemented.");
-      return createArgument<bool>(false);
+      // Void argument is special, because void is special in c++...
+      if constexpr(std::is_same<T, QJsonValue>::value) {
+        return new VoidArgument(value);
+      } else {
+        return new VoidArgument();
+      }
       break;
     case QMetaType::UnknownType:
       // Target type unregistered
@@ -1733,4 +1736,20 @@ QString Argument::getTypeName(const QJsonValue& value) {
 
 QString Argument::getTypeName(void* const&) {
   return "pointer";
+}
+
+VoidArgument::VoidArgument() {
+  argument = QGenericArgument("void", &nothing);
+}
+
+VoidArgument::VoidArgument(const QJsonValue& value) {
+  if(value.isNull() || value.isUndefined()) {
+    argument = QGenericArgument("void", &nothing);
+  } else {
+    throw exceptions::WrongArgumentType("void", value);
+  }
+}
+
+QJsonValue VoidArgument::getJson() {
+  return QJsonValue::Null;
 }

@@ -392,4 +392,22 @@ TEST_F(ConnectionTests, connectionFailsOnNonexistantMethod) {
   }
 }
 
+TEST_F(ConnectionTests, connectionVoidReturningMethodRespondsWithNullResult) {
+  QSharedPointer<Request> voidReturningRequest(new Request(39, "emitSignalA", {}));
+
+  sendMessageToConnection(voidReturningRequest);
+
+  processEvents(500, [this]() {
+    return receivedResponses.size() == 0;
+  });
+
+  EXPECT_EQ(receivedResponses.size(), 1);
+  EXPECT_EQ(receivedRequests.size(), 0);
+  EXPECT_EQ(receivedErrors.size(), 0);
+  QSharedPointer<Response> response = getLastResponse();
+  ASSERT_NE(response, nullptr);
+  ASSERT_EQ(response->getId(), QJsonValue(39));
+  ASSERT_EQ(response->getResult(), QJsonValue::Null);
+}
+
 #endif
