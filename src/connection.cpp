@@ -5,7 +5,7 @@ jsonrpc::Connection::Connection(QObject* target, QObject* parent): QObject(paren
   connect(messageProcessor, &MessageProcessor::outgoingMessage, this, &Connection::sendMessage);
 
   callManager = new CallManager(target, this);
-  connect(messageProcessor, &MessageProcessor::receivedRequest, callManager, &CallManager::processRequest);
+  connect(messageProcessor, &MessageProcessor::receivedRequest, this, &Connection::processRequest);
   connect(callManager, &CallManager::respond, messageProcessor, &MessageProcessor::sendMessage);
 }
 
@@ -25,18 +25,24 @@ void jsonrpc::Connection::processRequest(const QSharedPointer<jsonrpc::Request>&
   const QString& methodName = request->getMethodName();
   if(!methodName.startsWith("rpc.")) {
     callManager->processRequest(request);
+    return;
   }
 
   if(methodName == "rpc.qt.activate") {
     activateSignals();
     messageProcessor->sendMessage(QSharedPointer<Response>(new Response(request->getId(), QJsonValue(true))));
-  } else if(methodName == "rpc.qt.deactivate") {
+    return;
+  }
+  if(methodName == "rpc.qt.deactivate") {
     deactivateSignals();
     messageProcessor->sendMessage(QSharedPointer<Response>(new Response(request->getId(), QJsonValue(true))));
-  } else if(methodName == "rpc.qt.describe") {
+    return;
+  }
+  if(methodName == "rpc.qt.describe") {
     // describeInterface();
     exceptions::UnknownMethodName exception(methodName);
     messageProcessor->sendMessage(QSharedPointer<Error>(new Error(exception.generateError(request->getId()))));
+    return;
   }
 
   exceptions::UnknownMethodName exception(methodName);

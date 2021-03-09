@@ -196,4 +196,39 @@ TEST_F(ConnectionTests, connectionDoesNotEmitSignalBeforeActivation) {
   EXPECT_EQ(receivedRequests.size(), 0);
   EXPECT_EQ(receivedErrors.size(), 0);
 }
+
+TEST_F(ConnectionTests, connectionDoesNotFailOnActivate) {
+  QJsonValue id(34);
+  QString method = "rpc.qt.activate";
+  QList<QJsonValue> arguments = {};
+  QSharedPointer<Request> request(new Request(id, method, arguments));
+
+  sendMessageToConnection(request);
+
+  processEvents(500, [this]() {
+    return receivedResponses.size() == 0;
+  });
+
+  EXPECT_EQ(receivedResponses.size(), 1);
+  EXPECT_EQ(receivedRequests.size(), 0);
+  EXPECT_EQ(receivedErrors.size(), 0);
+}
+
+TEST_F(ConnectionTests, connectionDoesNotFailOnDeactivate) {
+  QJsonValue id(34);
+  QString method = "rpc.qt.deactivate";
+  QList<QJsonValue> arguments = {};
+  QSharedPointer<Request> request(new Request(id, method, arguments));
+
+  sendMessageToConnection(request);
+
+  processEvents(500, [this]() {
+    return receivedResponses.size() == 0;
+  });
+
+  EXPECT_EQ(receivedResponses.size(), 1);
+  EXPECT_EQ(receivedRequests.size(), 0);
+  EXPECT_EQ(receivedErrors.size(), 0);
+}
+
 #endif
