@@ -6,12 +6,12 @@ namespace jsonrpc {
 
 Message::Message(const QJsonObject& message) {
   if(message.value("jsonrpc") != "2.0") {
-    throw exceptions::InvalidMessage("Invalid Message");
+    throw exceptions::InvalidMessage("the jsonrpc field has to be \"2.0\".");
   }
 
   id = message.value("id");
   if(!(id.isUndefined() || id.isNull() || id.isString() || id.isDouble())) {
-    throw exceptions::InvalidMessage("Invalid Message");
+    throw exceptions::InvalidMessage("the id has to be null, a string, a number or undefined.");
   }
 }
 

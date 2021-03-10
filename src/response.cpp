@@ -7,7 +7,7 @@ namespace jsonrpc {
 Response::Response(const QJsonObject& message): Message(message) {
   result = message.value("result");
   if(result.isUndefined()) {
-    throw exceptions::InvalidResponse();
+    throw exceptions::InvalidResponse("there is no result field.");
   }
 }
 

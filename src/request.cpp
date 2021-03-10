@@ -7,12 +7,12 @@ namespace jsonrpc {
 Request::Request(const QJsonObject& message): Message(message) {
   QJsonValue jsonMethodName = message.value("method");
   if(!jsonMethodName.isString()) {
-    throw exceptions::InvalidRequest();
+    throw exceptions::InvalidRequest("the method is no string.");
   }
   methodName = jsonMethodName.toString();
 
   if(!buildArguments(message.value("params"))) {
-    throw exceptions::InvalidRequest();
+    throw exceptions::InvalidRequest("params seems to be invalid.");
   }
 }
 

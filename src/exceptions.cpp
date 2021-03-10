@@ -135,7 +135,14 @@ Error exceptions::InvokationFailed::generateError(const QJsonValue& id) const {
   return Error(id, Error::InternalError, message);
 }
 
-exceptions::ParseError::ParseError(): JsonrpcException("Invalid JSON.") {}
+exceptions::ParseError::ParseError(const QString& reason): JsonrpcException() {
+  message = "The message is not valid JSON";
+  if(!reason.isEmpty()) {
+    message += ", because " + reason;
+  } else {
+    message += ".";
+  }
+}
 
 void exceptions::ParseError::raise() const {
   throw *this;
@@ -153,7 +160,14 @@ Error exceptions::ParseError::generateError() const {
   return Error(Error::ParseError, message);
 }
 
-exceptions::InvalidMessage::InvalidMessage(const QString& message): JsonrpcException(message) {}
+exceptions::InvalidMessage::InvalidMessage(const QString& reason): JsonrpcException() {
+  message = "No valid JSON-RPC message";
+  if(!reason.isEmpty()) {
+    message += ", because " + reason;
+  } else {
+    message += ".";
+  }
+}
 
 void exceptions::InvalidMessage::raise() const {
   throw *this;
@@ -171,10 +185,14 @@ Error exceptions::InvalidMessage::generateError() const {
   return Error(Error::InvalidMessage, message);
 }
 
-exceptions::InvalidMessage::InvalidMessage(): JsonrpcException() {}
-
-exceptions::InvalidRequest::InvalidRequest(): InvalidMessage() {
-  message = "The JSON sent is not a valid request object.";
+exceptions::InvalidRequest::InvalidRequest(const QString& reason): InvalidMessage() {
+  // TODO The InvalidMessage() constructor also sets message, which is unnecessary, because we overwrite it here
+  message = "No valid JSON-RPC request";
+  if(!reason.isEmpty()) {
+    message += ", because " + reason;
+  } else {
+    message += ".";
+  }
 }
 
 void exceptions::InvalidRequest::raise() const {
@@ -193,8 +211,14 @@ Error exceptions::InvalidRequest::generateError() const {
   return Error(Error::InvalidRequest, message);
 }
 
-exceptions::InvalidResponse::InvalidResponse(): InvalidMessage() {
-  message = "The JSON sent is not a valid response object.";
+exceptions::InvalidResponse::InvalidResponse(const QString& reason): InvalidMessage() {
+  // TODO The InvalidMessage() constructor also sets message, which is unnecessary, because we overwrite it here
+  message = "No valid JSON-RPC response";
+  if(!reason.isEmpty()) {
+    message += ", because " + reason;
+  } else {
+    message += ".";
+  }
 }
 
 void exceptions::InvalidResponse::raise() const {
@@ -213,8 +237,14 @@ Error exceptions::InvalidResponse::generateError() const {
   return Error(Error::InvalidMessage, message);
 }
 
-exceptions::InvalidError::InvalidError(): InvalidMessage() {
-  message = "The JSON sent is not a valid error object.";
+exceptions::InvalidError::InvalidError(const QString& reason): InvalidMessage() {
+  // TODO The InvalidMessage() constructor also sets message, which is unnecessary, because we overwrite it here
+  message = "No valid JSON-RPC error";
+  if(!reason.isEmpty()) {
+    message += ", because " + reason;
+  } else {
+    message += ".";
+  }
 }
 
 void exceptions::InvalidError::raise() const {

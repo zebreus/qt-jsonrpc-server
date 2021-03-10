@@ -9,24 +9,24 @@ void jsonrpc::MessageProcessor::processIncomingDocument(const QJsonDocument& jso
     QJsonObject jsonObj = jsonDocument.object();
     processIncomingObject(jsonObj);
   } else if(jsonDocument.isArray()) {
+    // TODO Implement proper batch calls
     // Batch call
     QJsonArray jsonArray = jsonDocument.array();
     for(const QJsonValue& jsonRpcObject : jsonArray) {
       if(jsonRpcObject.isObject()) {
         processIncomingObject(jsonRpcObject.toObject());
       } else {
-        QString errorMessage = "Entry of batch request is no json object";
-        Error* error = new Error(QJsonValue::Null, Error::Code::InvalidRequest, errorMessage);
-        sendMessage(QSharedPointer<Error>(error));
+        exceptions::InvalidRequest exception("your batch request contained something, that was not a json object.");
+        sendMessage(QSharedPointer<Error>::create(exception.generateError()));
       }
     }
   } else if(jsonDocument.isEmpty()) {
     // Empty document, doing nothing
+    return;
   } else {
-    // Document is null, probably some kind of parsing error, should not happen
-    QString errorMessage = "Request is null";
-    Error* error = new Error(QJsonValue::Null, Error::Code::ParseError, errorMessage);
-    sendMessage(QSharedPointer<Error>(error));
+    // Document is null,
+    exceptions::InvalidMessage exception("your message is null.");
+    sendMessage(QSharedPointer<Error>::create(exception.generateError()));
   }
 }
 
