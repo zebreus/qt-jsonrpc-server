@@ -410,4 +410,96 @@ TEST_F(ConnectionTests, connectionVoidReturningMethodRespondsWithNullResult) {
   ASSERT_EQ(response->getResult(), QJsonValue::Null);
 }
 
+TEST_F(ConnectionTests, connectionWorksWithNumberId) {
+  QJsonValue id(34);
+  QSharedPointer<Request> request(new Request(id, "echoString", {"string"}));
+
+  sendMessageToConnection(request);
+
+  processEvents(500, [this]() {
+    return receivedResponses.size() == 0;
+  });
+
+  EXPECT_EQ(receivedResponses.size(), 1);
+  EXPECT_EQ(receivedRequests.size(), 0);
+  EXPECT_EQ(receivedErrors.size(), 0);
+  ASSERT_NE(getLastResponse(), nullptr);
+  ASSERT_EQ(getLastResponse()->getId(), id);
+}
+
+TEST_F(ConnectionTests, connectionWorksWithStringId) {
+  QJsonValue id("cooleid");
+  QSharedPointer<Request> request(new Request(id, "echoString", {"string"}));
+
+  sendMessageToConnection(request);
+
+  processEvents(500, [this]() {
+    return receivedResponses.size() == 0;
+  });
+
+  EXPECT_EQ(receivedResponses.size(), 1);
+  EXPECT_EQ(receivedRequests.size(), 0);
+  EXPECT_EQ(receivedErrors.size(), 0);
+  ASSERT_NE(getLastResponse(), nullptr);
+  ASSERT_EQ(getLastResponse()->getId(), id);
+}
+
+TEST_F(ConnectionTests, connectionWorksWithNullId) {
+  QJsonValue id(QJsonValue::Null);
+  QSharedPointer<Request> request(new Request(id, "echoString", {"string"}));
+
+  sendMessageToConnection(request);
+
+  processEvents(500, [this]() {
+    return receivedResponses.size() == 0;
+  });
+
+  EXPECT_EQ(receivedResponses.size(), 1);
+  EXPECT_EQ(receivedRequests.size(), 0);
+  EXPECT_EQ(receivedErrors.size(), 0);
+  ASSERT_NE(getLastResponse(), nullptr);
+  ASSERT_EQ(getLastResponse()->getId(), id);
+}
+
+TEST_F(ConnectionTests, connectionTakesUndefinedIdAsNotification) {
+  QJsonValue id(QJsonValue::Undefined);
+  QSharedPointer<Request> request(new Request(id, "echoString", {"string"}));
+
+  sendMessageToConnection(request);
+
+  processEvents(200, [this]() {
+    return receivedResponses.size() == 0;
+  });
+
+  EXPECT_EQ(receivedResponses.size(), 0);
+  EXPECT_EQ(receivedRequests.size(), 0);
+  EXPECT_EQ(receivedErrors.size(), 0);
+}
+
+TEST_F(ConnectionTests, connectionDoesNotWorkWithArrayOrObjectIds) {
+  QString requestTemplate = "{\"jsonrpc\":\"2.0\",\"method\":\"echoString\",\"params\":[\"stringd\"],\"id\":%1}";
+  QString requestNumberId = requestTemplate.arg("1");
+  QString requestEmptyArrayId = requestTemplate.arg("[]");
+  QString requestArrayId = requestTemplate.arg("[45]");
+  QString requestEmptyObjectId = requestTemplate.arg("{}");
+  QString requestObjectId = requestTemplate.arg("{\"number\":5}");
+  sendMessageToConnection(requestNumberId);
+  sendMessageToConnection(requestEmptyArrayId);
+  sendMessageToConnection(requestArrayId);
+  sendMessageToConnection(requestEmptyObjectId);
+  sendMessageToConnection(requestObjectId);
+
+  processEvents(500, [this]() {
+    return (receivedErrors.size() != 4 && receivedResponses.size() != 1);
+  });
+
+  EXPECT_EQ(receivedResponses.size(), 1);
+  EXPECT_EQ(receivedRequests.size(), 0);
+  EXPECT_EQ(receivedErrors.size(), 4);
+
+  for(QSharedPointer<Error> error : receivedErrors) {
+    EXPECT_TRUE((error->getCode() == Error::InvalidMessage || error->getCode() == Error::InvalidRequest));
+  }
+}
+
 #endif
