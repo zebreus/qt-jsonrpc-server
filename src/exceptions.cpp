@@ -168,7 +168,7 @@ Error exceptions::InvalidMessage::generateError(const QJsonValue&) const {
 }
 
 Error exceptions::InvalidMessage::generateError() const {
-  return Error(Error::ParseError, message);
+  return Error(Error::InvalidMessage, message);
 }
 
 exceptions::InvalidMessage::InvalidMessage(): JsonrpcException() {}
@@ -210,7 +210,7 @@ Error exceptions::InvalidResponse::generateError(const QJsonValue&) const {
 }
 
 Error exceptions::InvalidResponse::generateError() const {
-  return Error(Error::ParseError, message);
+  return Error(Error::InvalidMessage, message);
 }
 
 exceptions::InvalidError::InvalidError(): InvalidMessage() {
@@ -230,5 +230,5 @@ Error exceptions::InvalidError::generateError(const QJsonValue&) const {
 }
 
 Error exceptions::InvalidError::generateError() const {
-  return Error(Error::ParseError, message);
+  return Error(Error::InvalidMessage, message);
 }
