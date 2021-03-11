@@ -39,9 +39,8 @@ void jsonrpc::Connection::processRequest(const QSharedPointer<jsonrpc::Request>&
     return;
   }
   if(methodName == "rpc.qt.describe") {
-    // describeInterface();
-    exceptions::UnknownMethodName exception(methodName);
-    messageProcessor->sendMessage(QSharedPointer<Error>(new Error(exception.generateError(request->getId()))));
+    QJsonValue description = describeInterface();
+    messageProcessor->sendMessage(QSharedPointer<Response>(new Response(request->getId(), QJsonValue(description))));
     return;
   }
 
@@ -59,4 +58,10 @@ void jsonrpc::Connection::deactivateSignals() {
     QObject::disconnect(signalConverter, &SignalConverter::convertedSignal, messageProcessor, &MessageProcessor::sendMessage);
     delete signalConverter;
   }
+}
+
+QJsonValue jsonrpc::Connection::describeInterface() {
+  InterfaceDescription description(*processor->metaObject());
+  ArgumentImplementation<InterfaceDescription> descriptionArgument(&description);
+  return descriptionArgument.getJson();
 }

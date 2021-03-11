@@ -12,6 +12,7 @@
 #include <cmath>
 
 #include "callmanager.h"
+#include "interfacedescription.h"
 #include "messageprocessor.h"
 #include "signalconverter.h"
 
@@ -35,7 +36,7 @@ class Connection: public QObject {
  private:
   void activateSignals();
   void deactivateSignals();
-  void describeInterface();
+  QJsonValue describeInterface();
 
  private:
   QObject* processor;

@@ -550,4 +550,48 @@ TEST_F(ConnectionTests, connectionRespondsNothingOnEmptyRequest) {
   EXPECT_EQ(receivedErrors.size(), 0);
 }
 
+TEST_F(ConnectionTests, connectionRespondsToDescribe) {
+  QSharedPointer<Request> request(new Request("sdf", "rpc.qt.describe", {}));
+
+  sendMessageToConnection(request);
+
+  processEvents(250, [this]() {
+    return receivedResponses.size() != 1;
+  });
+
+  EXPECT_EQ(receivedResponses.size(), 1);
+  EXPECT_EQ(receivedRequests.size(), 0);
+  EXPECT_EQ(receivedErrors.size(), 0);
+}
+
+TEST_F(ConnectionTests, connectionRespondsToDescribeWithCorrectDescription) {
+  QSharedPointer<Request> request(new Request("sdf", "rpc.qt.describe", {}));
+
+  InterfaceDescription expectedDescription("MockTarget",
+                                           {
+                                               {"addNumbers", {"int", "int"}, "int"},
+                                               {"echoString", {"QString"}, "QString"},
+                                               {"noParams", {}, "int"},
+                                               {"emitSignalA", {}, "void"},
+                                               {"emitSignalB", {}, "void"},
+                                           },
+                                           {{"signalA", {}, "void"}, {"signalB", {"QString"}, "void"}});
+
+  sendMessageToConnection(request);
+
+  processEvents(250, [this]() {
+    return receivedResponses.size() != 1;
+  });
+
+  EXPECT_EQ(receivedResponses.size(), 1);
+  EXPECT_EQ(receivedRequests.size(), 0);
+  EXPECT_EQ(receivedErrors.size(), 0);
+  QSharedPointer<Response> response = getLastResponse();
+  ASSERT_NE(response, nullptr);
+  ASSERT_EQ(response->getResult().type(), QJsonValue::Object);
+  QJsonValue result = response->getResult();
+  ArgumentImplementation<InterfaceDescription> interfaceArgument(result);
+  ASSERT_EQ(*((InterfaceDescription*)interfaceArgument.getArgument().data()), expectedDescription);
+}
+
 #endif
