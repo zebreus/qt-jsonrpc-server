@@ -25,6 +25,7 @@ SOURCES += \
     src/error.cpp \
     src/message.cpp \
     src/messageprocessor.cpp \
+    src/methoddescription.cpp \
     src/request.cpp \
     src/response.cpp \
     src/exceptions.cpp \
@@ -45,6 +46,7 @@ HEADERS += \
     include/server.h \
     include/exceptions.h \
     include/signalconverter.h \
+    include/methoddescription.h \
     test/testservice.h
 
 test{
@@ -70,6 +72,7 @@ test{
                tests/servertest.cpp \
                tests/mocktarget.cpp \
                tests/connectiontest.cpp \
+               tests/methoddescriptiontest.cpp \
                tests/main.cpp
 }
 else{
