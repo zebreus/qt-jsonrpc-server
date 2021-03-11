@@ -537,4 +537,17 @@ TEST_F(ConnectionTests, connectionFailsWithParseErrorOnRandomString) {
   }
 }
 
+TEST_F(ConnectionTests, connectionRespondsNothingOnEmptyRequest) {
+  QString request = "";
+  sendMessageToConnection(request);
+
+  processEvents(200, [this]() {
+    return (receivedMessages.size() == 0);
+  });
+
+  EXPECT_EQ(receivedResponses.size(), 0);
+  EXPECT_EQ(receivedRequests.size(), 0);
+  EXPECT_EQ(receivedErrors.size(), 0);
+}
+
 #endif

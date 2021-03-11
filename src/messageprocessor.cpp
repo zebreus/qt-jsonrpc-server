@@ -50,6 +50,9 @@ void jsonrpc::MessageProcessor::processIncomingObject(const QJsonObject& message
 }
 
 void jsonrpc::MessageProcessor::receiveMessage(const QString& message) {
+  if(message.isEmpty()) {
+    return;
+  }
   QJsonParseError err;
   QJsonDocument jsonDocument = QJsonDocument::fromJson(message.toUtf8(), &err);
   if(err.error == QJsonParseError::NoError) {
