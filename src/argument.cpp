@@ -1415,6 +1415,112 @@ QJsonValue ArgumentImplementation<QByteArrayList>::getJson() {
   return QJsonValue::Undefined;
 }
 
+template<>
+ArgumentImplementation<MethodDescription>::ArgumentImplementation(const QJsonValue& argument) {
+  if(argument.isObject()) {
+    QJsonObject object = argument.toObject();
+    if(!object["name"].isString()) {
+      throw exceptions::WrongArgumentType("QString", object["name"], "the name has to be a string");
+    }
+    if(!object["parameters"].isArray()) {
+      throw exceptions::WrongArgumentType("array of strings", object["parameters"]);
+    }
+    if(!object["return"].isString()) {
+      throw exceptions::WrongArgumentType("string", object["return"]);
+    }
+
+    QList<QString> requiredTypes;
+    for(const QJsonValue& value : object["parameters"].toArray()) {
+      if(!value.isString()) {
+        throw exceptions::WrongArgumentType("string", value);
+      }
+      requiredTypes.append(value.toString());
+    }
+
+    QString name = object["name"].toString();
+    QString returnType = object["return"].toString();
+
+    setValue(MethodDescription(name, requiredTypes, returnType));
+  } else {
+    throw exceptions::WrongArgumentType("MethodDescription", argument);
+  }
+}
+
+template<>
+QJsonValue ArgumentImplementation<MethodDescription>::getJson() {
+  QJsonObject object;
+  object["name"] = value->getName();
+  object["return"] = value->getReturnType();
+  object["parameters"] = QJsonArray::fromStringList(value->getParameterTypes());
+  return object;
+}
+
+template<>
+ArgumentImplementation<InterfaceDescription>::ArgumentImplementation(const QJsonValue& argument) {
+  if(argument.isObject()) {
+    QJsonObject object = argument.toObject();
+    if(!object["name"].isString()) {
+      throw exceptions::WrongArgumentType("QString", object["name"], "the name has to be a string");
+    }
+    if(!object["signals"].isArray()) {
+      throw exceptions::WrongArgumentType("array of MethodDescription", object["signals"]);
+    }
+    if(!object["slots"].isArray()) {
+      throw exceptions::WrongArgumentType("array of MethodDescription", object["signals"]);
+    }
+
+    QString name = object["name"].toString();
+
+    QList<MethodDescription> availableSignals;
+    for(const QJsonValue& value : object["signals"].toArray()) {
+      ArgumentImplementation<MethodDescription> signalArgument(value);
+      availableSignals.append(*(MethodDescription const*)signalArgument.getArgument().data());
+    }
+
+    QList<MethodDescription> availableSlots;
+    for(const QJsonValue& value : object["slots"].toArray()) {
+      ArgumentImplementation<MethodDescription> slotArgument(value);
+      availableSlots.append(*(MethodDescription const*)slotArgument.getArgument().data());
+    }
+
+    double version;
+    if(object["version"].isUndefined()) {
+      version = 0.0;
+    } else {
+      ArgumentImplementation<double> versionArgument(object["version"]);
+      version = *(double const*)versionArgument.getArgument().data();
+    }
+
+    setValue(InterfaceDescription(name, availableSlots, availableSignals, version));
+
+  } else {
+    throw exceptions::WrongArgumentType("InterfaceDescription", argument);
+  }
+}
+
+template<>
+QJsonValue ArgumentImplementation<InterfaceDescription>::getJson() {
+  QJsonObject object;
+  object["name"] = value->getName();
+  object["version"] = value->getVersion();
+
+  QJsonArray availableSignals;
+  for(const MethodDescription& method : value->getSignals()) {
+    ArgumentImplementation<MethodDescription> signalArgument((MethodDescription* const&)&method);
+    availableSignals.append(signalArgument.getJson());
+  }
+  object["signals"] = availableSignals;
+
+  QJsonArray availableSlots;
+  for(const MethodDescription& method : value->getSlots()) {
+    ArgumentImplementation<MethodDescription> slotArgument((MethodDescription* const&)&method);
+    availableSlots.append(slotArgument.getJson());
+  }
+  object["slots"] = availableSlots;
+
+  return object;
+}
+
 template<typename T>
 ArgumentImplementation<T>::~ArgumentImplementation() {
   delete value;
@@ -1688,6 +1794,12 @@ Argument* Argument::create(const int requiredTypeId, const T& value) {
       break;
     default:
       // Usertype
+      if(requiredTypeId == QMetaType::fromType<MethodDescription>().id()) {
+        return createArgument<MethodDescription>(value);
+      }
+      if(requiredTypeId == QMetaType::fromType<InterfaceDescription>().id()) {
+        return createArgument<InterfaceDescription>(value);
+      }
       QString requiredTypeName = QMetaType::typeName((QMetaType::Type)requiredTypeId);
       throw exceptions::WrongArgumentType(requiredTypeName, getTypeName(value), "user defined types are not yet supported.");
   }

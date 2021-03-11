@@ -4,6 +4,8 @@
 #include <argument.h>
 #include <gmock/gmock-matchers.h>
 #include <gtest/gtest.h>
+#include <interfacedescription.h>
+#include <methoddescription.h>
 
 #include <QFile>
 #include <QJsonArray>
@@ -389,4 +391,39 @@ TEST(argumentTests, NullPtrTArgumentTest) {
   ASSERT_THROW({ createArgument<std::nullptr_t>(QJsonValue::Undefined); }, exceptions::WrongArgumentType);
 }
 
+// clang-format off
+
+TEST(argumentTests, MethodDescriptionArgumentTest) {
+  MethodDescription working{"name", {"int", "bool"}, "void"};
+  ASSERT_NO_THROW({
+    ASSERT_TRUE(roundtripWorks<MethodDescription>(working));
+  });
+  ASSERT_THROW({ createArgument<MethodDescription>(QJsonObject{}); }, exceptions::WrongArgumentType);
+  ASSERT_THROW({ createArgument<MethodDescription>('t'); }, exceptions::WrongArgumentType);
+  ASSERT_THROW({ createArgument<MethodDescription>(QJsonValue(false)); }, exceptions::WrongArgumentType);
+  ASSERT_THROW({ createArgument<MethodDescription>(QJsonValue::Undefined); }, exceptions::WrongArgumentType);
+};
+
+TEST(argumentTests, InterfaceDescriptionArgumentTest) {
+  InterfaceDescription description("MockTarget",
+                                   {
+                                     {"addNumbers", {"int", "int"}, "int"},
+                                     {"echoString", {"QString"}, "QString"},
+                                     {"noParams", {}, "int"},
+                                     {"emitSignalA", {}, "void"},
+                                     {"emitSignalB", {}, "void"},
+                                   },
+                                   {
+                                     {"signalA", {}, "void"},
+                                     {"signalB", {"QString"}, "void"}
+                                   });
+  ASSERT_NO_THROW({
+    ASSERT_TRUE(roundtripWorks<InterfaceDescription>(description));
+  });
+  ASSERT_THROW({ createArgument<InterfaceDescription>(QJsonObject{}); }, exceptions::WrongArgumentType);
+  ASSERT_THROW({ createArgument<InterfaceDescription>('t'); }, exceptions::WrongArgumentType);
+  ASSERT_THROW({ createArgument<InterfaceDescription>(QJsonValue(false)); }, exceptions::WrongArgumentType);
+  ASSERT_THROW({ createArgument<InterfaceDescription>(QJsonValue::Undefined); }, exceptions::WrongArgumentType);
+}
+// clang-format on
 #endif

@@ -2,6 +2,8 @@
 #define ARGUMENT_H
 
 #include <exceptions.h>
+#include <interfacedescription.h>
+#include <methoddescription.h>
 
 #include <QDate>
 #include <QJsonArray>
