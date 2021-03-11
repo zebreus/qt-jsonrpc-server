@@ -55,11 +55,8 @@ void jsonrpc::MessageProcessor::receiveMessage(const QString& message) {
   if(err.error == QJsonParseError::NoError) {
     processIncomingDocument(jsonDocument);
   } else {
-    qDebug() << "QJsonParseError while processing message: " << message;
-    QString errorMessage = "Error parsing json";
-    QJsonValue detailedErrorMessage = err.errorString();
-    Error* error = new Error(QJsonValue::Null, Error::Code::ParseError, errorMessage, detailedErrorMessage);
-    sendMessage(QSharedPointer<Error>(error));
+    exceptions::ParseError exception("it has a " + err.errorString() + ".");
+    sendMessage(QSharedPointer<Error>::create(exception.generateError()));
   }
 }
 

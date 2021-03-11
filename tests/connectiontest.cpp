@@ -171,7 +171,7 @@ TEST_F(ConnectionTests, connectionDoesNotRespondToNotification) {
 
   sendMessageToConnection(request);
 
-  processEvents(400, [this]() {
+  processEvents(250, [this]() {
     return receivedResponses.size() == 0;
   });
 
@@ -358,7 +358,7 @@ TEST_F(ConnectionTests, connectionFailsOnWrongArgumentTypes) {
   sendMessageToConnection(addRequest4);
 
   processEvents(500, [this]() {
-    return receivedErrors.size() == 4;
+    return receivedErrors.size() != 4;
   });
 
   EXPECT_EQ(receivedResponses.size(), 0);
@@ -381,7 +381,7 @@ TEST_F(ConnectionTests, connectionFailsOnNonexistantMethod) {
   sendMessageToConnection(addRequest4);
 
   processEvents(500, [this]() {
-    return receivedErrors.size() == 4;
+    return receivedErrors.size() != 4;
   });
 
   EXPECT_EQ(receivedResponses.size(), 0);
@@ -467,7 +467,7 @@ TEST_F(ConnectionTests, connectionTakesUndefinedIdAsNotification) {
 
   sendMessageToConnection(request);
 
-  processEvents(200, [this]() {
+  processEvents(250, [this]() {
     return receivedResponses.size() == 0;
   });
 
@@ -497,8 +497,43 @@ TEST_F(ConnectionTests, connectionDoesNotWorkWithArrayOrObjectIds) {
   EXPECT_EQ(receivedRequests.size(), 0);
   EXPECT_EQ(receivedErrors.size(), 4);
 
-  for(QSharedPointer<Error> error : receivedErrors) {
+  for(const QSharedPointer<Error>& error : receivedErrors) {
     EXPECT_TRUE((error->getCode() == Error::InvalidMessage || error->getCode() == Error::InvalidRequest));
+  }
+}
+
+TEST_F(ConnectionTests, connectionFailsWithParseErrorOnNullMessage) {
+  QString request = "null";
+  sendMessageToConnection(request);
+
+  processEvents(500, [this]() {
+    return (receivedErrors.size() != 1);
+  });
+
+  EXPECT_EQ(receivedResponses.size(), 0);
+  EXPECT_EQ(receivedRequests.size(), 0);
+  EXPECT_EQ(receivedErrors.size(), 1);
+  QSharedPointer<Error> error = getLastError();
+  ASSERT_NE(error, nullptr);
+  ASSERT_EQ(error->getCode(), Error::ParseError);
+}
+
+TEST_F(ConnectionTests, connectionFailsWithParseErrorOnRandomString) {
+  QList<QString> requests = {"undefined", "98", "\x12\x00\xa4\x00\x00\x99", "test ꨑ", "{dsfsda}", "{", "}", "[sadfsda]", "[", "]"};
+  for(const QString& request : requests) {
+    sendMessageToConnection(request);
+  }
+
+  processEvents(500, [this, &requests]() {
+    return (receivedErrors.size() != requests.size());
+  });
+
+  EXPECT_EQ(receivedResponses.size(), 0);
+  EXPECT_EQ(receivedRequests.size(), 0);
+  EXPECT_EQ(receivedErrors.size(), requests.size());
+  for(const QSharedPointer<Error>& error : receivedErrors) {
+    ASSERT_NE(error, nullptr);
+    ASSERT_EQ(error->getCode(), Error::ParseError);
   }
 }
 
