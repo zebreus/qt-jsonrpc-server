@@ -30,22 +30,30 @@ void jsonrpc::Connection::processRequest(const QSharedPointer<jsonrpc::Request>&
 
   if(methodName == "rpc.qt.activate") {
     activateSignals();
-    messageProcessor->sendMessage(QSharedPointer<Response>(new Response(request->getId(), QJsonValue(true))));
+    if(request->hasId()) {
+      messageProcessor->sendMessage(QSharedPointer<Response>(new Response(request->getId(), QJsonValue(true))));
+    }
     return;
   }
   if(methodName == "rpc.qt.deactivate") {
     deactivateSignals();
-    messageProcessor->sendMessage(QSharedPointer<Response>(new Response(request->getId(), QJsonValue(true))));
+    if(request->hasId()) {
+      messageProcessor->sendMessage(QSharedPointer<Response>(new Response(request->getId(), QJsonValue(true))));
+    }
     return;
   }
   if(methodName == "rpc.qt.describe") {
-    QJsonValue description = describeInterface();
-    messageProcessor->sendMessage(QSharedPointer<Response>(new Response(request->getId(), QJsonValue(description))));
+    if(request->hasId()) {
+      QJsonValue description = describeInterface();
+      messageProcessor->sendMessage(QSharedPointer<Response>(new Response(request->getId(), QJsonValue(description))));
+    }
     return;
   }
 
-  exceptions::UnknownMethodName exception(methodName);
-  messageProcessor->sendMessage(QSharedPointer<Error>(new Error(exception.generateError(request->getId()))));
+  if(request->hasId()) {
+    exceptions::UnknownMethodName exception(methodName);
+    messageProcessor->sendMessage(QSharedPointer<Error>(new Error(exception.generateError(request->getId()))));
+  }
 }
 
 void jsonrpc::Connection::activateSignals() {

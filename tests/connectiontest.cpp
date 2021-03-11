@@ -594,4 +594,24 @@ TEST_F(ConnectionTests, connectionRespondsToDescribeWithCorrectDescription) {
   ASSERT_EQ(*((InterfaceDescription*)interfaceArgument.getArgument().data()), expectedDescription);
 }
 
+TEST_F(ConnectionTests, connectionDoesNotRespondOnSystemMethodNotification) {
+  QSharedPointer<Request> request1(new Request("rpc.qt.activate", {}));
+  QSharedPointer<Request> request2(new Request("rpc.qt.deactivate", {}));
+  QSharedPointer<Request> request3(new Request("rpc.qt.describe", {}));
+  QSharedPointer<Request> request4(new Request("rpc.dsgsdrtdf", {}));
+
+  sendMessageToConnection(request1);
+  sendMessageToConnection(request2);
+  sendMessageToConnection(request3);
+  sendMessageToConnection(request4);
+
+  processEvents(250, [this]() {
+    return receivedMessages.size() != 0;
+  });
+
+  EXPECT_EQ(receivedResponses.size(), 0);
+  EXPECT_EQ(receivedRequests.size(), 0);
+  EXPECT_EQ(receivedErrors.size(), 0);
+}
+
 #endif
