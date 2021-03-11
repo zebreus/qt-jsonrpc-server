@@ -22,8 +22,6 @@ MethodDescription::MethodDescription(const QString& name, const QList<int>& para
 MethodDescription::MethodDescription(const QString& name, const QList<QString>& parameterTypes, QString returnType)
     : name(name), returnType(returnType), parameterTypes(parameterTypes) {}
 
-MethodDescription::MethodDescription(const MethodDescription& that) = default;
-
 QString MethodDescription::getName() const {
   return name;
 }

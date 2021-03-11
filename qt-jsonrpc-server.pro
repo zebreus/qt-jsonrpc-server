@@ -23,6 +23,7 @@ SOURCES += \
     src/callmanager.cpp \
     src/connection.cpp \
     src/error.cpp \
+    src/interfacedescription.cpp \
     src/message.cpp \
     src/messageprocessor.cpp \
     src/methoddescription.cpp \
@@ -46,6 +47,7 @@ HEADERS += \
     include/server.h \
     include/exceptions.h \
     include/signalconverter.h \
+    include/interfacedescription.h \
     include/methoddescription.h \
     test/testservice.h
 
@@ -72,6 +74,7 @@ test{
                tests/servertest.cpp \
                tests/mocktarget.cpp \
                tests/connectiontest.cpp \
+               tests/interfacedescriptiontest.cpp \
                tests/methoddescriptiontest.cpp \
                tests/main.cpp
 }

@@ -12,7 +12,6 @@ class MethodDescription {
   MethodDescription(const QMetaMethod& method);
   MethodDescription(const QString& name, const QList<int>& parameterTypeIds, int returnTypeId = QMetaType::Void);
   MethodDescription(const QString& name, const QList<QString>& parameterType, QString returnType = QMetaType::typeName(QMetaType::Void));
-  MethodDescription(const MethodDescription& that);
 
   QString getName() const;
   QString getReturnType() const;
