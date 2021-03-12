@@ -1,5 +1,5 @@
 # qt-jsonrpc-server
-The easiest way to create jsonrpc services in qt. Simply expose your QObjects as services
+The easiest way to create jsonrpc services in qt. Simply expose your QObjects as services.
 
 ## Features
 Call your QObjects using jsonrpc over websockets.
@@ -43,3 +43,9 @@ to do that. You have to ensure, that the arguments still exist, when the object 
 ### Emitting signals on the server
 
 Your service QObject can emit signals and pass them to the client. To use this, the client first has to confirm, that it is capable of receiving signals, by calling the special method `rpc.qt.activate`. After that all signals emitted by your Qobject will be sent as jsonrpc 2.0 notifications. For more details see the [jsonrpc extension](qt-jsonrpc-extension.md).
+
+## Limitations
+ * You can only transfer types registered with the qt metatype system.
+ * You can not transfer pointers, or complex types.
+ * Currently there are some unsupported types, but most basic types are supported (integers of all sizes, bool, float, double, QString, QChar, QDate, QList<QString>, QVariant and a few more).
+ * Currently only Websockets are the only supported transport protocol.
