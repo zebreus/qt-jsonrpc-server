@@ -4,13 +4,13 @@
 #include <QList>
 #include <QString>
 
-#include "test/testservice.h"
+#include "tests/mocktarget.hpp"
 
 int main(int argc, char* argv[]) {
   QCoreApplication a(argc, argv);
 
-  jsonrpc::Server<TestService> test(56730);
-  test.setConstructorArguments(42, "test");
+  jsonrpc::Server<MockTarget> test(56730);
+  test.setConstructorArguments(42);
   test.startListening();
 
   return a.exec();

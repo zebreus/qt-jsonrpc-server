@@ -30,9 +30,7 @@ SOURCES += \
     src/request.cpp \
     src/response.cpp \
     src/exceptions.cpp \
-    src/signalconverter.cpp \
-    test/testservice.cpp \
-    test/main.cpp
+    src/signalconverter.cpp
 
 HEADERS += \
     include/argument.h \
@@ -48,8 +46,7 @@ HEADERS += \
     include/exceptions.h \
     include/signalconverter.h \
     include/interfacedescription.h \
-    include/methoddescription.h \
-    test/testservice.h
+    include/methoddescription.h
 
 test{
     include($$PWD/libs/gtest/gtest_dependency.pri)
@@ -62,9 +59,6 @@ test{
     CONFIG += thread
     LIBS += -lgtest
 
-    SOURCES -= test/testservice.cpp
-    SOURCES -= test/main.cpp
-    HEADERS -= test/testservice.h
     HEADERS += tests/mocktarget.hpp
     SOURCES += tests/argumenttest.cpp \
                tests/calltest.cpp \
@@ -77,10 +71,16 @@ test{
                tests/interfacedescriptiontest.cpp \
                tests/methoddescriptiontest.cpp \
                tests/main.cpp
-}
-else{
-    message(Building app)
+} else:demo{
+    message(Building demo)
     TEMPLATE = app
+    TARGET = qt-jsonrpc
+    SOURCES += demo/main.cpp \
+               tests/mocktarget.cpp
+    HEADERS += tests/mocktarget.hpp
+}else{
+    message(Building demo)
+    TEMPLATE = lib
     TARGET = qt-jsonrpc
 }
 
