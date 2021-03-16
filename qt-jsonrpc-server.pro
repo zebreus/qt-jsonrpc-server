@@ -21,6 +21,7 @@ SOURCES += \
     src/argument.cpp \
     src/call.cpp \
     src/callmanager.cpp \
+    src/slotconverter.cpp \
     src/connection.cpp \
     src/error.cpp \
     src/interfacedescription.cpp \
@@ -46,7 +47,8 @@ HEADERS += \
     include/exceptions.h \
     include/signalconverter.h \
     include/interfacedescription.h \
-    include/methoddescription.h
+    include/methoddescription.h \
+    include/slotconverter.h
 
 test{
     include($$PWD/libs/gtest/gtest_dependency.pri)
@@ -65,6 +67,7 @@ test{
                tests/exceptionstest.cpp \
                tests/callmanagertest.cpp \
                tests/signalconvertertest.cpp \
+               tests/slotconvertertest.cpp \
                tests/servertest.cpp \
                tests/mocktarget.cpp \
                tests/connectiontest.cpp \
