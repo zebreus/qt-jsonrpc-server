@@ -2,7 +2,6 @@
 #define SLOTCONVERTER_H
 
 #include <argument.h>
-#include <client.h>
 #include <methoddescription.h>
 #include <request.h>
 
