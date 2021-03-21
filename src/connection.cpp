@@ -1,6 +1,6 @@
 #include "connection.h"
 
-jsonrpc::Connection::Connection(QObject* target, QObject* parent): QObject(parent), processor(target) {
+jsonrpc::Connection::Connection(QObject* target, QObject* parent): QObject(parent), processor(target), signalConverter(nullptr) {
   messageProcessor = new MessageProcessor(this);
   connect(messageProcessor, &MessageProcessor::outgoingMessage, this, &Connection::sendMessage);
 
@@ -57,14 +57,17 @@ void jsonrpc::Connection::processRequest(const QSharedPointer<jsonrpc::Request>&
 }
 
 void jsonrpc::Connection::activateSignals() {
-  signalConverter = new SignalConverter(processor, this);
-  connect(signalConverter, &SignalConverter::convertedSignal, messageProcessor, &MessageProcessor::sendMessage);
+  if(signalConverter == nullptr) {
+    signalConverter = new SignalConverter(processor, this);
+    connect(signalConverter, &SignalConverter::convertedSignal, messageProcessor, &MessageProcessor::sendMessage);
+  }
 }
 
 void jsonrpc::Connection::deactivateSignals() {
   if(signalConverter != nullptr) {
     QObject::disconnect(signalConverter, &SignalConverter::convertedSignal, messageProcessor, &MessageProcessor::sendMessage);
     delete signalConverter;
+    signalConverter = nullptr;
   }
 }
 
