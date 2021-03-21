@@ -1,4 +1,4 @@
-#include <mocktarget.hpp>
+#include "mocktarget.hpp"
 
 SuperMock::SuperMock(QObject* parent): QObject(parent) {}
 

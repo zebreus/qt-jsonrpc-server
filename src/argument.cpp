@@ -593,19 +593,6 @@ QJsonValue ArgumentImplementation<QVariant>::getJson() {
 }
 
 template<>
-ArgumentImplementation<QCursor>::ArgumentImplementation(const QJsonValue& argument) {
-  Q_UNUSED(argument);
-  // TODO implement QCursor type
-  throw exceptions::WrongArgumentType("QCursor", argument, "this type is not yet implemented.");
-}
-
-template<>
-QJsonValue ArgumentImplementation<QCursor>::getJson() {
-  // TODO implement QCursor type
-  return QJsonValue::Undefined;
-}
-
-template<>
 ArgumentImplementation<QDate>::ArgumentImplementation(const QJsonValue& argument) {
   if(argument.isString()) {
     // Try TextDate and ISODate formats
@@ -689,58 +676,6 @@ QJsonValue ArgumentImplementation<QVariantList>::getJson() {
 }
 
 template<>
-ArgumentImplementation<QPolygon>::ArgumentImplementation(const QJsonValue& argument) {
-  Q_UNUSED(argument);
-  // TODO implement QPolygon type
-  throw exceptions::WrongArgumentType("QPolygon", argument, "this type is not yet implemented.");
-}
-
-template<>
-QJsonValue ArgumentImplementation<QPolygon>::getJson() {
-  // TODO implement QPolygon type
-  return QJsonValue::Undefined;
-}
-
-template<>
-ArgumentImplementation<QPolygonF>::ArgumentImplementation(const QJsonValue& argument) {
-  Q_UNUSED(argument);
-  // TODO implement QPolygonF type
-  throw exceptions::WrongArgumentType("QPolygonF", argument, "this type is not yet implemented.");
-}
-
-template<>
-QJsonValue ArgumentImplementation<QPolygonF>::getJson() {
-  // TODO implement QPolygonF type
-  return QJsonValue::Undefined;
-}
-
-template<>
-ArgumentImplementation<QColor>::ArgumentImplementation(const QJsonValue& argument) {
-  Q_UNUSED(argument);
-  // TODO implement QColor type
-  throw exceptions::WrongArgumentType("QColor", argument, "this type is not yet implemented.");
-}
-
-template<>
-QJsonValue ArgumentImplementation<QColor>::getJson() {
-  // TODO implement QColor type
-  return QJsonValue::Undefined;
-}
-
-template<>
-ArgumentImplementation<QColorSpace>::ArgumentImplementation(const QJsonValue& argument) {
-  Q_UNUSED(argument);
-  // TODO implement QColorSpace type
-  throw exceptions::WrongArgumentType("QColorSpace", argument, "this type is not yet implemented.");
-}
-
-template<>
-QJsonValue ArgumentImplementation<QColorSpace>::getJson() {
-  // TODO implement QColorSpace type
-  return QJsonValue::Undefined;
-}
-
-template<>
 ArgumentImplementation<QSizeF>::ArgumentImplementation(const QJsonValue& argument) {
   Q_UNUSED(argument);
   // TODO implement QSizeF type
@@ -776,19 +711,6 @@ ArgumentImplementation<QLine>::ArgumentImplementation(const QJsonValue& argument
 template<>
 QJsonValue ArgumentImplementation<QLine>::getJson() {
   // TODO implement QLine type
-  return QJsonValue::Undefined;
-}
-
-template<>
-ArgumentImplementation<QTextLength>::ArgumentImplementation(const QJsonValue& argument) {
-  Q_UNUSED(argument);
-  // TODO implement QTextLength type
-  throw exceptions::WrongArgumentType("QTextLength", argument, "this type is not yet implemented.");
-}
-
-template<>
-QJsonValue ArgumentImplementation<QTextLength>::getJson() {
-  // TODO implement QTextLength type
   return QJsonValue::Undefined;
 }
 
@@ -835,32 +757,6 @@ QJsonValue ArgumentImplementation<QVariantHash>::getJson() {
 }
 
 template<>
-ArgumentImplementation<QIcon>::ArgumentImplementation(const QJsonValue& argument) {
-  Q_UNUSED(argument);
-  // TODO implement QIcon type
-  throw exceptions::WrongArgumentType("QIcon", argument, "this type is not yet implemented.");
-}
-
-template<>
-QJsonValue ArgumentImplementation<QIcon>::getJson() {
-  // TODO implement QIcon type
-  return QJsonValue::Undefined;
-}
-
-template<>
-ArgumentImplementation<QPen>::ArgumentImplementation(const QJsonValue& argument) {
-  Q_UNUSED(argument);
-  // TODO implement QPen type
-  throw exceptions::WrongArgumentType("QPen", argument, "this type is not yet implemented.");
-}
-
-template<>
-QJsonValue ArgumentImplementation<QPen>::getJson() {
-  // TODO implement QPen type
-  return QJsonValue::Undefined;
-}
-
-template<>
 ArgumentImplementation<QLineF>::ArgumentImplementation(const QJsonValue& argument) {
   Q_UNUSED(argument);
   // TODO implement QLineF type
@@ -870,19 +766,6 @@ ArgumentImplementation<QLineF>::ArgumentImplementation(const QJsonValue& argumen
 template<>
 QJsonValue ArgumentImplementation<QLineF>::getJson() {
   // TODO implement QLineF type
-  return QJsonValue::Undefined;
-}
-
-template<>
-ArgumentImplementation<QTextFormat>::ArgumentImplementation(const QJsonValue& argument) {
-  Q_UNUSED(argument);
-  // TODO implement QTextFormat type
-  throw exceptions::WrongArgumentType("QTextFormat", argument, "this type is not yet implemented.");
-}
-
-template<>
-QJsonValue ArgumentImplementation<QTextFormat>::getJson() {
-  // TODO implement QTextFormat type
   return QJsonValue::Undefined;
 }
 
@@ -985,58 +868,6 @@ QJsonValue ArgumentImplementation<QPointF>::getJson() {
 }
 
 template<>
-ArgumentImplementation<QPalette>::ArgumentImplementation(const QJsonValue& argument) {
-  Q_UNUSED(argument);
-  // TODO implement QPalette type
-  throw exceptions::WrongArgumentType("QPalette", argument, "this type is not yet implemented.");
-}
-
-template<>
-QJsonValue ArgumentImplementation<QPalette>::getJson() {
-  // TODO implement QPalette type
-  return QJsonValue::Undefined;
-}
-
-template<>
-ArgumentImplementation<QFont>::ArgumentImplementation(const QJsonValue& argument) {
-  Q_UNUSED(argument);
-  // TODO implement QFont type
-  throw exceptions::WrongArgumentType("QFont", argument, "this type is not yet implemented.");
-}
-
-template<>
-QJsonValue ArgumentImplementation<QFont>::getJson() {
-  // TODO implement QFont type
-  return QJsonValue::Undefined;
-}
-
-template<>
-ArgumentImplementation<QBrush>::ArgumentImplementation(const QJsonValue& argument) {
-  Q_UNUSED(argument);
-  // TODO implement QBrush type
-  throw exceptions::WrongArgumentType("QBrush", argument, "this type is not yet implemented.");
-}
-
-template<>
-QJsonValue ArgumentImplementation<QBrush>::getJson() {
-  // TODO implement QBrush type
-  return QJsonValue::Undefined;
-}
-
-template<>
-ArgumentImplementation<QRegion>::ArgumentImplementation(const QJsonValue& argument) {
-  Q_UNUSED(argument);
-  // TODO implement QRegion type
-  throw exceptions::WrongArgumentType("QRegion", argument, "this type is not yet implemented.");
-}
-
-template<>
-QJsonValue ArgumentImplementation<QRegion>::getJson() {
-  // TODO implement QRegion type
-  return QJsonValue::Undefined;
-}
-
-template<>
 ArgumentImplementation<QBitArray>::ArgumentImplementation(const QJsonValue& argument) {
   Q_UNUSED(argument);
   // TODO implement QBitArray type
@@ -1050,58 +881,6 @@ QJsonValue ArgumentImplementation<QBitArray>::getJson() {
 }
 
 template<>
-ArgumentImplementation<QImage>::ArgumentImplementation(const QJsonValue& argument) {
-  Q_UNUSED(argument);
-  // TODO implement QImage type
-  throw exceptions::WrongArgumentType("QImage", argument, "this type is not yet implemented.");
-}
-
-template<>
-QJsonValue ArgumentImplementation<QImage>::getJson() {
-  // TODO implement QImage type
-  return QJsonValue::Undefined;
-}
-
-template<>
-ArgumentImplementation<QKeySequence>::ArgumentImplementation(const QJsonValue& argument) {
-  Q_UNUSED(argument);
-  // TODO implement QKeySequence type
-  throw exceptions::WrongArgumentType("QKeySequence", argument, "this type is not yet implemented.");
-}
-
-template<>
-QJsonValue ArgumentImplementation<QKeySequence>::getJson() {
-  // TODO implement QKeySequence type
-  return QJsonValue::Undefined;
-}
-
-template<>
-ArgumentImplementation<QSizePolicy>::ArgumentImplementation(const QJsonValue& argument) {
-  Q_UNUSED(argument);
-  // TODO implement QSizePolicy type
-  throw exceptions::WrongArgumentType("QSizePolicy", argument, "this type is not yet implemented.");
-}
-
-template<>
-QJsonValue ArgumentImplementation<QSizePolicy>::getJson() {
-  // TODO implement QSizePolicy type
-  return QJsonValue::Undefined;
-}
-
-template<>
-ArgumentImplementation<QPixmap>::ArgumentImplementation(const QJsonValue& argument) {
-  Q_UNUSED(argument);
-  // TODO implement QPixmap type
-  throw exceptions::WrongArgumentType("QPixmap", argument, "this type is not yet implemented.");
-}
-
-template<>
-QJsonValue ArgumentImplementation<QPixmap>::getJson() {
-  // TODO implement QPixmap type
-  return QJsonValue::Undefined;
-}
-
-template<>
 ArgumentImplementation<QLocale>::ArgumentImplementation(const QJsonValue& argument) {
   Q_UNUSED(argument);
   // TODO implement QLocale type
@@ -1111,110 +890,6 @@ ArgumentImplementation<QLocale>::ArgumentImplementation(const QJsonValue& argume
 template<>
 QJsonValue ArgumentImplementation<QLocale>::getJson() {
   // TODO implement QLocale type
-  return QJsonValue::Undefined;
-}
-
-template<>
-ArgumentImplementation<QBitmap>::ArgumentImplementation(const QJsonValue& argument) {
-  Q_UNUSED(argument);
-  // TODO implement QBitmap type
-  throw exceptions::WrongArgumentType("QBitmap", argument, "this type is not yet implemented.");
-}
-
-template<>
-QJsonValue ArgumentImplementation<QBitmap>::getJson() {
-  // TODO implement QBitmap type
-  return QJsonValue::Undefined;
-}
-
-template<>
-ArgumentImplementation<QMatrix>::ArgumentImplementation(const QJsonValue& argument) {
-  Q_UNUSED(argument);
-  // TODO implement QMatrix type
-  throw exceptions::WrongArgumentType("QMatrix", argument, "this type is not yet implemented.");
-}
-
-template<>
-QJsonValue ArgumentImplementation<QMatrix>::getJson() {
-  // TODO implement QMatrix type
-  return QJsonValue::Undefined;
-}
-
-template<>
-ArgumentImplementation<QTransform>::ArgumentImplementation(const QJsonValue& argument) {
-  Q_UNUSED(argument);
-  // TODO implement QTransform type
-  throw exceptions::WrongArgumentType("QTransform", argument, "this type is not yet implemented.");
-}
-
-template<>
-QJsonValue ArgumentImplementation<QTransform>::getJson() {
-  // TODO implement QTransform type
-  return QJsonValue::Undefined;
-}
-
-template<>
-ArgumentImplementation<QMatrix4x4>::ArgumentImplementation(const QJsonValue& argument) {
-  Q_UNUSED(argument);
-  // TODO implement QMatrix4x4 type
-  throw exceptions::WrongArgumentType("QMatrix4x4", argument, "this type is not yet implemented.");
-}
-
-template<>
-QJsonValue ArgumentImplementation<QMatrix4x4>::getJson() {
-  // TODO implement QMatrix4x4 type
-  return QJsonValue::Undefined;
-}
-
-template<>
-ArgumentImplementation<QVector2D>::ArgumentImplementation(const QJsonValue& argument) {
-  Q_UNUSED(argument);
-  // TODO implement QVector2D type
-  throw exceptions::WrongArgumentType("QVector2D", argument, "this type is not yet implemented.");
-}
-
-template<>
-QJsonValue ArgumentImplementation<QVector2D>::getJson() {
-  // TODO implement QVector2D type
-  return QJsonValue::Undefined;
-}
-
-template<>
-ArgumentImplementation<QVector3D>::ArgumentImplementation(const QJsonValue& argument) {
-  Q_UNUSED(argument);
-  // TODO implement QVector3D type
-  throw exceptions::WrongArgumentType("QVector3D", argument, "this type is not yet implemented.");
-}
-
-template<>
-QJsonValue ArgumentImplementation<QVector3D>::getJson() {
-  // TODO implement QVector3D type
-  return QJsonValue::Undefined;
-}
-
-template<>
-ArgumentImplementation<QVector4D>::ArgumentImplementation(const QJsonValue& argument) {
-  Q_UNUSED(argument);
-  // TODO implement QVector4D type
-  throw exceptions::WrongArgumentType("QVector4D", argument, "this type is not yet implemented.");
-}
-
-template<>
-QJsonValue ArgumentImplementation<QVector4D>::getJson() {
-  // TODO implement QVector4D type
-  return QJsonValue::Undefined;
-}
-
-template<>
-ArgumentImplementation<QQuaternion>::ArgumentImplementation(const QJsonValue& argument) {
-  Q_UNUSED(argument);
-  // TODO implement QQuaternion type
-  throw exceptions::WrongArgumentType("QQuaternion", argument, "this type is not yet implemented.");
-}
-
-template<>
-QJsonValue ArgumentImplementation<QQuaternion>::getJson() {
-  // TODO implement QQuaternion type
   return QJsonValue::Undefined;
 }
 
@@ -1414,6 +1089,334 @@ QJsonValue ArgumentImplementation<QByteArrayList>::getJson() {
   // TODO implement QByteArrayList type
   return QJsonValue::Undefined;
 }
+
+#if defined(QT_GUI_LIB) or defined(QT_MODULE_GUI)
+template<>
+ArgumentImplementation<QCursor>::ArgumentImplementation(const QJsonValue& argument) {
+  Q_UNUSED(argument);
+  // TODO implement QCursor type
+  throw exceptions::WrongArgumentType("QCursor", argument, "this type is not yet implemented.");
+}
+
+template<>
+QJsonValue ArgumentImplementation<QCursor>::getJson() {
+  // TODO implement QCursor type
+  return QJsonValue::Undefined;
+}
+
+template<>
+ArgumentImplementation<QPolygon>::ArgumentImplementation(const QJsonValue& argument) {
+  Q_UNUSED(argument);
+  // TODO implement QPolygon type
+  throw exceptions::WrongArgumentType("QPolygon", argument, "this type is not yet implemented.");
+}
+
+template<>
+QJsonValue ArgumentImplementation<QPolygon>::getJson() {
+  // TODO implement QPolygon type
+  return QJsonValue::Undefined;
+}
+
+template<>
+ArgumentImplementation<QPolygonF>::ArgumentImplementation(const QJsonValue& argument) {
+  Q_UNUSED(argument);
+  // TODO implement QPolygonF type
+  throw exceptions::WrongArgumentType("QPolygonF", argument, "this type is not yet implemented.");
+}
+
+template<>
+QJsonValue ArgumentImplementation<QPolygonF>::getJson() {
+  // TODO implement QPolygonF type
+  return QJsonValue::Undefined;
+}
+
+template<>
+ArgumentImplementation<QColor>::ArgumentImplementation(const QJsonValue& argument) {
+  Q_UNUSED(argument);
+  // TODO implement QColor type
+  throw exceptions::WrongArgumentType("QColor", argument, "this type is not yet implemented.");
+}
+
+template<>
+QJsonValue ArgumentImplementation<QColor>::getJson() {
+  // TODO implement QColor type
+  return QJsonValue::Undefined;
+}
+
+template<>
+ArgumentImplementation<QColorSpace>::ArgumentImplementation(const QJsonValue& argument) {
+  Q_UNUSED(argument);
+  // TODO implement QColorSpace type
+  throw exceptions::WrongArgumentType("QColorSpace", argument, "this type is not yet implemented.");
+}
+
+template<>
+QJsonValue ArgumentImplementation<QColorSpace>::getJson() {
+  // TODO implement QColorSpace type
+  return QJsonValue::Undefined;
+}
+
+template<>
+ArgumentImplementation<QVector2D>::ArgumentImplementation(const QJsonValue& argument) {
+  Q_UNUSED(argument);
+  // TODO implement QVector2D type
+  throw exceptions::WrongArgumentType("QVector2D", argument, "this type is not yet implemented.");
+}
+
+template<>
+QJsonValue ArgumentImplementation<QVector2D>::getJson() {
+  // TODO implement QVector2D type
+  return QJsonValue::Undefined;
+}
+
+template<>
+ArgumentImplementation<QVector3D>::ArgumentImplementation(const QJsonValue& argument) {
+  Q_UNUSED(argument);
+  // TODO implement QVector3D type
+  throw exceptions::WrongArgumentType("QVector3D", argument, "this type is not yet implemented.");
+}
+
+template<>
+QJsonValue ArgumentImplementation<QVector3D>::getJson() {
+  // TODO implement QVector3D type
+  return QJsonValue::Undefined;
+}
+
+template<>
+ArgumentImplementation<QVector4D>::ArgumentImplementation(const QJsonValue& argument) {
+  Q_UNUSED(argument);
+  // TODO implement QVector4D type
+  throw exceptions::WrongArgumentType("QVector4D", argument, "this type is not yet implemented.");
+}
+
+template<>
+ArgumentImplementation<QIcon>::ArgumentImplementation(const QJsonValue& argument) {
+  Q_UNUSED(argument);
+  // TODO implement QIcon type
+  throw exceptions::WrongArgumentType("QIcon", argument, "this type is not yet implemented.");
+}
+
+template<>
+QJsonValue ArgumentImplementation<QIcon>::getJson() {
+  // TODO implement QIcon type
+  return QJsonValue::Undefined;
+}
+
+template<>
+QJsonValue ArgumentImplementation<QVector4D>::getJson() {
+  // TODO implement QVector4D type
+  return QJsonValue::Undefined;
+}
+
+template<>
+ArgumentImplementation<QTextLength>::ArgumentImplementation(const QJsonValue& argument) {
+  Q_UNUSED(argument);
+  // TODO implement QTextLength type
+  throw exceptions::WrongArgumentType("QTextLength", argument, "this type is not yet implemented.");
+}
+
+template<>
+QJsonValue ArgumentImplementation<QTextLength>::getJson() {
+  // TODO implement QTextLength type
+  return QJsonValue::Undefined;
+}
+
+template<>
+ArgumentImplementation<QPen>::ArgumentImplementation(const QJsonValue& argument) {
+  Q_UNUSED(argument);
+  // TODO implement QPen type
+  throw exceptions::WrongArgumentType("QPen", argument, "this type is not yet implemented.");
+}
+
+template<>
+QJsonValue ArgumentImplementation<QPen>::getJson() {
+  // TODO implement QPen type
+  return QJsonValue::Undefined;
+}
+
+template<>
+ArgumentImplementation<QTextFormat>::ArgumentImplementation(const QJsonValue& argument) {
+  Q_UNUSED(argument);
+  // TODO implement QTextFormat type
+  throw exceptions::WrongArgumentType("QTextFormat", argument, "this type is not yet implemented.");
+}
+
+template<>
+QJsonValue ArgumentImplementation<QTextFormat>::getJson() {
+  // TODO implement QTextFormat type
+  return QJsonValue::Undefined;
+}
+
+template<>
+ArgumentImplementation<QPalette>::ArgumentImplementation(const QJsonValue& argument) {
+  Q_UNUSED(argument);
+  // TODO implement QPalette type
+  throw exceptions::WrongArgumentType("QPalette", argument, "this type is not yet implemented.");
+}
+
+template<>
+QJsonValue ArgumentImplementation<QPalette>::getJson() {
+  // TODO implement QPalette type
+  return QJsonValue::Undefined;
+}
+
+template<>
+ArgumentImplementation<QFont>::ArgumentImplementation(const QJsonValue& argument) {
+  Q_UNUSED(argument);
+  // TODO implement QFont type
+  throw exceptions::WrongArgumentType("QFont", argument, "this type is not yet implemented.");
+}
+
+template<>
+QJsonValue ArgumentImplementation<QFont>::getJson() {
+  // TODO implement QFont type
+  return QJsonValue::Undefined;
+}
+
+template<>
+ArgumentImplementation<QBrush>::ArgumentImplementation(const QJsonValue& argument) {
+  Q_UNUSED(argument);
+  // TODO implement QBrush type
+  throw exceptions::WrongArgumentType("QBrush", argument, "this type is not yet implemented.");
+}
+
+template<>
+QJsonValue ArgumentImplementation<QBrush>::getJson() {
+  // TODO implement QBrush type
+  return QJsonValue::Undefined;
+}
+
+template<>
+ArgumentImplementation<QRegion>::ArgumentImplementation(const QJsonValue& argument) {
+  Q_UNUSED(argument);
+  // TODO implement QRegion type
+  throw exceptions::WrongArgumentType("QRegion", argument, "this type is not yet implemented.");
+}
+
+template<>
+QJsonValue ArgumentImplementation<QRegion>::getJson() {
+  // TODO implement QRegion type
+  return QJsonValue::Undefined;
+}
+
+template<>
+ArgumentImplementation<QImage>::ArgumentImplementation(const QJsonValue& argument) {
+  Q_UNUSED(argument);
+  // TODO implement QImage type
+  throw exceptions::WrongArgumentType("QImage", argument, "this type is not yet implemented.");
+}
+
+template<>
+QJsonValue ArgumentImplementation<QImage>::getJson() {
+  // TODO implement QImage type
+  return QJsonValue::Undefined;
+}
+
+template<>
+ArgumentImplementation<QKeySequence>::ArgumentImplementation(const QJsonValue& argument) {
+  Q_UNUSED(argument);
+  // TODO implement QKeySequence type
+  throw exceptions::WrongArgumentType("QKeySequence", argument, "this type is not yet implemented.");
+}
+
+template<>
+QJsonValue ArgumentImplementation<QKeySequence>::getJson() {
+  // TODO implement QKeySequence type
+  return QJsonValue::Undefined;
+}
+
+template<>
+ArgumentImplementation<QPixmap>::ArgumentImplementation(const QJsonValue& argument) {
+  Q_UNUSED(argument);
+  // TODO implement QPixmap type
+  throw exceptions::WrongArgumentType("QPixmap", argument, "this type is not yet implemented.");
+}
+
+template<>
+QJsonValue ArgumentImplementation<QPixmap>::getJson() {
+  // TODO implement QPixmap type
+  return QJsonValue::Undefined;
+}
+
+template<>
+ArgumentImplementation<QBitmap>::ArgumentImplementation(const QJsonValue& argument) {
+  Q_UNUSED(argument);
+  // TODO implement QBitmap type
+  throw exceptions::WrongArgumentType("QBitmap", argument, "this type is not yet implemented.");
+}
+
+template<>
+QJsonValue ArgumentImplementation<QBitmap>::getJson() {
+  // TODO implement QBitmap type
+  return QJsonValue::Undefined;
+}
+
+template<>
+ArgumentImplementation<QMatrix>::ArgumentImplementation(const QJsonValue& argument) {
+  Q_UNUSED(argument);
+  // TODO implement QMatrix type
+  throw exceptions::WrongArgumentType("QMatrix", argument, "this type is not yet implemented.");
+}
+
+template<>
+QJsonValue ArgumentImplementation<QMatrix>::getJson() {
+  // TODO implement QMatrix type
+  return QJsonValue::Undefined;
+}
+
+template<>
+ArgumentImplementation<QTransform>::ArgumentImplementation(const QJsonValue& argument) {
+  Q_UNUSED(argument);
+  // TODO implement QTransform type
+  throw exceptions::WrongArgumentType("QTransform", argument, "this type is not yet implemented.");
+}
+
+template<>
+QJsonValue ArgumentImplementation<QTransform>::getJson() {
+  // TODO implement QTransform type
+  return QJsonValue::Undefined;
+}
+
+template<>
+ArgumentImplementation<QMatrix4x4>::ArgumentImplementation(const QJsonValue& argument) {
+  Q_UNUSED(argument);
+  // TODO implement QMatrix4x4 type
+  throw exceptions::WrongArgumentType("QMatrix4x4", argument, "this type is not yet implemented.");
+}
+
+template<>
+QJsonValue ArgumentImplementation<QMatrix4x4>::getJson() {
+  // TODO implement QMatrix4x4 type
+  return QJsonValue::Undefined;
+}
+
+template<>
+ArgumentImplementation<QQuaternion>::ArgumentImplementation(const QJsonValue& argument) {
+  Q_UNUSED(argument);
+  // TODO implement QQuaternion type
+  throw exceptions::WrongArgumentType("QQuaternion", argument, "this type is not yet implemented.");
+}
+
+template<>
+QJsonValue ArgumentImplementation<QQuaternion>::getJson() {
+  // TODO implement QQuaternion type
+  return QJsonValue::Undefined;
+}
+#endif
+#if defined(QT_WIDGETS_LIB) or defined(QT_MODULE_WIDGETS)
+template<>
+ArgumentImplementation<QSizePolicy>::ArgumentImplementation(const QJsonValue& argument) {
+  Q_UNUSED(argument);
+  // TODO implement QSizePolicy type
+  throw exceptions::WrongArgumentType("QSizePolicy", argument, "this type is not yet implemented.");
+}
+
+template<>
+QJsonValue ArgumentImplementation<QSizePolicy>::getJson() {
+  // TODO implement QSizePolicy type
+  return QJsonValue::Undefined;
+}
+#endif
 
 template<>
 ArgumentImplementation<MethodDescription>::ArgumentImplementation(const QJsonValue& argument) {
@@ -1618,32 +1621,17 @@ Argument* Argument::create(const int requiredTypeId, const T& value) {
     case QMetaType::QVariant:
       return createArgument<QVariant>(value);
       break;
-    case QMetaType::QCursor:
-      return createArgument<QCursor>(value);
-      break;
-    case QMetaType::QDate:
-      return createArgument<QDate>(value);
-      break;
-    case QMetaType::QSize:
-      return createArgument<QSize>(value);
-      break;
     case QMetaType::QTime:
       return createArgument<QTime>(value);
       break;
     case QMetaType::QVariantList:
       return createArgument<QVariantList>(value);
       break;
-    case QMetaType::QPolygon:
-      return createArgument<QPolygon>(value);
+    case QMetaType::QDate:
+      return createArgument<QDate>(value);
       break;
-    case QMetaType::QPolygonF:
-      return createArgument<QPolygonF>(value);
-      break;
-    case QMetaType::QColor:
-      return createArgument<QColor>(value);
-      break;
-    case QMetaType::QColorSpace:
-      return createArgument<QColorSpace>(value);
+    case QMetaType::QSize:
+      return createArgument<QSize>(value);
       break;
     case QMetaType::QSizeF:
       return createArgument<QSizeF>(value);
@@ -1654,9 +1642,6 @@ Argument* Argument::create(const int requiredTypeId, const T& value) {
     case QMetaType::QLine:
       return createArgument<QLine>(value);
       break;
-    case QMetaType::QTextLength:
-      return createArgument<QTextLength>(value);
-      break;
     case QMetaType::QStringList:
       return createArgument<QStringList>(value);
       break;
@@ -1666,17 +1651,8 @@ Argument* Argument::create(const int requiredTypeId, const T& value) {
     case QMetaType::QVariantHash:
       return createArgument<QVariantHash>(value);
       break;
-    case QMetaType::QIcon:
-      return createArgument<QIcon>(value);
-      break;
-    case QMetaType::QPen:
-      return createArgument<QPen>(value);
-      break;
     case QMetaType::QLineF:
       return createArgument<QLineF>(value);
-      break;
-    case QMetaType::QTextFormat:
-      return createArgument<QTextFormat>(value);
       break;
     case QMetaType::QRect:
       return createArgument<QRect>(value);
@@ -1699,59 +1675,11 @@ Argument* Argument::create(const int requiredTypeId, const T& value) {
     case QMetaType::QPointF:
       return createArgument<QPointF>(value);
       break;
-    case QMetaType::QPalette:
-      return createArgument<QPalette>(value);
-      break;
-    case QMetaType::QFont:
-      return createArgument<QFont>(value);
-      break;
-    case QMetaType::QBrush:
-      return createArgument<QBrush>(value);
-      break;
-    case QMetaType::QRegion:
-      return createArgument<QRegion>(value);
-      break;
     case QMetaType::QBitArray:
       return createArgument<QBitArray>(value);
       break;
-    case QMetaType::QImage:
-      return createArgument<QImage>(value);
-      break;
-    case QMetaType::QKeySequence:
-      return createArgument<QKeySequence>(value);
-      break;
-    case QMetaType::QSizePolicy:
-      return createArgument<QSizePolicy>(value);
-      break;
-    case QMetaType::QPixmap:
-      return createArgument<QPixmap>(value);
-      break;
     case QMetaType::QLocale:
       return createArgument<QLocale>(value);
-      break;
-    case QMetaType::QBitmap:
-      return createArgument<QBitmap>(value);
-      break;
-    case QMetaType::QMatrix:
-      return createArgument<QMatrix>(value);
-      break;
-    case QMetaType::QTransform:
-      return createArgument<QTransform>(value);
-      break;
-    case QMetaType::QMatrix4x4:
-      return createArgument<QMatrix4x4>(value);
-      break;
-    case QMetaType::QVector2D:
-      return createArgument<QVector2D>(value);
-      break;
-    case QMetaType::QVector3D:
-      return createArgument<QVector3D>(value);
-      break;
-    case QMetaType::QVector4D:
-      return createArgument<QVector4D>(value);
-      break;
-    case QMetaType::QQuaternion:
-      return createArgument<QQuaternion>(value);
       break;
     case QMetaType::QEasingCurve:
       return createArgument<QEasingCurve>(value);
@@ -1792,6 +1720,118 @@ Argument* Argument::create(const int requiredTypeId, const T& value) {
     case QMetaType::QByteArrayList:
       return createArgument<QByteArrayList>(value);
       break;
+#if defined(QT_GUI_LIB) or defined(QT_MODULE_GUI)
+    case QMetaType::QCursor:
+      return createArgument<QCursor>(value);
+      break;
+    case QMetaType::QColor:
+      return createArgument<QColor>(value);
+      break;
+    case QMetaType::QColorSpace:
+      return createArgument<QColorSpace>(value);
+      break;
+    case QMetaType::QPolygon:
+      return createArgument<QPolygon>(value);
+      break;
+    case QMetaType::QPolygonF:
+      return createArgument<QPolygonF>(value);
+      break;
+    case QMetaType::QVector2D:
+      return createArgument<QVector2D>(value);
+      break;
+    case QMetaType::QVector3D:
+      return createArgument<QVector3D>(value);
+      break;
+    case QMetaType::QVector4D:
+      return createArgument<QVector4D>(value);
+      break;
+    case QMetaType::QIcon:
+      return createArgument<QIcon>(value);
+      break;
+    case QMetaType::QPen:
+      return createArgument<QPen>(value);
+      break;
+    case QMetaType::QTextLength:
+      return createArgument<QTextLength>(value);
+      break;
+    case QMetaType::QTextFormat:
+      return createArgument<QTextFormat>(value);
+      break;
+    case QMetaType::QPalette:
+      return createArgument<QPalette>(value);
+      break;
+    case QMetaType::QFont:
+      return createArgument<QFont>(value);
+      break;
+    case QMetaType::QBrush:
+      return createArgument<QBrush>(value);
+      break;
+    case QMetaType::QRegion:
+      return createArgument<QRegion>(value);
+      break;
+    case QMetaType::QImage:
+      return createArgument<QImage>(value);
+      break;
+    case QMetaType::QKeySequence:
+      return createArgument<QKeySequence>(value);
+      break;
+    case QMetaType::QPixmap:
+      return createArgument<QPixmap>(value);
+      break;
+    case QMetaType::QBitmap:
+      return createArgument<QBitmap>(value);
+      break;
+    case QMetaType::QMatrix:
+      return createArgument<QMatrix>(value);
+      break;
+    case QMetaType::QTransform:
+      return createArgument<QTransform>(value);
+      break;
+    case QMetaType::QMatrix4x4:
+      return createArgument<QMatrix4x4>(value);
+      break;
+    case QMetaType::QQuaternion:
+      return createArgument<QQuaternion>(value);
+      break;
+#else
+    case QMetaType::QCursor:
+    case QMetaType::QColor:
+    case QMetaType::QColorSpace:
+    case QMetaType::QPolygon:
+    case QMetaType::QPolygonF:
+    case QMetaType::QVector2D:
+    case QMetaType::QVector3D:
+    case QMetaType::QVector4D:
+    case QMetaType::QIcon:
+    case QMetaType::QPen:
+    case QMetaType::QTextLength:
+    case QMetaType::QTextFormat:
+    case QMetaType::QPalette:
+    case QMetaType::QFont:
+    case QMetaType::QBrush:
+    case QMetaType::QRegion:
+    case QMetaType::QImage:
+    case QMetaType::QKeySequence:
+    case QMetaType::QPixmap:
+    case QMetaType::QBitmap:
+    case QMetaType::QMatrix:
+    case QMetaType::QTransform:
+    case QMetaType::QMatrix4x4:
+    case QMetaType::QQuaternion: {
+      QString requiredTypeName = QMetaType::typeName((QMetaType::Type)requiredTypeId);
+      throw exceptions::WrongArgumentType(requiredTypeName, getTypeName(value), "that type requires qtgui.");
+    }
+#endif
+#if defined(QT_WIDGETS_LIB) or defined(QT_MODULE_WIDGETS)
+    case QMetaType::QSizePolicy:
+      return createArgument<QSizePolicy>(value);
+      break;
+#else
+    case QMetaType::QSizePolicy: {
+      QString requiredTypeName = QMetaType::typeName((QMetaType::Type)requiredTypeId);
+      throw exceptions::WrongArgumentType(requiredTypeName, getTypeName(value), "that type requires qtwidgets.");
+    }
+#endif
     default:
       // Usertype
       if(requiredTypeId == QMetaType::fromType<MethodDescription>().id()) {
