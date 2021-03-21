@@ -3,7 +3,7 @@ DEPENDPATH *= $$PWD
 
 QT += websockets
 
-CONFIG += c++17
+CONFIG += c++2a
 
 SOURCES *= \
     $$PWD/src/argument.cpp \
