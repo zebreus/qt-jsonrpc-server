@@ -22,6 +22,7 @@ run:
    - -c
    - |
      set -eux
-     qmake qt-jsonrpc-server.pro QMAKE_CXXFLAGS_RELEASE="'"-O${optimization_level}"'" QMAKE_LFLAGS_RELEASE="'"-O${optimization_level}"'"
+     qmake qt-jsonrpc-server.pro CONFIG+=test QMAKE_CXXFLAGS_RELEASE="'"-O${optimization_level}"'" QMAKE_LFLAGS_RELEASE="'"-O${optimization_level}"'"
      make -j ${make_threads}
+      ./qt-jsonrpc-tests
   dir: ./qt-jsonrpc-server
