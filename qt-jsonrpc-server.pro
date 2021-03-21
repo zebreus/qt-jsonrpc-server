@@ -73,7 +73,7 @@ test{
                tests/connectiontest.cpp \
                tests/interfacedescriptiontest.cpp \
                tests/methoddescriptiontest.cpp \
-               tests/main.cpp
+               libs/gtest/main.cpp
 } else:demo{
     message(Building demo)
     TEMPLATE = app

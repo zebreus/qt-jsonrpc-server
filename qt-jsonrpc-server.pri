@@ -54,6 +54,5 @@ test{
                $$PWD/tests/mocktarget.cpp \
                $$PWD/tests/connectiontest.cpp \
                $$PWD/tests/interfacedescriptiontest.cpp \
-               $$PWD/tests/methoddescriptiontest.cpp \
-               $$PWD/tests/main.cpp
+               $$PWD/tests/methoddescriptiontest.cpp
 }
