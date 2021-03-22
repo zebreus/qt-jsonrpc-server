@@ -1,6 +1,92 @@
 #include "argument.h"
 
-using namespace jsonrpc;
+namespace jsonrpc {
+
+template class ArgumentImplementation<bool>;
+template class ArgumentImplementation<int>;
+template class ArgumentImplementation<unsigned int>;
+template class ArgumentImplementation<double>;
+template class ArgumentImplementation<QChar>;
+template class ArgumentImplementation<QString>;
+template class ArgumentImplementation<QByteArray>;
+template class ArgumentImplementation<std::nullptr_t>;
+template class ArgumentImplementation<void*>;
+template class ArgumentImplementation<long>;
+template class ArgumentImplementation<long long>;
+template class ArgumentImplementation<short>;
+template class ArgumentImplementation<char>;
+template class ArgumentImplementation<unsigned long>;
+template class ArgumentImplementation<unsigned long long>;
+template class ArgumentImplementation<unsigned short>;
+template class ArgumentImplementation<signed char>;
+template class ArgumentImplementation<unsigned char>;
+template class ArgumentImplementation<float>;
+template class ArgumentImplementation<QObject*>;
+template class ArgumentImplementation<QVariant>;
+template class ArgumentImplementation<QTime>;
+template class ArgumentImplementation<QVariantList>;
+template class ArgumentImplementation<QDate>;
+template class ArgumentImplementation<QSize>;
+template class ArgumentImplementation<QSizeF>;
+template class ArgumentImplementation<QRectF>;
+template class ArgumentImplementation<QLine>;
+template class ArgumentImplementation<QStringList>;
+template class ArgumentImplementation<QVariantMap>;
+template class ArgumentImplementation<QVariantHash>;
+template class ArgumentImplementation<QLineF>;
+template class ArgumentImplementation<QRect>;
+template class ArgumentImplementation<QPoint>;
+template class ArgumentImplementation<QUrl>;
+template class ArgumentImplementation<QRegExp>;
+template class ArgumentImplementation<QRegularExpression>;
+template class ArgumentImplementation<QDateTime>;
+template class ArgumentImplementation<QPointF>;
+template class ArgumentImplementation<QBitArray>;
+template class ArgumentImplementation<QLocale>;
+template class ArgumentImplementation<QEasingCurve>;
+template class ArgumentImplementation<QJsonValue>;
+template class ArgumentImplementation<QJsonObject>;
+template class ArgumentImplementation<QJsonArray>;
+template class ArgumentImplementation<QJsonDocument>;
+template class ArgumentImplementation<QCborValue>;
+template class ArgumentImplementation<QCborArray>;
+template class ArgumentImplementation<QCborMap>;
+template class ArgumentImplementation<QCborSimpleType>;
+template class ArgumentImplementation<QModelIndex>;
+template class ArgumentImplementation<QPersistentModelIndex>;
+template class ArgumentImplementation<QUuid>;
+template class ArgumentImplementation<QByteArrayList>;
+#if defined(QT_GUI_LIB) or defined(QT_MODULE_GUI)
+template class ArgumentImplementation<QCursor>;
+template class ArgumentImplementation<QColor>;
+template class ArgumentImplementation<QColorSpace>;
+template class ArgumentImplementation<QPolygon>;
+template class ArgumentImplementation<QPolygonF>;
+template class ArgumentImplementation<QVector2D>;
+template class ArgumentImplementation<QVector3D>;
+template class ArgumentImplementation<QVector4D>;
+template class ArgumentImplementation<QIcon>;
+template class ArgumentImplementation<QPen>;
+template class ArgumentImplementation<QTextLength>;
+template class ArgumentImplementation<QTextFormat>;
+template class ArgumentImplementation<QPalette>;
+template class ArgumentImplementation<QFont>;
+template class ArgumentImplementation<QBrush>;
+template class ArgumentImplementation<QRegion>;
+template class ArgumentImplementation<QImage>;
+template class ArgumentImplementation<QKeySequence>;
+template class ArgumentImplementation<QPixmap>;
+template class ArgumentImplementation<QBitmap>;
+template class ArgumentImplementation<QMatrix>;
+template class ArgumentImplementation<QTransform>;
+template class ArgumentImplementation<QMatrix4x4>;
+template class ArgumentImplementation<QQuaternion>;
+#endif
+#if defined(QT_WIDGETS_LIB) or defined(QT_MODULE_WIDGETS)
+template class ArgumentImplementation<QSizePolicy>;
+#endif
+template class ArgumentImplementation<MethodDescription>;
+template class ArgumentImplementation<InterfaceDescription>;
 
 QGenericArgument& Argument::getArgument() {
   return argument;
@@ -1905,3 +1991,5 @@ VoidArgument::VoidArgument(const QJsonValue& value) {
 QJsonValue VoidArgument::getJson() {
   return QJsonValue::Null;
 }
+
+}  // namespace jsonrpc
