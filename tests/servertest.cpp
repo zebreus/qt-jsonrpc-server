@@ -25,6 +25,8 @@
 using namespace testing;
 using namespace jsonrpc;
 
+// The server test has to be explicitly enabled, because it needs to open a port, which causes problems on the build server
+#ifdef RUN_SERVER_TEST
 class ServerTests: public ::testing::Test {
  protected:
   void SetUp() override {
@@ -73,5 +75,6 @@ TEST_F(ServerTests, serverRespondsSomething) {
   }
   ASSERT_TRUE(receivedResponse);
 }
+#endif
 
 #endif

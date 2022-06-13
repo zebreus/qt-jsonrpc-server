@@ -12,6 +12,7 @@
 
 namespace jsonrpc {
 
+// This class represents a call to a slot of a QObject
 class Call: public QObject {
   Q_OBJECT
  public:

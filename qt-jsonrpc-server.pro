@@ -1,5 +1,6 @@
-QT -= gui
+#QT -= gui
 QT += websockets
+# widgets
 
 CONFIG += c++2a console
 CONFIG -= app_bundle
@@ -21,6 +22,7 @@ SOURCES += \
     src/argument.cpp \
     src/call.cpp \
     src/callmanager.cpp \
+    src/client.cpp \
     src/slotconverter.cpp \
     src/connection.cpp \
     src/error.cpp \
@@ -31,12 +33,14 @@ SOURCES += \
     src/request.cpp \
     src/response.cpp \
     src/exceptions.cpp \
-    src/signalconverter.cpp
+    src/signalconverter.cpp \
+    src/signalreceiver.cpp
 
 HEADERS += \
     include/argument.h \
     include/call.h \
     include/callmanager.h \
+    include/client.h \
     include/connection.h \
     include/error.h \
     include/message.h \
@@ -48,6 +52,7 @@ HEADERS += \
     include/signalconverter.h \
     include/interfacedescription.h \
     include/methoddescription.h \
+    include/signalreceiver.h \
     include/slotconverter.h
 
 test{
@@ -60,6 +65,8 @@ test{
 
     CONFIG += thread
     LIBS += -lgtest
+    # The server test needs to open a port, which makes it difficult to run on the CI server
+    DEFINES += RUN_SERVER_TEST
 
     HEADERS += tests/mocktarget.hpp
     SOURCES += tests/argumenttest.cpp \
